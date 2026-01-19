@@ -1,20 +1,50 @@
-import 'dart:convert';
-
 import 'package:collection/collection.dart';
-import 'package:flutter/services.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 
 import '../models/models.dart';
 import 'ingredient_provider.dart';
 
-// All cocktails from data source
+// All cocktails from Supabase with ingredients
 final cocktailsProvider = FutureProvider<List<Cocktail>>((ref) async {
-  final jsonString = await rootBundle.loadString('assets/data/cocktails.json');
-  final jsonList = json.decode(jsonString) as List<dynamic>;
-  return jsonList
-      .map((e) => Cocktail.fromJson(e as Map<String, dynamic>))
-      .toList()
-    ..sort((a, b) => a.name.compareTo(b.name));
+  final supabase = ref.watch(supabaseClientProvider);
+
+  // Fetch cocktails
+  final cocktailsResponse = await supabase
+      .from('cocktails')
+      .select()
+      .order('name');
+
+  // Fetch cocktail ingredients with ingredient details
+  final ingredientsResponse = await supabase
+      .from('cocktail_ingredients')
+      .select('*, ingredients(name, name_ko)')
+      .order('sort_order');
+
+  // Group ingredients by cocktail
+  final ingredientsByCocktail = <String, List<CocktailIngredient>>{};
+  for (final row in ingredientsResponse) {
+    final cocktailId = row['cocktail_id'] as String;
+    final ingredient = row['ingredients'] as Map<String, dynamic>?;
+
+    ingredientsByCocktail.putIfAbsent(cocktailId, () => []).add(
+          CocktailIngredient(
+            id: row['ingredient_id'] as String,
+            name: ingredient?['name'] as String? ?? row['ingredient_id'] as String,
+            sort: row['sort_order'] as int? ?? 0,
+            amount: (row['amount'] as num?)?.toDouble() ?? 0,
+            units: row['units'] as String? ?? '',
+            optional: row['is_optional'] as bool? ?? false,
+            note: row['note'] as String?,
+          ),
+        );
+  }
+
+  return (cocktailsResponse as List)
+      .map((row) => Cocktail.fromSupabase(
+            row as Map<String, dynamic>,
+            ingredients: ingredientsByCocktail[row['id']] ?? [],
+          ))
+      .toList();
 });
 
 // Search query for cocktails
@@ -35,7 +65,6 @@ final cocktailMatchesProvider = Provider<AsyncValue<List<CocktailMatch>>>((ref) 
 
   if (selectedIngredients.isEmpty) {
     return cocktailsAsync.whenData((cocktails) {
-      // Return all cocktails with full missing count when nothing selected
       return cocktails.map((c) {
         return CocktailMatch(
           cocktail: c,
@@ -141,7 +170,9 @@ final filteredCocktailMatchesProvider = Provider<AsyncValue<List<CocktailMatch>>
   return matchesAsync.whenData((matches) {
     if (query.isEmpty) return matches;
     return matches
-        .where((m) => m.cocktail.name.toLowerCase().contains(query))
+        .where((m) =>
+            m.cocktail.name.toLowerCase().contains(query) ||
+            (m.cocktail.nameKo?.toLowerCase().contains(query) ?? false))
         .toList();
   });
 });

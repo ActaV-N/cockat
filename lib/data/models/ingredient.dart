@@ -4,6 +4,7 @@ import 'package:flutter/foundation.dart';
 class Ingredient {
   final String id;
   final String name;
+  final String? nameKo;
   final String? category;
   final String? description;
   final double? strength; // ABV percentage
@@ -14,6 +15,7 @@ class Ingredient {
   const Ingredient({
     required this.id,
     required this.name,
+    this.nameKo,
     this.category,
     this.description,
     this.strength,
@@ -22,10 +24,12 @@ class Ingredient {
     this.substitutes,
   });
 
+  /// Create from local JSON (Bar Assistant format)
   factory Ingredient.fromJson(Map<String, dynamic> json) {
     return Ingredient(
       id: json['_id'] as String,
       name: json['name'] as String,
+      nameKo: json['name_ko'] as String?,
       category: json['category'] as String?,
       description: json['description'] as String?,
       strength: (json['strength'] as num?)?.toDouble(),
@@ -37,10 +41,28 @@ class Ingredient {
     );
   }
 
+  /// Create from Supabase row
+  factory Ingredient.fromSupabase(
+    Map<String, dynamic> row, {
+    List<String>? substitutes,
+  }) {
+    return Ingredient(
+      id: row['id'] as String,
+      name: row['name'] as String,
+      nameKo: row['name_ko'] as String?,
+      category: row['category'] as String?,
+      description: row['description'] as String?,
+      strength: (row['strength'] as num?)?.toDouble(),
+      origin: row['origin'] as String?,
+      substitutes: substitutes,
+    );
+  }
+
   Map<String, dynamic> toJson() {
     return {
       '_id': id,
       'name': name,
+      'name_ko': nameKo,
       'category': category,
       'description': description,
       'strength': strength,
@@ -50,9 +72,23 @@ class Ingredient {
     };
   }
 
+  /// Convert to Supabase insert format
+  Map<String, dynamic> toSupabase() {
+    return {
+      'id': id,
+      'name': name,
+      'name_ko': nameKo,
+      'category': category,
+      'description': description,
+      'strength': strength,
+      'origin': origin,
+    };
+  }
+
   Ingredient copyWith({
     String? id,
     String? name,
+    String? nameKo,
     String? category,
     String? description,
     double? strength,
@@ -63,6 +99,7 @@ class Ingredient {
     return Ingredient(
       id: id ?? this.id,
       name: name ?? this.name,
+      nameKo: nameKo ?? this.nameKo,
       category: category ?? this.category,
       description: description ?? this.description,
       strength: strength ?? this.strength,
@@ -124,6 +161,21 @@ class CocktailIngredient {
     );
   }
 
+  /// Create from Supabase cocktail_ingredients row with joined ingredient
+  factory CocktailIngredient.fromSupabase(Map<String, dynamic> row) {
+    final ingredient = row['ingredient'] as Map<String, dynamic>?;
+    return CocktailIngredient(
+      id: row['ingredient_id'] as String,
+      name: ingredient?['name'] as String? ?? row['ingredient_id'] as String,
+      sort: row['sort_order'] as int? ?? 0,
+      amount: (row['amount'] as num?)?.toDouble() ?? 0,
+      units: row['units'] as String? ?? '',
+      optional: row['is_optional'] as bool? ?? false,
+      note: row['note'] as String?,
+      substitutes: const [], // Loaded separately
+    );
+  }
+
   Map<String, dynamic> toJson() {
     return {
       '_id': id,
@@ -142,6 +194,10 @@ class CocktailIngredient {
     if (amountMax != null) {
       return '$amount-$amountMax $units';
     }
-    return '$amount $units';
+    // Format nicely
+    final amountStr = amount == amount.roundToDouble()
+        ? amount.round().toString()
+        : amount.toString();
+    return '$amountStr $units';
   }
 }

@@ -5,6 +5,7 @@ import 'ingredient.dart';
 class Cocktail {
   final String id;
   final String name;
+  final String? nameKo;
   final String instructions;
   final String? description;
   final String? source;
@@ -13,12 +14,13 @@ class Cocktail {
   final List<String> tags;
   final String? glass;
   final String? method;
+  final String? imageUrl;
   final List<CocktailIngredient> ingredients;
-  final List<CocktailImage> images;
 
   const Cocktail({
     required this.id,
     required this.name,
+    this.nameKo,
     required this.instructions,
     this.description,
     this.source,
@@ -27,14 +29,15 @@ class Cocktail {
     this.tags = const [],
     this.glass,
     this.method,
+    this.imageUrl,
     this.ingredients = const [],
-    this.images = const [],
   });
 
   factory Cocktail.fromJson(Map<String, dynamic> json) {
     return Cocktail(
       id: json['_id'] as String,
       name: json['name'] as String,
+      nameKo: json['name_ko'] as String?,
       instructions: json['instructions'] as String? ?? '',
       description: json['description'] as String?,
       source: json['source'] as String?,
@@ -46,14 +49,35 @@ class Cocktail {
           [],
       glass: json['glass'] as String?,
       method: json['method'] as String?,
+      imageUrl: json['image_url'] as String?,
       ingredients: (json['ingredients'] as List<dynamic>?)
               ?.map((e) => CocktailIngredient.fromJson(e as Map<String, dynamic>))
               .toList() ??
           [],
-      images: (json['images'] as List<dynamic>?)
-              ?.map((e) => CocktailImage.fromJson(e as Map<String, dynamic>))
+    );
+  }
+
+  /// Create from Supabase row with joined ingredients
+  factory Cocktail.fromSupabase(
+    Map<String, dynamic> row, {
+    List<CocktailIngredient> ingredients = const [],
+  }) {
+    return Cocktail(
+      id: row['id'] as String,
+      name: row['name'] as String,
+      nameKo: row['name_ko'] as String?,
+      instructions: row['instructions'] as String? ?? '',
+      description: row['description'] as String?,
+      garnish: row['garnish'] as String?,
+      abv: (row['abv'] as num?)?.toDouble(),
+      tags: (row['tags'] as List<dynamic>?)
+              ?.map((e) => e.toString())
               .toList() ??
           [],
+      glass: row['glass'] as String?,
+      method: row['method'] as String?,
+      imageUrl: row['image_url'] as String?,
+      ingredients: ingredients,
     );
   }
 
@@ -61,6 +85,7 @@ class Cocktail {
     return {
       '_id': id,
       'name': name,
+      'name_ko': nameKo,
       'instructions': instructions,
       'description': description,
       'source': source,
@@ -69,8 +94,25 @@ class Cocktail {
       'tags': tags,
       'glass': glass,
       'method': method,
+      'image_url': imageUrl,
       'ingredients': ingredients.map((e) => e.toJson()).toList(),
-      'images': images.map((e) => e.toJson()).toList(),
+    };
+  }
+
+  /// Convert to Supabase insert format (without ingredients)
+  Map<String, dynamic> toSupabase() {
+    return {
+      'id': id,
+      'name': name,
+      'name_ko': nameKo,
+      'instructions': instructions,
+      'description': description,
+      'garnish': garnish,
+      'abv': abv,
+      'tags': tags,
+      'glass': glass,
+      'method': method,
+      'image_url': imageUrl,
     };
   }
 
@@ -98,39 +140,6 @@ class Cocktail {
 
   @override
   int get hashCode => id.hashCode;
-}
-
-@immutable
-class CocktailImage {
-  final String uri;
-  final int sort;
-  final String? copyright;
-  final String? placeholderHash;
-
-  const CocktailImage({
-    required this.uri,
-    this.sort = 0,
-    this.copyright,
-    this.placeholderHash,
-  });
-
-  factory CocktailImage.fromJson(Map<String, dynamic> json) {
-    return CocktailImage(
-      uri: json['uri'] as String,
-      sort: json['sort'] as int? ?? 0,
-      copyright: json['copyright'] as String?,
-      placeholderHash: json['placeholder_hash'] as String?,
-    );
-  }
-
-  Map<String, dynamic> toJson() {
-    return {
-      'uri': uri,
-      'sort': sort,
-      'copyright': copyright,
-      'placeholder_hash': placeholderHash,
-    };
-  }
 }
 
 /// Result of matching user's ingredients against a cocktail
