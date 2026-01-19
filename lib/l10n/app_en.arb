@@ -1,0 +1,88 @@
+{
+  "@@locale": "en",
+  "appTitle": "What to Drink?",
+  "@appTitle": {
+    "description": "The title of the application"
+  },
+  "home": "Home",
+  "myIngredients": "My Ingredients",
+  "cocktails": "Cocktails",
+  "settings": "Settings",
+  "search": "Search",
+  "searchIngredients": "Search ingredients...",
+  "searchCocktails": "Search cocktails...",
+  "noIngredientsSelected": "No ingredients selected",
+  "selectIngredientsPrompt": "Select the ingredients you have to find cocktails you can make!",
+  "canMake": "Can Make",
+  "almostCanMake": "Almost There",
+  "oneMoreIngredient": "1 more ingredient needed",
+  "nMoreIngredients": "{count} more ingredients needed",
+  "@nMoreIngredients": {
+    "placeholders": {
+      "count": {
+        "type": "int"
+      }
+    }
+  },
+  "ingredients": "Ingredients",
+  "instructions": "Instructions",
+  "garnish": "Garnish",
+  "glass": "Glass",
+  "method": "Method",
+  "optional": "Optional",
+  "substitute": "Can substitute with: {ingredient}",
+  "@substitute": {
+    "placeholders": {
+      "ingredient": {
+        "type": "String"
+      }
+    }
+  },
+  "abv": "ABV: {percent}%",
+  "@abv": {
+    "placeholders": {
+      "percent": {
+        "type": "double"
+      }
+    }
+  },
+  "allIngredients": "All Ingredients",
+  "spirits": "Spirits",
+  "liqueurs": "Liqueurs",
+  "wines": "Wines & Fortified",
+  "bitters": "Bitters",
+  "juices": "Juices",
+  "syrups": "Syrups",
+  "other": "Other",
+  "clearAll": "Clear All",
+  "selectedCount": "{count} selected",
+  "@selectedCount": {
+    "placeholders": {
+      "count": {
+        "type": "int"
+      }
+    }
+  },
+  "cocktailsFound": "{count} cocktails found",
+  "@cocktailsFound": {
+    "placeholders": {
+      "count": {
+        "type": "int"
+      }
+    }
+  },
+  "language": "Language",
+  "theme": "Theme",
+  "darkMode": "Dark Mode",
+  "lightMode": "Light Mode",
+  "systemMode": "System",
+  "about": "About",
+  "version": "Version {version}",
+  "@version": {
+    "placeholders": {
+      "version": {
+        "type": "String"
+      }
+    }
+  }
+}
