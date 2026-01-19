@@ -337,6 +337,84 @@ abstract class AppLocalizations {
   /// In en, this message translates to:
   /// **'Version {version}'**
   String version(String version);
+
+  /// No description provided for @myBar.
+  ///
+  /// In en, this message translates to:
+  /// **'My Bar'**
+  String get myBar;
+
+  /// No description provided for @searchProducts.
+  ///
+  /// In en, this message translates to:
+  /// **'Search products...'**
+  String get searchProducts;
+
+  /// No description provided for @noProductsSelected.
+  ///
+  /// In en, this message translates to:
+  /// **'No products selected'**
+  String get noProductsSelected;
+
+  /// No description provided for @selectProductsPrompt.
+  ///
+  /// In en, this message translates to:
+  /// **'Add the bottles you have to find cocktails you can make!'**
+  String get selectProductsPrompt;
+
+  /// No description provided for @addProduct.
+  ///
+  /// In en, this message translates to:
+  /// **'Add Product'**
+  String get addProduct;
+
+  /// No description provided for @productsSelected.
+  ///
+  /// In en, this message translates to:
+  /// **'{count} bottles'**
+  String productsSelected(int count);
+
+  /// No description provided for @emptyBar.
+  ///
+  /// In en, this message translates to:
+  /// **'Your bar is empty'**
+  String get emptyBar;
+
+  /// No description provided for @emptyBarPrompt.
+  ///
+  /// In en, this message translates to:
+  /// **'Start by adding the bottles you have'**
+  String get emptyBarPrompt;
+
+  /// No description provided for @brand.
+  ///
+  /// In en, this message translates to:
+  /// **'Brand'**
+  String get brand;
+
+  /// No description provided for @volume.
+  ///
+  /// In en, this message translates to:
+  /// **'Volume'**
+  String get volume;
+
+  /// No description provided for @mapsTo.
+  ///
+  /// In en, this message translates to:
+  /// **'Type: {ingredient}'**
+  String mapsTo(String ingredient);
+
+  /// No description provided for @noProductsAvailable.
+  ///
+  /// In en, this message translates to:
+  /// **'No products available yet'**
+  String get noProductsAvailable;
+
+  /// No description provided for @fallbackToIngredients.
+  ///
+  /// In en, this message translates to:
+  /// **'Select by ingredient type instead'**
+  String get fallbackToIngredients;
 }
 
 class _AppLocalizationsDelegate

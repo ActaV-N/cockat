@@ -2,7 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 
 import '../../l10n/app_localizations.dart';
-import '../ingredients/ingredients_screen.dart';
+import '../products/products_screen.dart';
 import '../cocktails/cocktails_screen.dart';
 import '../settings/settings_screen.dart';
 
@@ -21,7 +21,7 @@ class _HomeScreenState extends ConsumerState<HomeScreen> {
     final l10n = AppLocalizations.of(context)!;
 
     final screens = [
-      const IngredientsScreen(),
+      const ProductsScreen(),
       const CocktailsScreen(),
       const SettingsScreen(),
     ];
@@ -42,7 +42,7 @@ class _HomeScreenState extends ConsumerState<HomeScreen> {
           NavigationDestination(
             icon: const Icon(Icons.liquor_outlined),
             selectedIcon: const Icon(Icons.liquor),
-            label: l10n.myIngredients,
+            label: l10n.myBar,
           ),
           NavigationDestination(
             icon: const Icon(Icons.local_bar_outlined),

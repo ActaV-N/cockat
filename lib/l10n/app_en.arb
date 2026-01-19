@@ -84,5 +84,32 @@
         "type": "String"
       }
     }
-  }
+  },
+  "myBar": "My Bar",
+  "searchProducts": "Search products...",
+  "noProductsSelected": "No products selected",
+  "selectProductsPrompt": "Add the bottles you have to find cocktails you can make!",
+  "addProduct": "Add Product",
+  "productsSelected": "{count} bottles",
+  "@productsSelected": {
+    "placeholders": {
+      "count": {
+        "type": "int"
+      }
+    }
+  },
+  "emptyBar": "Your bar is empty",
+  "emptyBarPrompt": "Start by adding the bottles you have",
+  "brand": "Brand",
+  "volume": "Volume",
+  "mapsTo": "Type: {ingredient}",
+  "@mapsTo": {
+    "placeholders": {
+      "ingredient": {
+        "type": "String"
+      }
+    }
+  },
+  "noProductsAvailable": "No products available yet",
+  "fallbackToIngredients": "Select by ingredient type instead"
 }

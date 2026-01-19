@@ -3,6 +3,7 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 
 import '../models/models.dart';
 import 'ingredient_provider.dart';
+import 'product_provider.dart';
 
 // All cocktails from Supabase with ingredients
 final cocktailsProvider = FutureProvider<List<Cocktail>>((ref) async {
@@ -57,10 +58,11 @@ final cocktailByIdProvider = Provider.family<AsyncValue<Cocktail?>, String>((ref
       );
 });
 
-// Matched cocktails based on user's ingredients
+// Matched cocktails based on user's products (via ingredient mapping)
 final cocktailMatchesProvider = Provider<AsyncValue<List<CocktailMatch>>>((ref) {
   final cocktailsAsync = ref.watch(cocktailsProvider);
-  final selectedIngredients = ref.watch(selectedIngredientsProvider);
+  // Use ingredients derived from selected products
+  final selectedIngredients = ref.watch(ingredientIdsFromProductsProvider);
   final ingredientsAsync = ref.watch(ingredientsProvider);
 
   if (selectedIngredients.isEmpty) {

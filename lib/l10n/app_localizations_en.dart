@@ -140,4 +140,48 @@ class AppLocalizationsEn extends AppLocalizations {
   String version(String version) {
     return 'Version $version';
   }
+
+  @override
+  String get myBar => 'My Bar';
+
+  @override
+  String get searchProducts => 'Search products...';
+
+  @override
+  String get noProductsSelected => 'No products selected';
+
+  @override
+  String get selectProductsPrompt =>
+      'Add the bottles you have to find cocktails you can make!';
+
+  @override
+  String get addProduct => 'Add Product';
+
+  @override
+  String productsSelected(int count) {
+    return '$count bottles';
+  }
+
+  @override
+  String get emptyBar => 'Your bar is empty';
+
+  @override
+  String get emptyBarPrompt => 'Start by adding the bottles you have';
+
+  @override
+  String get brand => 'Brand';
+
+  @override
+  String get volume => 'Volume';
+
+  @override
+  String mapsTo(String ingredient) {
+    return 'Type: $ingredient';
+  }
+
+  @override
+  String get noProductsAvailable => 'No products available yet';
+
+  @override
+  String get fallbackToIngredients => 'Select by ingredient type instead';
 }

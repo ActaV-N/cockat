@@ -39,5 +39,18 @@
   "lightMode": "라이트 모드",
   "systemMode": "시스템 설정",
   "about": "앱 정보",
-  "version": "버전 {version}"
+  "version": "버전 {version}",
+  "myBar": "내 술장",
+  "searchProducts": "상품 검색...",
+  "noProductsSelected": "선택된 상품 없음",
+  "selectProductsPrompt": "보유한 술병을 추가하면 만들 수 있는 칵테일을 찾아드릴게요!",
+  "addProduct": "상품 추가",
+  "productsSelected": "{count}병",
+  "emptyBar": "술장이 비어있어요",
+  "emptyBarPrompt": "보유한 술병을 추가해보세요",
+  "brand": "브랜드",
+  "volume": "용량",
+  "mapsTo": "종류: {ingredient}",
+  "noProductsAvailable": "아직 등록된 상품이 없어요",
+  "fallbackToIngredients": "재료 종류로 선택하기"
 }

@@ -139,4 +139,47 @@ class AppLocalizationsKo extends AppLocalizations {
   String version(String version) {
     return '버전 $version';
   }
+
+  @override
+  String get myBar => '내 술장';
+
+  @override
+  String get searchProducts => '상품 검색...';
+
+  @override
+  String get noProductsSelected => '선택된 상품 없음';
+
+  @override
+  String get selectProductsPrompt => '보유한 술병을 추가하면 만들 수 있는 칵테일을 찾아드릴게요!';
+
+  @override
+  String get addProduct => '상품 추가';
+
+  @override
+  String productsSelected(int count) {
+    return '$count병';
+  }
+
+  @override
+  String get emptyBar => '술장이 비어있어요';
+
+  @override
+  String get emptyBarPrompt => '보유한 술병을 추가해보세요';
+
+  @override
+  String get brand => '브랜드';
+
+  @override
+  String get volume => '용량';
+
+  @override
+  String mapsTo(String ingredient) {
+    return '종류: $ingredient';
+  }
+
+  @override
+  String get noProductsAvailable => '아직 등록된 상품이 없어요';
+
+  @override
+  String get fallbackToIngredients => '재료 종류로 선택하기';
 }
