@@ -66,3 +66,9 @@ lib/core/config/env.dart
 
 # Supabase
 supabase/.temp/
+
+# MCP config
+.mcp.json
+
+# Local prompts
+prompts/

@@ -111,5 +111,6 @@
     }
   },
   "noProductsAvailable": "No products available yet",
-  "fallbackToIngredients": "Select by ingredient type instead"
+  "fallbackToIngredients": "Select by ingredient type instead",
+  "allCocktails": "All Cocktails"
 }

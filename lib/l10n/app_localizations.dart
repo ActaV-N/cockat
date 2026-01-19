@@ -415,6 +415,12 @@ abstract class AppLocalizations {
   /// In en, this message translates to:
   /// **'Select by ingredient type instead'**
   String get fallbackToIngredients;
+
+  /// No description provided for @allCocktails.
+  ///
+  /// In en, this message translates to:
+  /// **'All Cocktails'**
+  String get allCocktails;
 }
 
 class _AppLocalizationsDelegate

@@ -182,4 +182,7 @@ class AppLocalizationsKo extends AppLocalizations {
 
   @override
   String get fallbackToIngredients => '재료 종류로 선택하기';
+
+  @override
+  String get allCocktails => '전체 칵테일';
 }

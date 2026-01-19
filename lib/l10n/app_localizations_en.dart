@@ -184,4 +184,7 @@ class AppLocalizationsEn extends AppLocalizations {
 
   @override
   String get fallbackToIngredients => 'Select by ingredient type instead';
+
+  @override
+  String get allCocktails => 'All Cocktails';
 }

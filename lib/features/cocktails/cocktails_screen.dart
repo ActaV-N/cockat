@@ -13,7 +13,7 @@ class CocktailsScreen extends ConsumerWidget {
   Widget build(BuildContext context, WidgetRef ref) {
     final l10n = AppLocalizations.of(context)!;
     final matchesAsync = ref.watch(filteredCocktailMatchesProvider);
-    final selectedCount = ref.watch(selectedIngredientCountProvider);
+    final selectedCount = ref.watch(selectedProductCountProvider);
 
     return Scaffold(
       appBar: AppBar(
@@ -47,8 +47,19 @@ class CocktailsScreen extends ConsumerWidget {
           Expanded(
             child: matchesAsync.when(
               data: (matches) {
+                // When no products selected, show all cocktails
                 if (selectedCount == 0) {
-                  return _EmptyState(l10n: l10n);
+                  return CustomScrollView(
+                    slivers: [
+                      _SectionHeader(
+                        title: l10n.allCocktails,
+                        count: matches.length,
+                        color: Theme.of(context).colorScheme.primary,
+                      ),
+                      _CocktailGrid(matches: matches, showStatus: false),
+                      const SliverPadding(padding: EdgeInsets.only(bottom: 16)),
+                    ],
+                  );
                 }
 
                 final canMake = matches.where((m) => m.canMake).toList();
@@ -94,41 +105,6 @@ class CocktailsScreen extends ConsumerWidget {
               loading: () => const Center(child: CircularProgressIndicator()),
               error: (error, stack) => Center(child: Text('Error: $error')),
             ),
-          ),
-        ],
-      ),
-    );
-  }
-}
-
-class _EmptyState extends StatelessWidget {
-  final AppLocalizations l10n;
-
-  const _EmptyState({required this.l10n});
-
-  @override
-  Widget build(BuildContext context) {
-    return Center(
-      child: Column(
-        mainAxisAlignment: MainAxisAlignment.center,
-        children: [
-          Icon(
-            Icons.liquor,
-            size: 80,
-            color: Theme.of(context).colorScheme.outline,
-          ),
-          const SizedBox(height: 24),
-          Text(
-            l10n.noIngredientsSelected,
-            style: Theme.of(context).textTheme.titleLarge,
-          ),
-          const SizedBox(height: 8),
-          Text(
-            l10n.selectIngredientsPrompt,
-            textAlign: TextAlign.center,
-            style: Theme.of(context).textTheme.bodyMedium?.copyWith(
-                  color: Theme.of(context).colorScheme.outline,
-                ),
           ),
         ],
       ),
@@ -185,8 +161,9 @@ class _SectionHeader extends StatelessWidget {
 
 class _CocktailGrid extends StatelessWidget {
   final List<CocktailMatch> matches;
+  final bool showStatus;
 
-  const _CocktailGrid({required this.matches});
+  const _CocktailGrid({required this.matches, this.showStatus = true});
 
   @override
   Widget build(BuildContext context) {
@@ -200,7 +177,10 @@ class _CocktailGrid extends StatelessWidget {
           mainAxisSpacing: 12,
         ),
         delegate: SliverChildBuilderDelegate(
-          (context, index) => _CocktailCard(match: matches[index]),
+          (context, index) => _CocktailCard(
+            match: matches[index],
+            showStatus: showStatus,
+          ),
           childCount: matches.length,
         ),
       ),
@@ -210,8 +190,9 @@ class _CocktailGrid extends StatelessWidget {
 
 class _CocktailCard extends StatelessWidget {
   final CocktailMatch match;
+  final bool showStatus;
 
-  const _CocktailCard({required this.match});
+  const _CocktailCard({required this.match, this.showStatus = true});
 
   @override
   Widget build(BuildContext context) {
@@ -255,22 +236,24 @@ class _CocktailCard extends StatelessWidget {
                 maxLines: 2,
                 overflow: TextOverflow.ellipsis,
               ),
-              const SizedBox(height: 4),
-              if (match.canMake)
-                _StatusChip(
-                  label: l10n.canMake,
-                  color: Colors.green,
-                )
-              else if (match.missingCount == 1)
-                _StatusChip(
-                  label: l10n.oneMoreIngredient,
-                  color: Colors.orange,
-                )
-              else
-                _StatusChip(
-                  label: l10n.nMoreIngredients(match.missingCount),
-                  color: Colors.grey,
-                ),
+              if (showStatus) ...[
+                const SizedBox(height: 4),
+                if (match.canMake)
+                  _StatusChip(
+                    label: l10n.canMake,
+                    color: Colors.green,
+                  )
+                else if (match.missingCount == 1)
+                  _StatusChip(
+                    label: l10n.oneMoreIngredient,
+                    color: Colors.orange,
+                  )
+                else
+                  _StatusChip(
+                    label: l10n.nMoreIngredients(match.missingCount),
+                    color: Colors.grey,
+                  ),
+              ],
             ],
           ),
         ),
