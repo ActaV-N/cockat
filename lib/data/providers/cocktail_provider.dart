@@ -58,11 +58,26 @@ final cocktailByIdProvider = Provider.family<AsyncValue<Cocktail?>, String>((ref
       );
 });
 
-// Matched cocktails based on user's products (via ingredient mapping)
+/// Combined ingredient IDs from both products and direct ingredient selection
+/// This allows both methods to work together
+final allSelectedIngredientIdsProvider = Provider<Set<String>>((ref) {
+  final fromProducts = ref.watch(ingredientIdsFromProductsProvider);
+  final directSelection = ref.watch(selectedIngredientsProvider);
+  return {...fromProducts, ...directSelection};
+});
+
+/// Total count of selected items (products + direct ingredients)
+final totalSelectedCountProvider = Provider<int>((ref) {
+  final productCount = ref.watch(selectedProductCountProvider);
+  final ingredientCount = ref.watch(selectedIngredientCountProvider);
+  return productCount + ingredientCount;
+});
+
+// Matched cocktails based on user's selection (products + ingredients)
 final cocktailMatchesProvider = Provider<AsyncValue<List<CocktailMatch>>>((ref) {
   final cocktailsAsync = ref.watch(cocktailsProvider);
-  // Use ingredients derived from selected products
-  final selectedIngredients = ref.watch(ingredientIdsFromProductsProvider);
+  // Use combined ingredients from products AND direct selection
+  final selectedIngredients = ref.watch(allSelectedIngredientIdsProvider);
   final ingredientsAsync = ref.watch(ingredientsProvider);
 
   if (selectedIngredients.isEmpty) {
