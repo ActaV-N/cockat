@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 
+import '../../core/widgets/widgets.dart';
 import '../../data/models/models.dart';
 import '../../data/providers/providers.dart';
 import '../../l10n/app_localizations.dart';
@@ -47,10 +48,38 @@ class CocktailsScreen extends ConsumerWidget {
           Expanded(
             child: matchesAsync.when(
               data: (matches) {
-                final favoritesAsync = ref.watch(favoriteCocktailMatchesProvider);
+                final favoritesAsync = ref.watch(effectiveFavoriteCocktailMatchesProvider);
                 final favorites = favoritesAsync.valueOrNull ?? [];
                 final searchQuery = ref.watch(cocktailSearchQueryProvider);
                 final showFavorites = searchQuery.isEmpty && favorites.isNotEmpty;
+
+                // Empty search state
+                if (matches.isEmpty && searchQuery.isNotEmpty) {
+                  return Center(
+                    child: Column(
+                      mainAxisAlignment: MainAxisAlignment.center,
+                      children: [
+                        Icon(
+                          Icons.search_off,
+                          size: 64,
+                          color: Theme.of(context).colorScheme.outline,
+                        ),
+                        const SizedBox(height: 16),
+                        Text(
+                          l10n.noResultsFound,
+                          style: Theme.of(context).textTheme.titleMedium,
+                        ),
+                        const SizedBox(height: 8),
+                        Text(
+                          l10n.tryDifferentSearch,
+                          style: Theme.of(context).textTheme.bodyMedium?.copyWith(
+                                color: Theme.of(context).colorScheme.outline,
+                              ),
+                        ),
+                      ],
+                    ),
+                  );
+                }
 
                 // When no products selected, show all cocktails
                 if (selectedCount == 0) {
@@ -239,18 +268,13 @@ class _CocktailCard extends StatelessWidget {
           child: Column(
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
-              // Icon placeholder
-              Container(
+              // Cocktail image
+              CocktailImage(
+                cocktail: cocktail,
+                mode: ImageDisplayMode.thumbnail,
                 width: 48,
                 height: 48,
-                decoration: BoxDecoration(
-                  color: Theme.of(context).colorScheme.primaryContainer,
-                  borderRadius: BorderRadius.circular(12),
-                ),
-                child: Icon(
-                  Icons.local_bar,
-                  color: Theme.of(context).colorScheme.primary,
-                ),
+                borderRadius: BorderRadius.circular(12),
               ),
               const Spacer(),
               Text(

@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 
+import '../../core/widgets/widgets.dart';
 import '../../data/models/models.dart';
 import '../../data/providers/providers.dart';
 import '../../l10n/app_localizations.dart';
@@ -41,24 +42,10 @@ class CocktailDetailScreen extends ConsumerWidget {
                       fontWeight: FontWeight.bold,
                     ),
                   ),
-                  background: Container(
-                    decoration: BoxDecoration(
-                      gradient: LinearGradient(
-                        begin: Alignment.topCenter,
-                        end: Alignment.bottomCenter,
-                        colors: [
-                          Theme.of(context).colorScheme.primaryContainer,
-                          Theme.of(context).colorScheme.surface,
-                        ],
-                      ),
-                    ),
-                    child: Center(
-                      child: Icon(
-                        Icons.local_bar,
-                        size: 80,
-                        color: Theme.of(context).colorScheme.primary.withValues(alpha: 0.5),
-                      ),
-                    ),
+                  background: CocktailImage(
+                    cocktail: cocktail,
+                    mode: ImageDisplayMode.full,
+                    fit: BoxFit.cover,
                   ),
                 ),
               ),
@@ -325,7 +312,9 @@ class _FavoriteButton extends ConsumerWidget {
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
-    final isFavorite = ref.watch(isFavoriteProvider(cocktailId));
+    // 통합 Provider 사용 (비회원: 로컬, 회원: DB)
+    final isFavorite = ref.watch(effectiveIsFavoriteProvider(cocktailId));
+    final isAuthenticated = ref.watch(isAuthenticatedProvider);
     final l10n = AppLocalizations.of(context)!;
 
     return IconButton(
@@ -334,8 +323,8 @@ class _FavoriteButton extends ConsumerWidget {
         color: isFavorite ? Colors.red : null,
       ),
       onPressed: () async {
-        final notifier = ref.read(favoriteCocktailsProvider.notifier);
-        final result = await notifier.toggle(cocktailId);
+        final favoritesService = ref.read(effectiveFavoritesServiceProvider);
+        final result = await favoritesService.toggle(cocktailId);
 
         if (!context.mounted) return;
 
@@ -357,18 +346,21 @@ class _FavoriteButton extends ConsumerWidget {
             );
             break;
           case FavoriteResult.limitReached:
-            ScaffoldMessenger.of(context).showSnackBar(
-              SnackBar(
-                content: Text(l10n.favoritesLimitReached(kMaxFavoritesForGuest)),
-                duration: const Duration(seconds: 3),
-                action: SnackBarAction(
-                  label: l10n.signUpForMore,
-                  onPressed: () {
-                    // TODO: Navigate to sign up screen
-                  },
+            // 비회원만 제한이 있음
+            if (!isAuthenticated) {
+              ScaffoldMessenger.of(context).showSnackBar(
+                SnackBar(
+                  content: Text(l10n.favoritesLimitReached(kMaxFavoritesForGuest)),
+                  duration: const Duration(seconds: 3),
+                  action: SnackBarAction(
+                    label: l10n.signUpForMore,
+                    onPressed: () {
+                      // TODO: Navigate to sign up screen
+                    },
+                  ),
                 ),
-              ),
-            );
+              );
+            }
             break;
           case FavoriteResult.alreadyExists:
             break;

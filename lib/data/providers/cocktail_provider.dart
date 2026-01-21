@@ -2,8 +2,10 @@ import 'package:collection/collection.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 
 import '../models/models.dart';
+import 'auth_provider.dart';
 import 'ingredient_provider.dart';
 import 'product_provider.dart';
+import 'unified_providers.dart';
 
 // All cocktails from Supabase with ingredients
 final cocktailsProvider = FutureProvider<List<Cocktail>>((ref) async {
@@ -60,17 +62,35 @@ final cocktailByIdProvider = Provider.family<AsyncValue<Cocktail?>, String>((ref
 
 /// Combined ingredient IDs from both products and direct ingredient selection
 /// This allows both methods to work together
+/// 자동으로 비회원/회원 데이터 소스를 분기
 final allSelectedIngredientIdsProvider = Provider<Set<String>>((ref) {
-  final fromProducts = ref.watch(ingredientIdsFromProductsProvider);
-  final directSelection = ref.watch(selectedIngredientsProvider);
-  return {...fromProducts, ...directSelection};
+  final isAuthenticated = ref.watch(isAuthenticatedProvider);
+
+  if (isAuthenticated) {
+    // 회원: 통합 Provider 사용
+    return ref.watch(effectiveAllIngredientIdsProvider);
+  } else {
+    // 비회원: 로컬 Provider 사용
+    final fromProducts = ref.watch(ingredientIdsFromProductsProvider);
+    final directSelection = ref.watch(selectedIngredientsProvider);
+    return {...fromProducts, ...directSelection};
+  }
 });
 
 /// Total count of selected items (products + direct ingredients)
+/// 자동으로 비회원/회원 데이터 소스를 분기
 final totalSelectedCountProvider = Provider<int>((ref) {
-  final productCount = ref.watch(selectedProductCountProvider);
-  final ingredientCount = ref.watch(selectedIngredientCountProvider);
-  return productCount + ingredientCount;
+  final isAuthenticated = ref.watch(isAuthenticatedProvider);
+
+  if (isAuthenticated) {
+    // 회원: 통합 Provider 사용
+    return ref.watch(effectiveTotalSelectedCountProvider);
+  } else {
+    // 비회원: 로컬 Provider 사용
+    final productCount = ref.watch(selectedProductCountProvider);
+    final ingredientCount = ref.watch(selectedIngredientCountProvider);
+    return productCount + ingredientCount;
+  }
 });
 
 // Matched cocktails based on user's selection (products + ingredients)

@@ -1,19 +1,17 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 
-import '../../core/widgets/widgets.dart';
 import '../../data/models/models.dart';
 import '../../data/providers/providers.dart';
 import '../../l10n/app_localizations.dart';
-import '../ingredients/ingredients_screen.dart';
 
-class ProductsScreen extends ConsumerWidget {
-  const ProductsScreen({super.key});
+class MyBarScreen extends ConsumerWidget {
+  const MyBarScreen({super.key});
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
     final l10n = AppLocalizations.of(context)!;
-    final productsAsync = ref.watch(filteredProductsProvider);
+    final ownedProductsAsync = ref.watch(effectiveSelectedProductsListProvider);
     final selectedCount = ref.watch(effectiveSelectedProductCountProvider);
 
     return Scaffold(
@@ -30,13 +28,12 @@ class ProductsScreen extends ConsumerWidget {
             ),
         ],
       ),
-      body: productsAsync.when(
+      body: ownedProductsAsync.when(
         data: (products) {
-          // If no products exist, show fallback to ingredient selection
           if (products.isEmpty) {
-            return _EmptyProductsView(l10n: l10n);
+            return _EmptyBarView(l10n: l10n);
           }
-          return _ProductsContent(
+          return _OwnedProductsContent(
             products: products,
             selectedCount: selectedCount,
           );
@@ -50,10 +47,10 @@ class ProductsScreen extends ConsumerWidget {
   }
 }
 
-class _EmptyProductsView extends StatelessWidget {
+class _EmptyBarView extends StatelessWidget {
   final AppLocalizations l10n;
 
-  const _EmptyProductsView({required this.l10n});
+  const _EmptyBarView({required this.l10n});
 
   @override
   Widget build(BuildContext context) {
@@ -64,34 +61,23 @@ class _EmptyProductsView extends StatelessWidget {
           mainAxisAlignment: MainAxisAlignment.center,
           children: [
             Icon(
-              Icons.liquor_outlined,
+              Icons.inventory_2_outlined,
               size: 64,
               color: Theme.of(context).colorScheme.outline,
             ),
             const SizedBox(height: 16),
             Text(
-              l10n.noProductsAvailable,
+              l10n.myBarEmpty,
               style: Theme.of(context).textTheme.titleMedium,
               textAlign: TextAlign.center,
             ),
             const SizedBox(height: 8),
             Text(
-              l10n.emptyBarPrompt,
+              l10n.myBarEmptyPrompt,
               style: Theme.of(context).textTheme.bodyMedium?.copyWith(
                     color: Theme.of(context).colorScheme.outline,
                   ),
               textAlign: TextAlign.center,
-            ),
-            const SizedBox(height: 24),
-            FilledButton.tonal(
-              onPressed: () {
-                Navigator.of(context).push(
-                  MaterialPageRoute(
-                    builder: (context) => const IngredientsScreen(),
-                  ),
-                );
-              },
-              child: Text(l10n.fallbackToIngredients),
             ),
           ],
         ),
@@ -100,11 +86,11 @@ class _EmptyProductsView extends StatelessWidget {
   }
 }
 
-class _ProductsContent extends ConsumerWidget {
+class _OwnedProductsContent extends ConsumerWidget {
   final List<Product> products;
   final int selectedCount;
 
-  const _ProductsContent({
+  const _OwnedProductsContent({
     required this.products,
     required this.selectedCount,
   });
@@ -115,54 +101,19 @@ class _ProductsContent extends ConsumerWidget {
 
     return Column(
       children: [
-        // Search Bar
+        // Owned count info
         Padding(
           padding: const EdgeInsets.all(16),
-          child: TextField(
-            decoration: InputDecoration(
-              hintText: l10n.searchProducts,
-              prefixIcon: const Icon(Icons.search),
-              suffixIcon: ref.watch(productSearchQueryProvider).isNotEmpty
-                  ? IconButton(
-                      icon: const Icon(Icons.clear),
-                      onPressed: () {
-                        ref.read(productSearchQueryProvider.notifier).state = '';
-                      },
-                    )
-                  : null,
-            ),
-            onChanged: (value) {
-              ref.read(productSearchQueryProvider.notifier).state = value;
-            },
+          child: Row(
+            children: [
+              Chip(
+                avatar: const Icon(Icons.inventory_2, size: 18),
+                label: Text(l10n.ownedProducts(selectedCount)),
+                backgroundColor: Theme.of(context).colorScheme.primaryContainer,
+              ),
+            ],
           ),
         ),
-
-        // Selected count
-        if (selectedCount > 0)
-          Padding(
-            padding: const EdgeInsets.symmetric(horizontal: 16),
-            child: Row(
-              children: [
-                Chip(
-                  avatar: const Icon(Icons.check_circle, size: 18),
-                  label: Text(l10n.productsSelected(selectedCount)),
-                  backgroundColor: Theme.of(context).colorScheme.primaryContainer,
-                ),
-                const Spacer(),
-                TextButton.icon(
-                  onPressed: () {
-                    Navigator.of(context).push(
-                      MaterialPageRoute(
-                        builder: (context) => const IngredientsScreen(),
-                      ),
-                    );
-                  },
-                  icon: const Icon(Icons.add, size: 18),
-                  label: Text(l10n.fallbackToIngredients),
-                ),
-              ],
-            ),
-          ),
 
         // Product Grid
         Expanded(
@@ -203,19 +154,17 @@ class _ProductCard extends ConsumerWidget {
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
-    final isSelected = ref.watch(effectiveIsProductSelectedProvider(product.id));
     final theme = Theme.of(context);
 
     return Card(
       clipBehavior: Clip.antiAlias,
       shape: RoundedRectangleBorder(
         borderRadius: BorderRadius.circular(12),
-        side: isSelected
-            ? BorderSide(color: theme.colorScheme.primary, width: 2)
-            : BorderSide.none,
+        side: BorderSide(color: theme.colorScheme.primary, width: 2),
       ),
       child: InkWell(
         onTap: () {
+          // Remove from bar
           ref.read(effectiveProductsServiceProvider).toggle(product.id);
         },
         child: Column(
@@ -227,27 +176,24 @@ class _ProductCard extends ConsumerWidget {
               child: Stack(
                 fit: StackFit.expand,
                 children: [
-                  ProductImage(
-                    product: product,
-                    mode: ImageDisplayMode.thumbnail,
-                  ),
-                  if (isSelected)
-                    Positioned(
-                      top: 8,
-                      right: 8,
-                      child: Container(
-                        padding: const EdgeInsets.all(4),
-                        decoration: BoxDecoration(
-                          color: theme.colorScheme.primary,
-                          shape: BoxShape.circle,
-                        ),
-                        child: Icon(
-                          Icons.check,
-                          size: 16,
-                          color: theme.colorScheme.onPrimary,
-                        ),
+                  _ProductImage(imageUrl: product.imageUrl),
+                  // Remove button
+                  Positioned(
+                    top: 8,
+                    right: 8,
+                    child: Container(
+                      padding: const EdgeInsets.all(4),
+                      decoration: BoxDecoration(
+                        color: theme.colorScheme.errorContainer,
+                        shape: BoxShape.circle,
+                      ),
+                      child: Icon(
+                        Icons.remove,
+                        size: 16,
+                        color: theme.colorScheme.onErrorContainer,
                       ),
                     ),
+                  ),
                 ],
               ),
             ),
@@ -275,8 +221,7 @@ class _ProductCard extends ConsumerWidget {
                       overflow: TextOverflow.ellipsis,
                     ),
                     const Spacer(),
-                    if (product.formattedVolume != null ||
-                        product.abv != null)
+                    if (product.formattedVolume != null || product.abv != null)
                       Text(
                         [
                           if (product.formattedVolume != null)
@@ -298,3 +243,44 @@ class _ProductCard extends ConsumerWidget {
   }
 }
 
+class _ProductImage extends StatelessWidget {
+  final String? imageUrl;
+
+  const _ProductImage({this.imageUrl});
+
+  @override
+  Widget build(BuildContext context) {
+    if (imageUrl != null && imageUrl!.isNotEmpty) {
+      return Image.network(
+        imageUrl!,
+        fit: BoxFit.cover,
+        errorBuilder: (context, error, stackTrace) => _placeholder(context),
+        loadingBuilder: (context, child, loadingProgress) {
+          if (loadingProgress == null) return child;
+          return Center(
+            child: CircularProgressIndicator(
+              value: loadingProgress.expectedTotalBytes != null
+                  ? loadingProgress.cumulativeBytesLoaded /
+                      loadingProgress.expectedTotalBytes!
+                  : null,
+            ),
+          );
+        },
+      );
+    }
+    return _placeholder(context);
+  }
+
+  Widget _placeholder(BuildContext context) {
+    return Container(
+      color: Theme.of(context).colorScheme.surfaceContainerHighest,
+      child: Center(
+        child: Icon(
+          Icons.liquor,
+          size: 48,
+          color: Theme.of(context).colorScheme.outline,
+        ),
+      ),
+    );
+  }
+}

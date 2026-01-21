@@ -13,7 +13,7 @@ class IngredientsScreen extends ConsumerWidget {
   Widget build(BuildContext context, WidgetRef ref) {
     final l10n = AppLocalizations.of(context)!;
     final ingredientsAsync = ref.watch(filteredIngredientsProvider);
-    final selectedCount = ref.watch(selectedIngredientCountProvider);
+    final selectedCount = ref.watch(effectiveSelectedIngredientCountProvider);
 
     return Scaffold(
       appBar: AppBar(
@@ -22,7 +22,7 @@ class IngredientsScreen extends ConsumerWidget {
           if (selectedCount > 0)
             TextButton.icon(
               onPressed: () {
-                ref.read(selectedIngredientsProvider.notifier).clear();
+                ref.read(effectiveIngredientsServiceProvider).clear();
               },
               icon: const Icon(Icons.clear_all),
               label: Text(l10n.clearAll),
@@ -151,7 +151,7 @@ class _IngredientTile extends ConsumerWidget {
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
-    final isSelected = ref.watch(isIngredientSelectedProvider(ingredient.id));
+    final isSelected = ref.watch(effectiveIsIngredientSelectedProvider(ingredient.id));
 
     return ListTile(
       title: Text(ingredient.name),
@@ -164,11 +164,11 @@ class _IngredientTile extends ConsumerWidget {
       trailing: Checkbox(
         value: isSelected,
         onChanged: (_) {
-          ref.read(selectedIngredientsProvider.notifier).toggle(ingredient.id);
+          ref.read(effectiveIngredientsServiceProvider).toggle(ingredient.id);
         },
       ),
       onTap: () {
-        ref.read(selectedIngredientsProvider.notifier).toggle(ingredient.id);
+        ref.read(effectiveIngredientsServiceProvider).toggle(ingredient.id);
       },
     );
   }

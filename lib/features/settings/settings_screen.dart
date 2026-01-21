@@ -3,6 +3,8 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 
 import '../../data/providers/providers.dart';
 import '../../l10n/app_localizations.dart';
+import '../auth/login_screen.dart';
+import '../onboarding/onboarding_screen.dart';
 
 class SettingsScreen extends ConsumerWidget {
   const SettingsScreen({super.key});
@@ -19,6 +21,10 @@ class SettingsScreen extends ConsumerWidget {
       ),
       body: ListView(
         children: [
+          // Account Section
+          _AccountSection(),
+          const Divider(),
+
           // Theme Section
           _SectionHeader(title: l10n.theme),
           _ThemeTile(
@@ -72,6 +78,50 @@ class SettingsScreen extends ConsumerWidget {
             isSelected: locale?.languageCode == 'ko',
             onTap: () {
               ref.read(localeProvider.notifier).setLocale(const Locale('ko'));
+            },
+          ),
+
+          const Divider(),
+
+          // Setup Section
+          _SectionHeader(title: 'Setup'),
+          ListTile(
+            leading: const Icon(Icons.refresh),
+            title: Text(l10n.reRunSetup),
+            subtitle: Text(l10n.reRunSetupDescription),
+            onTap: () async {
+              final confirmed = await showDialog<bool>(
+                context: context,
+                builder: (context) => AlertDialog(
+                  title: Text(l10n.reRunSetup),
+                  content: Text(l10n.reRunSetupDescription),
+                  actions: [
+                    TextButton(
+                      onPressed: () => Navigator.pop(context, false),
+                      child: Text(l10n.skip),
+                    ),
+                    FilledButton(
+                      onPressed: () => Navigator.pop(context, true),
+                      child: Text(l10n.getStarted),
+                    ),
+                  ],
+                ),
+              );
+
+              if (confirmed == true && context.mounted) {
+                await ref.read(onboardingServiceProvider).resetOnboarding();
+                if (context.mounted) {
+                  ScaffoldMessenger.of(context).showSnackBar(
+                    SnackBar(content: Text(l10n.setupReset)),
+                  );
+                  Navigator.of(context).pushAndRemoveUntil(
+                    MaterialPageRoute(
+                      builder: (_) => const OnboardingScreen(),
+                    ),
+                    (route) => false,
+                  );
+                }
+              }
             },
           ),
 
@@ -171,6 +221,83 @@ class _LanguageTile extends StatelessWidget {
             )
           : null,
       onTap: onTap,
+    );
+  }
+}
+
+class _AccountSection extends ConsumerWidget {
+  @override
+  Widget build(BuildContext context, WidgetRef ref) {
+    final l10n = AppLocalizations.of(context)!;
+    final theme = Theme.of(context);
+    final user = ref.watch(currentUserProvider);
+    final isAuthenticated = user != null;
+
+    return Column(
+      crossAxisAlignment: CrossAxisAlignment.start,
+      children: [
+        _SectionHeader(title: l10n.account),
+        if (isAuthenticated) ...[
+          ListTile(
+            leading: CircleAvatar(
+              backgroundColor: theme.colorScheme.primaryContainer,
+              child: Icon(
+                Icons.person,
+                color: theme.colorScheme.onPrimaryContainer,
+              ),
+            ),
+            title: Text(user.email ?? ''),
+            subtitle: Text(l10n.account),
+          ),
+          ListTile(
+            leading: const Icon(Icons.sync),
+            title: Text(l10n.syncData),
+            subtitle: Text(l10n.comingSoon),
+            onTap: () {
+              ScaffoldMessenger.of(context).showSnackBar(
+                SnackBar(content: Text(l10n.featureComingSoon)),
+              );
+            },
+          ),
+          ListTile(
+            leading: Icon(
+              Icons.logout,
+              color: theme.colorScheme.error,
+            ),
+            title: Text(
+              l10n.logout,
+              style: TextStyle(color: theme.colorScheme.error),
+            ),
+            onTap: () async {
+              final authService = ref.read(authServiceProvider);
+              await authService.signOut();
+              if (context.mounted) {
+                ScaffoldMessenger.of(context).showSnackBar(
+                  SnackBar(content: Text(l10n.logoutSuccess)),
+                );
+              }
+            },
+          ),
+        ] else ...[
+          ListTile(
+            leading: const Icon(Icons.person_outline),
+            title: Text(l10n.notLoggedIn),
+            subtitle: Text(l10n.loginPrompt),
+          ),
+          Padding(
+            padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
+            child: FilledButton.icon(
+              onPressed: () {
+                Navigator.of(context).push(
+                  MaterialPageRoute(builder: (_) => const LoginScreen()),
+                );
+              },
+              icon: const Icon(Icons.login),
+              label: Text(l10n.login),
+            ),
+          ),
+        ],
+      ],
     );
   }
 }

@@ -469,6 +469,510 @@ abstract class AppLocalizations {
   /// In en, this message translates to:
   /// **'Sign up for more'**
   String get signUpForMore;
+
+  /// No description provided for @login.
+  ///
+  /// In en, this message translates to:
+  /// **'Log In'**
+  String get login;
+
+  /// No description provided for @signUp.
+  ///
+  /// In en, this message translates to:
+  /// **'Sign Up'**
+  String get signUp;
+
+  /// No description provided for @logout.
+  ///
+  /// In en, this message translates to:
+  /// **'Log Out'**
+  String get logout;
+
+  /// No description provided for @email.
+  ///
+  /// In en, this message translates to:
+  /// **'Email'**
+  String get email;
+
+  /// No description provided for @password.
+  ///
+  /// In en, this message translates to:
+  /// **'Password'**
+  String get password;
+
+  /// No description provided for @confirmPassword.
+  ///
+  /// In en, this message translates to:
+  /// **'Confirm Password'**
+  String get confirmPassword;
+
+  /// No description provided for @forgotPassword.
+  ///
+  /// In en, this message translates to:
+  /// **'Forgot Password?'**
+  String get forgotPassword;
+
+  /// No description provided for @resetPassword.
+  ///
+  /// In en, this message translates to:
+  /// **'Reset Password'**
+  String get resetPassword;
+
+  /// No description provided for @sendResetLink.
+  ///
+  /// In en, this message translates to:
+  /// **'Send Reset Link'**
+  String get sendResetLink;
+
+  /// No description provided for @resetLinkSent.
+  ///
+  /// In en, this message translates to:
+  /// **'Password reset link has been sent to your email'**
+  String get resetLinkSent;
+
+  /// No description provided for @continueWithGoogle.
+  ///
+  /// In en, this message translates to:
+  /// **'Continue with Google'**
+  String get continueWithGoogle;
+
+  /// No description provided for @continueWithApple.
+  ///
+  /// In en, this message translates to:
+  /// **'Continue with Apple'**
+  String get continueWithApple;
+
+  /// No description provided for @orContinueWith.
+  ///
+  /// In en, this message translates to:
+  /// **'or continue with'**
+  String get orContinueWith;
+
+  /// No description provided for @alreadyHaveAccount.
+  ///
+  /// In en, this message translates to:
+  /// **'Already have an account?'**
+  String get alreadyHaveAccount;
+
+  /// No description provided for @dontHaveAccount.
+  ///
+  /// In en, this message translates to:
+  /// **'Don\'t have an account?'**
+  String get dontHaveAccount;
+
+  /// No description provided for @welcomeBack.
+  ///
+  /// In en, this message translates to:
+  /// **'Welcome Back'**
+  String get welcomeBack;
+
+  /// No description provided for @createAccount.
+  ///
+  /// In en, this message translates to:
+  /// **'Create Account'**
+  String get createAccount;
+
+  /// No description provided for @loginSubtitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Log in to sync your data across devices'**
+  String get loginSubtitle;
+
+  /// No description provided for @signUpSubtitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Sign up for unlimited favorites and more'**
+  String get signUpSubtitle;
+
+  /// No description provided for @passwordMinLength.
+  ///
+  /// In en, this message translates to:
+  /// **'Password must be at least 6 characters'**
+  String get passwordMinLength;
+
+  /// No description provided for @passwordsDoNotMatch.
+  ///
+  /// In en, this message translates to:
+  /// **'Passwords do not match'**
+  String get passwordsDoNotMatch;
+
+  /// No description provided for @invalidEmail.
+  ///
+  /// In en, this message translates to:
+  /// **'Please enter a valid email'**
+  String get invalidEmail;
+
+  /// No description provided for @fieldRequired.
+  ///
+  /// In en, this message translates to:
+  /// **'This field is required'**
+  String get fieldRequired;
+
+  /// No description provided for @loginSuccess.
+  ///
+  /// In en, this message translates to:
+  /// **'Successfully logged in'**
+  String get loginSuccess;
+
+  /// No description provided for @signUpSuccess.
+  ///
+  /// In en, this message translates to:
+  /// **'Account created! Please check your email to verify.'**
+  String get signUpSuccess;
+
+  /// No description provided for @logoutSuccess.
+  ///
+  /// In en, this message translates to:
+  /// **'Successfully logged out'**
+  String get logoutSuccess;
+
+  /// No description provided for @account.
+  ///
+  /// In en, this message translates to:
+  /// **'Account'**
+  String get account;
+
+  /// No description provided for @notLoggedIn.
+  ///
+  /// In en, this message translates to:
+  /// **'Not logged in'**
+  String get notLoggedIn;
+
+  /// No description provided for @loginPrompt.
+  ///
+  /// In en, this message translates to:
+  /// **'Log in to sync your bar and favorites'**
+  String get loginPrompt;
+
+  /// No description provided for @syncData.
+  ///
+  /// In en, this message translates to:
+  /// **'Sync Data'**
+  String get syncData;
+
+  /// No description provided for @dataSynced.
+  ///
+  /// In en, this message translates to:
+  /// **'Your data has been synced'**
+  String get dataSynced;
+
+  /// No description provided for @comingSoon.
+  ///
+  /// In en, this message translates to:
+  /// **'Coming soon!'**
+  String get comingSoon;
+
+  /// No description provided for @featureComingSoon.
+  ///
+  /// In en, this message translates to:
+  /// **'This feature is coming soon'**
+  String get featureComingSoon;
+
+  /// No description provided for @migrationTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Welcome!'**
+  String get migrationTitle;
+
+  /// No description provided for @migrationPrompt.
+  ///
+  /// In en, this message translates to:
+  /// **'Would you like to sync your saved data to your account?'**
+  String get migrationPrompt;
+
+  /// No description provided for @migrationProducts.
+  ///
+  /// In en, this message translates to:
+  /// **'Products: {count}'**
+  String migrationProducts(Object count);
+
+  /// No description provided for @migrationIngredients.
+  ///
+  /// In en, this message translates to:
+  /// **'Ingredients: {count}'**
+  String migrationIngredients(Object count);
+
+  /// No description provided for @migrationFavorites.
+  ///
+  /// In en, this message translates to:
+  /// **'Favorites: {count}'**
+  String migrationFavorites(Object count);
+
+  /// No description provided for @syncNow.
+  ///
+  /// In en, this message translates to:
+  /// **'Sync Now'**
+  String get syncNow;
+
+  /// No description provided for @skipSync.
+  ///
+  /// In en, this message translates to:
+  /// **'Skip'**
+  String get skipSync;
+
+  /// No description provided for @migrationSuccess.
+  ///
+  /// In en, this message translates to:
+  /// **'Synced {count} items to your account'**
+  String migrationSuccess(Object count);
+
+  /// No description provided for @migrationFailed.
+  ///
+  /// In en, this message translates to:
+  /// **'Sync failed. Please try again later.'**
+  String get migrationFailed;
+
+  /// No description provided for @noResultsFound.
+  ///
+  /// In en, this message translates to:
+  /// **'No results found'**
+  String get noResultsFound;
+
+  /// No description provided for @tryDifferentSearch.
+  ///
+  /// In en, this message translates to:
+  /// **'Try a different search term'**
+  String get tryDifferentSearch;
+
+  /// No description provided for @products.
+  ///
+  /// In en, this message translates to:
+  /// **'Products'**
+  String get products;
+
+  /// No description provided for @myBarEmpty.
+  ///
+  /// In en, this message translates to:
+  /// **'Your bar is empty'**
+  String get myBarEmpty;
+
+  /// No description provided for @myBarEmptyPrompt.
+  ///
+  /// In en, this message translates to:
+  /// **'Add products from the Products tab to see what cocktails you can make'**
+  String get myBarEmptyPrompt;
+
+  /// No description provided for @goToProducts.
+  ///
+  /// In en, this message translates to:
+  /// **'Browse Products'**
+  String get goToProducts;
+
+  /// No description provided for @ownedProducts.
+  ///
+  /// In en, this message translates to:
+  /// **'{count} bottles in your bar'**
+  String ownedProducts(int count);
+
+  /// No description provided for @onboardingWelcome.
+  ///
+  /// In en, this message translates to:
+  /// **'Welcome to Cockat'**
+  String get onboardingWelcome;
+
+  /// No description provided for @onboardingWelcomeSubtitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Your personal cocktail companion'**
+  String get onboardingWelcomeSubtitle;
+
+  /// No description provided for @onboardingProductsTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'What\'s in Your Bar?'**
+  String get onboardingProductsTitle;
+
+  /// No description provided for @onboardingProductsSubtitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Select the bottles you have at home'**
+  String get onboardingProductsSubtitle;
+
+  /// No description provided for @onboardingMiscTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Other Essentials'**
+  String get onboardingMiscTitle;
+
+  /// No description provided for @onboardingMiscSubtitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Select ice, garnishes, and fresh ingredients you have'**
+  String get onboardingMiscSubtitle;
+
+  /// No description provided for @onboardingPreferencesTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Your Preferences'**
+  String get onboardingPreferencesTitle;
+
+  /// No description provided for @onboardingPreferencesSubtitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Choose your preferred measurement unit'**
+  String get onboardingPreferencesSubtitle;
+
+  /// No description provided for @onboardingAuthTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Save Your Progress'**
+  String get onboardingAuthTitle;
+
+  /// No description provided for @onboardingAuthSubtitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Sign in to sync your bar across devices'**
+  String get onboardingAuthSubtitle;
+
+  /// No description provided for @next.
+  ///
+  /// In en, this message translates to:
+  /// **'Next'**
+  String get next;
+
+  /// No description provided for @skip.
+  ///
+  /// In en, this message translates to:
+  /// **'Skip'**
+  String get skip;
+
+  /// No description provided for @getStarted.
+  ///
+  /// In en, this message translates to:
+  /// **'Get Started'**
+  String get getStarted;
+
+  /// No description provided for @browseNow.
+  ///
+  /// In en, this message translates to:
+  /// **'Browse Now'**
+  String get browseNow;
+
+  /// No description provided for @maybeLater.
+  ///
+  /// In en, this message translates to:
+  /// **'Maybe Later'**
+  String get maybeLater;
+
+  /// No description provided for @unitMl.
+  ///
+  /// In en, this message translates to:
+  /// **'Milliliters (ml)'**
+  String get unitMl;
+
+  /// No description provided for @unitOz.
+  ///
+  /// In en, this message translates to:
+  /// **'Ounces (oz)'**
+  String get unitOz;
+
+  /// No description provided for @unitParts.
+  ///
+  /// In en, this message translates to:
+  /// **'Parts (ratio)'**
+  String get unitParts;
+
+  /// No description provided for @ice.
+  ///
+  /// In en, this message translates to:
+  /// **'Ice'**
+  String get ice;
+
+  /// No description provided for @fresh.
+  ///
+  /// In en, this message translates to:
+  /// **'Fresh'**
+  String get fresh;
+
+  /// No description provided for @dairy.
+  ///
+  /// In en, this message translates to:
+  /// **'Dairy'**
+  String get dairy;
+
+  /// No description provided for @mixer.
+  ///
+  /// In en, this message translates to:
+  /// **'Mixers'**
+  String get mixer;
+
+  /// No description provided for @syrup.
+  ///
+  /// In en, this message translates to:
+  /// **'Syrups'**
+  String get syrup;
+
+  /// No description provided for @reRunSetup.
+  ///
+  /// In en, this message translates to:
+  /// **'Re-run Setup'**
+  String get reRunSetup;
+
+  /// No description provided for @reRunSetupDescription.
+  ///
+  /// In en, this message translates to:
+  /// **'Go through the initial setup again'**
+  String get reRunSetupDescription;
+
+  /// No description provided for @setupReset.
+  ///
+  /// In en, this message translates to:
+  /// **'Setup has been reset'**
+  String get setupReset;
+
+  /// No description provided for @itemsSelected.
+  ///
+  /// In en, this message translates to:
+  /// **'{count} items selected'**
+  String itemsSelected(int count);
+
+  /// No description provided for @profile.
+  ///
+  /// In en, this message translates to:
+  /// **'Profile'**
+  String get profile;
+
+  /// No description provided for @guestUser.
+  ///
+  /// In en, this message translates to:
+  /// **'Guest'**
+  String get guestUser;
+
+  /// No description provided for @signInForMore.
+  ///
+  /// In en, this message translates to:
+  /// **'Sign in for more features'**
+  String get signInForMore;
+
+  /// No description provided for @benefitSync.
+  ///
+  /// In en, this message translates to:
+  /// **'Sync across devices'**
+  String get benefitSync;
+
+  /// No description provided for @benefitFavorites.
+  ///
+  /// In en, this message translates to:
+  /// **'Unlimited favorites'**
+  String get benefitFavorites;
+
+  /// No description provided for @benefitBackup.
+  ///
+  /// In en, this message translates to:
+  /// **'Backup your bar'**
+  String get benefitBackup;
+
+  /// No description provided for @allSet.
+  ///
+  /// In en, this message translates to:
+  /// **'You\'re all set!'**
+  String get allSet;
+
+  /// No description provided for @dataSyncMessage.
+  ///
+  /// In en, this message translates to:
+  /// **'Your data will be synced across devices'**
+  String get dataSyncMessage;
 }
 
 class _AppLocalizationsDelegate

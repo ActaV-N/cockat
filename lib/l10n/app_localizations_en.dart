@@ -216,4 +216,275 @@ class AppLocalizationsEn extends AppLocalizations {
 
   @override
   String get signUpForMore => 'Sign up for more';
+
+  @override
+  String get login => 'Log In';
+
+  @override
+  String get signUp => 'Sign Up';
+
+  @override
+  String get logout => 'Log Out';
+
+  @override
+  String get email => 'Email';
+
+  @override
+  String get password => 'Password';
+
+  @override
+  String get confirmPassword => 'Confirm Password';
+
+  @override
+  String get forgotPassword => 'Forgot Password?';
+
+  @override
+  String get resetPassword => 'Reset Password';
+
+  @override
+  String get sendResetLink => 'Send Reset Link';
+
+  @override
+  String get resetLinkSent => 'Password reset link has been sent to your email';
+
+  @override
+  String get continueWithGoogle => 'Continue with Google';
+
+  @override
+  String get continueWithApple => 'Continue with Apple';
+
+  @override
+  String get orContinueWith => 'or continue with';
+
+  @override
+  String get alreadyHaveAccount => 'Already have an account?';
+
+  @override
+  String get dontHaveAccount => 'Don\'t have an account?';
+
+  @override
+  String get welcomeBack => 'Welcome Back';
+
+  @override
+  String get createAccount => 'Create Account';
+
+  @override
+  String get loginSubtitle => 'Log in to sync your data across devices';
+
+  @override
+  String get signUpSubtitle => 'Sign up for unlimited favorites and more';
+
+  @override
+  String get passwordMinLength => 'Password must be at least 6 characters';
+
+  @override
+  String get passwordsDoNotMatch => 'Passwords do not match';
+
+  @override
+  String get invalidEmail => 'Please enter a valid email';
+
+  @override
+  String get fieldRequired => 'This field is required';
+
+  @override
+  String get loginSuccess => 'Successfully logged in';
+
+  @override
+  String get signUpSuccess =>
+      'Account created! Please check your email to verify.';
+
+  @override
+  String get logoutSuccess => 'Successfully logged out';
+
+  @override
+  String get account => 'Account';
+
+  @override
+  String get notLoggedIn => 'Not logged in';
+
+  @override
+  String get loginPrompt => 'Log in to sync your bar and favorites';
+
+  @override
+  String get syncData => 'Sync Data';
+
+  @override
+  String get dataSynced => 'Your data has been synced';
+
+  @override
+  String get comingSoon => 'Coming soon!';
+
+  @override
+  String get featureComingSoon => 'This feature is coming soon';
+
+  @override
+  String get migrationTitle => 'Welcome!';
+
+  @override
+  String get migrationPrompt =>
+      'Would you like to sync your saved data to your account?';
+
+  @override
+  String migrationProducts(Object count) {
+    return 'Products: $count';
+  }
+
+  @override
+  String migrationIngredients(Object count) {
+    return 'Ingredients: $count';
+  }
+
+  @override
+  String migrationFavorites(Object count) {
+    return 'Favorites: $count';
+  }
+
+  @override
+  String get syncNow => 'Sync Now';
+
+  @override
+  String get skipSync => 'Skip';
+
+  @override
+  String migrationSuccess(Object count) {
+    return 'Synced $count items to your account';
+  }
+
+  @override
+  String get migrationFailed => 'Sync failed. Please try again later.';
+
+  @override
+  String get noResultsFound => 'No results found';
+
+  @override
+  String get tryDifferentSearch => 'Try a different search term';
+
+  @override
+  String get products => 'Products';
+
+  @override
+  String get myBarEmpty => 'Your bar is empty';
+
+  @override
+  String get myBarEmptyPrompt =>
+      'Add products from the Products tab to see what cocktails you can make';
+
+  @override
+  String get goToProducts => 'Browse Products';
+
+  @override
+  String ownedProducts(int count) {
+    return '$count bottles in your bar';
+  }
+
+  @override
+  String get onboardingWelcome => 'Welcome to Cockat';
+
+  @override
+  String get onboardingWelcomeSubtitle => 'Your personal cocktail companion';
+
+  @override
+  String get onboardingProductsTitle => 'What\'s in Your Bar?';
+
+  @override
+  String get onboardingProductsSubtitle =>
+      'Select the bottles you have at home';
+
+  @override
+  String get onboardingMiscTitle => 'Other Essentials';
+
+  @override
+  String get onboardingMiscSubtitle =>
+      'Select ice, garnishes, and fresh ingredients you have';
+
+  @override
+  String get onboardingPreferencesTitle => 'Your Preferences';
+
+  @override
+  String get onboardingPreferencesSubtitle =>
+      'Choose your preferred measurement unit';
+
+  @override
+  String get onboardingAuthTitle => 'Save Your Progress';
+
+  @override
+  String get onboardingAuthSubtitle =>
+      'Sign in to sync your bar across devices';
+
+  @override
+  String get next => 'Next';
+
+  @override
+  String get skip => 'Skip';
+
+  @override
+  String get getStarted => 'Get Started';
+
+  @override
+  String get browseNow => 'Browse Now';
+
+  @override
+  String get maybeLater => 'Maybe Later';
+
+  @override
+  String get unitMl => 'Milliliters (ml)';
+
+  @override
+  String get unitOz => 'Ounces (oz)';
+
+  @override
+  String get unitParts => 'Parts (ratio)';
+
+  @override
+  String get ice => 'Ice';
+
+  @override
+  String get fresh => 'Fresh';
+
+  @override
+  String get dairy => 'Dairy';
+
+  @override
+  String get mixer => 'Mixers';
+
+  @override
+  String get syrup => 'Syrups';
+
+  @override
+  String get reRunSetup => 'Re-run Setup';
+
+  @override
+  String get reRunSetupDescription => 'Go through the initial setup again';
+
+  @override
+  String get setupReset => 'Setup has been reset';
+
+  @override
+  String itemsSelected(int count) {
+    return '$count items selected';
+  }
+
+  @override
+  String get profile => 'Profile';
+
+  @override
+  String get guestUser => 'Guest';
+
+  @override
+  String get signInForMore => 'Sign in for more features';
+
+  @override
+  String get benefitSync => 'Sync across devices';
+
+  @override
+  String get benefitFavorites => 'Unlimited favorites';
+
+  @override
+  String get benefitBackup => 'Backup your bar';
+
+  @override
+  String get allSet => 'You\'re all set!';
+
+  @override
+  String get dataSyncMessage => 'Your data will be synced across devices';
 }

@@ -30,6 +30,9 @@ dependencies:
   shared_preferences: ^2.3.4
   collection: ^1.18.0
 
+  # Image Caching
+  cached_network_image: ^3.4.1
+
   # Navigation
   go_router: ^14.8.1
 

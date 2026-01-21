@@ -213,4 +213,268 @@ class AppLocalizationsKo extends AppLocalizations {
 
   @override
   String get signUpForMore => '회원가입하고 더 이용하기';
+
+  @override
+  String get login => '로그인';
+
+  @override
+  String get signUp => '회원가입';
+
+  @override
+  String get logout => '로그아웃';
+
+  @override
+  String get email => '이메일';
+
+  @override
+  String get password => '비밀번호';
+
+  @override
+  String get confirmPassword => '비밀번호 확인';
+
+  @override
+  String get forgotPassword => '비밀번호를 잊으셨나요?';
+
+  @override
+  String get resetPassword => '비밀번호 재설정';
+
+  @override
+  String get sendResetLink => '재설정 링크 보내기';
+
+  @override
+  String get resetLinkSent => '비밀번호 재설정 링크가 이메일로 전송되었습니다';
+
+  @override
+  String get continueWithGoogle => 'Google로 계속하기';
+
+  @override
+  String get continueWithApple => 'Apple로 계속하기';
+
+  @override
+  String get orContinueWith => '또는';
+
+  @override
+  String get alreadyHaveAccount => '이미 계정이 있으신가요?';
+
+  @override
+  String get dontHaveAccount => '계정이 없으신가요?';
+
+  @override
+  String get welcomeBack => '다시 만나서 반가워요';
+
+  @override
+  String get createAccount => '계정 만들기';
+
+  @override
+  String get loginSubtitle => '로그인하면 여러 기기에서 데이터를 동기화할 수 있어요';
+
+  @override
+  String get signUpSubtitle => '회원가입하고 무제한 즐겨찾기와 더 많은 기능을 이용하세요';
+
+  @override
+  String get passwordMinLength => '비밀번호는 최소 6자 이상이어야 합니다';
+
+  @override
+  String get passwordsDoNotMatch => '비밀번호가 일치하지 않습니다';
+
+  @override
+  String get invalidEmail => '유효한 이메일을 입력해주세요';
+
+  @override
+  String get fieldRequired => '필수 입력 항목입니다';
+
+  @override
+  String get loginSuccess => '로그인되었습니다';
+
+  @override
+  String get signUpSuccess => '계정이 생성되었습니다! 이메일을 확인해주세요.';
+
+  @override
+  String get logoutSuccess => '로그아웃되었습니다';
+
+  @override
+  String get account => '계정';
+
+  @override
+  String get notLoggedIn => '로그인되지 않음';
+
+  @override
+  String get loginPrompt => '로그인하고 술장과 즐겨찾기를 동기화하세요';
+
+  @override
+  String get syncData => '데이터 동기화';
+
+  @override
+  String get dataSynced => '데이터가 동기화되었습니다';
+
+  @override
+  String get comingSoon => '곧 출시 예정!';
+
+  @override
+  String get featureComingSoon => '이 기능은 곧 추가될 예정이에요';
+
+  @override
+  String get migrationTitle => '환영합니다!';
+
+  @override
+  String get migrationPrompt => '기존에 저장해둔 데이터를 계정에 연결할까요?';
+
+  @override
+  String migrationProducts(Object count) {
+    return '선택한 상품: $count개';
+  }
+
+  @override
+  String migrationIngredients(Object count) {
+    return '선택한 재료: $count개';
+  }
+
+  @override
+  String migrationFavorites(Object count) {
+    return '즐겨찾기: $count개';
+  }
+
+  @override
+  String get syncNow => '연결하기';
+
+  @override
+  String get skipSync => '건너뛰기';
+
+  @override
+  String migrationSuccess(Object count) {
+    return '$count개 항목이 계정에 동기화되었습니다';
+  }
+
+  @override
+  String get migrationFailed => '동기화에 실패했습니다. 나중에 다시 시도해주세요.';
+
+  @override
+  String get noResultsFound => '검색 결과가 없어요';
+
+  @override
+  String get tryDifferentSearch => '다른 검색어를 시도해보세요';
+
+  @override
+  String get products => '상품';
+
+  @override
+  String get myBarEmpty => '술장이 비어있어요';
+
+  @override
+  String get myBarEmptyPrompt => '상품 탭에서 보유한 술을 추가하면 만들 수 있는 칵테일을 찾아드릴게요';
+
+  @override
+  String get goToProducts => '상품 둘러보기';
+
+  @override
+  String ownedProducts(int count) {
+    return '$count병 보유 중';
+  }
+
+  @override
+  String get onboardingWelcome => 'Cockat에 오신 것을 환영해요';
+
+  @override
+  String get onboardingWelcomeSubtitle => '나만의 칵테일 도우미';
+
+  @override
+  String get onboardingProductsTitle => '어떤 술이 있나요?';
+
+  @override
+  String get onboardingProductsSubtitle => '집에 있는 술병을 선택해주세요';
+
+  @override
+  String get onboardingMiscTitle => '기타 재료';
+
+  @override
+  String get onboardingMiscSubtitle => '얼음, 가니쉬, 신선한 재료를 선택해주세요';
+
+  @override
+  String get onboardingPreferencesTitle => '설정';
+
+  @override
+  String get onboardingPreferencesSubtitle => '선호하는 계량 단위를 선택해주세요';
+
+  @override
+  String get onboardingAuthTitle => '진행상황 저장하기';
+
+  @override
+  String get onboardingAuthSubtitle => '로그인하면 여러 기기에서 동기화할 수 있어요';
+
+  @override
+  String get next => '다음';
+
+  @override
+  String get skip => '건너뛰기';
+
+  @override
+  String get getStarted => '시작하기';
+
+  @override
+  String get browseNow => '둘러보기';
+
+  @override
+  String get maybeLater => '나중에';
+
+  @override
+  String get unitMl => '밀리리터 (ml)';
+
+  @override
+  String get unitOz => '온스 (oz)';
+
+  @override
+  String get unitParts => '비율';
+
+  @override
+  String get ice => '얼음';
+
+  @override
+  String get fresh => '신선한 재료';
+
+  @override
+  String get dairy => '유제품';
+
+  @override
+  String get mixer => '믹서';
+
+  @override
+  String get syrup => '시럽';
+
+  @override
+  String get reRunSetup => '초기 설정 다시하기';
+
+  @override
+  String get reRunSetupDescription => '처음 설정을 다시 진행합니다';
+
+  @override
+  String get setupReset => '설정이 초기화되었습니다';
+
+  @override
+  String itemsSelected(int count) {
+    return '$count개 선택됨';
+  }
+
+  @override
+  String get profile => '프로필';
+
+  @override
+  String get guestUser => '게스트';
+
+  @override
+  String get signInForMore => '로그인하고 더 많은 기능을 이용하세요';
+
+  @override
+  String get benefitSync => '여러 기기에서 동기화';
+
+  @override
+  String get benefitFavorites => '무제한 즐겨찾기';
+
+  @override
+  String get benefitBackup => '내 술장 백업';
+
+  @override
+  String get allSet => '준비 완료!';
+
+  @override
+  String get dataSyncMessage => '데이터가 여러 기기에서 동기화됩니다';
 }

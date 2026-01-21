@@ -1,6 +1,7 @@
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
+import '../../core/constants/constants.dart';
 import '../models/models.dart';
 import 'ingredient_provider.dart';
 import 'settings_provider.dart';
@@ -131,6 +132,71 @@ final selectedProductsListProvider = Provider<AsyncValue<List<Product>>>((ref) {
 
   return productsAsync.whenData((products) {
     return products.where((p) => selectedIds.contains(p.id)).toList();
+  });
+});
+
+// Category filter for products catalog
+final productCategoryFilterProvider = StateProvider<String?>((ref) => null);
+
+// Filtered products based on search and category
+final catalogFilteredProductsProvider = Provider<AsyncValue<List<Product>>>((ref) {
+  final productsAsync = ref.watch(productsProvider);
+  final query = ref.watch(productSearchQueryProvider).toLowerCase();
+  final categoryFilter = ref.watch(productCategoryFilterProvider);
+  final ingredientsAsync = ref.watch(ingredientsProvider);
+
+  return productsAsync.whenData((products) {
+    var filtered = products;
+
+    // Filter by search query
+    if (query.isNotEmpty) {
+      filtered = filtered
+          .where((p) =>
+              p.name.toLowerCase().contains(query) ||
+              (p.brand?.toLowerCase().contains(query) ?? false) ||
+              p.displayName.toLowerCase().contains(query))
+          .toList();
+    }
+
+    // Filter by category
+    if (categoryFilter != null) {
+      final ingredients = ingredientsAsync.valueOrNull ?? [];
+      final ingredientMap = {for (var i in ingredients) i.id: i};
+
+      filtered = filtered.where((p) {
+        if (p.ingredientId == null) return false;
+        final ingredient = ingredientMap[p.ingredientId];
+        if (ingredient == null) return false;
+        return IngredientCategories.getCategoryKey(ingredient.category) == categoryFilter;
+      }).toList();
+    }
+
+    return filtered;
+  });
+});
+
+// Get unique categories from products
+final productCategoriesProvider = Provider<AsyncValue<List<String>>>((ref) {
+  final productsAsync = ref.watch(productsProvider);
+  final ingredientsAsync = ref.watch(ingredientsProvider);
+
+  return productsAsync.whenData((products) {
+    final ingredients = ingredientsAsync.valueOrNull ?? [];
+    final ingredientMap = {for (var i in ingredients) i.id: i};
+    final categories = <String>{};
+
+    for (final product in products) {
+      if (product.ingredientId != null) {
+        final ingredient = ingredientMap[product.ingredientId];
+        if (ingredient != null) {
+          categories.add(IngredientCategories.getCategoryKey(ingredient.category));
+        }
+      }
+    }
+
+    return IngredientCategories.allCategories
+        .where((c) => categories.contains(c))
+        .toList();
   });
 });
 

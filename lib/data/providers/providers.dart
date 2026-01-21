@@ -3,3 +3,7 @@ export 'ingredient_provider.dart';
 export 'cocktail_provider.dart';
 export 'product_provider.dart';
 export 'favorites_provider.dart';
+export 'auth_provider.dart';
+export 'unified_providers.dart';
+export 'misc_item_provider.dart';
+export 'onboarding_provider.dart';

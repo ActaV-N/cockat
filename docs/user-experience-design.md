@@ -389,19 +389,25 @@ final cocktailMatchesProvider = Provider<AsyncValue<List<CocktailMatch>>>((ref) 
 });
 ```
 
-#### 회원 연동 시 추가할 Provider
+#### 회원 연동 Provider (구현 완료)
 
 ```dart
-// lib/data/providers/auth_provider.dart (추가 예정)
+// lib/data/providers/auth_provider.dart
+
+/// 현재 사용자 (반응형 - auth 상태 변경 시 자동 업데이트)
+final currentUserProvider = Provider<User?>((ref) {
+  ref.watch(authStateChangesProvider); // auth 상태 변경 시 자동 재평가
+  return Supabase.instance.client.auth.currentUser;
+});
 
 /// 현재 사용자 ID
 final currentUserIdProvider = Provider<String?>((ref) {
-  return Supabase.instance.client.auth.currentUser?.id;
+  return ref.watch(currentUserProvider)?.id;
 });
 
 /// 인증 상태
 final isAuthenticatedProvider = Provider<bool>((ref) {
-  return ref.watch(currentUserIdProvider) != null;
+  return ref.watch(currentUserProvider) != null;
 });
 
 /// 회원 상품 목록 (DB 실시간 동기화)
@@ -451,10 +457,10 @@ final effectiveIngredientIdsProvider = Provider<Set<String>>((ref) {
 });
 ```
 
-### 4.4 로그인 시 데이터 마이그레이션
+### 4.4 로그인 시 데이터 마이그레이션 (구현 완료)
 
 ```dart
-// lib/core/services/migration_service.dart (추가 예정)
+// lib/core/services/migration_service.dart
 
 class MigrationResult {
   int productsMigrated = 0;
@@ -577,16 +583,16 @@ class DataMigrationService {
 - [x] 칵테일 매칭 로직
 - [x] 로컬 즐겨찾기 (20개 제한)
 
-### Phase 2: 인증 기반 구축
-- [ ] Supabase Auth 연동 (이메일, 소셜 로그인)
-- [ ] 회원 테이블 생성 (user_products, user_ingredients, user_favorites)
-- [ ] 인증 상태 Provider
-- [ ] 로그인/회원가입 UI
+### Phase 2: 인증 기반 구축 ✅
+- [x] Supabase Auth 연동 (이메일, 소셜 로그인)
+- [x] 회원 테이블 생성 (user_products, user_ingredients, user_favorites)
+- [x] 인증 상태 Provider (반응형 auth state)
+- [x] 로그인/회원가입 UI
 
-### Phase 3: 데이터 동기화
-- [ ] 통합 Provider (비회원/회원 자동 분기)
-- [ ] 로컬 → 클라우드 마이그레이션
-- [ ] 실시간 동기화 (Supabase Realtime)
+### Phase 3: 데이터 동기화 ✅
+- [x] 통합 Provider (비회원/회원 자동 분기)
+- [x] 로컬 → 클라우드 마이그레이션
+- [x] 실시간 동기화 (Supabase Realtime)
 
 ### Phase 4: 회원 전용 기능
 - [ ] 무제한 즐겨찾기
