@@ -25,22 +25,9 @@ class CocktailsScreen extends ConsumerWidget {
           // Search Bar
           Padding(
             padding: const EdgeInsets.all(16),
-            child: TextField(
-              decoration: InputDecoration(
-                hintText: l10n.searchCocktails,
-                prefixIcon: const Icon(Icons.search),
-                suffixIcon: ref.watch(cocktailSearchQueryProvider).isNotEmpty
-                    ? IconButton(
-                        icon: const Icon(Icons.clear),
-                        onPressed: () {
-                          ref.read(cocktailSearchQueryProvider.notifier).state = '';
-                        },
-                      )
-                    : null,
-              ),
-              onChanged: (value) {
-                ref.read(cocktailSearchQueryProvider.notifier).state = value;
-              },
+            child: SearchBarField(
+              hintText: l10n.searchCocktails,
+              searchQueryProvider: cocktailSearchQueryProvider,
             ),
           ),
 

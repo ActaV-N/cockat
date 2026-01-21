@@ -1,0 +1,9 @@
+action,product_id,name,brand,ingredient_id,country,volume_ml,abv,image_file,notes
+UPDATE,beefeater-london-dry-gin,Beefeater London Dry Gin,Beefeater,gin,England,750,40.00,beefeater.png,이미지 업데이트 필요 (현재 image_url null)
+UPDATE,cynar-artichoke-liqueur,Cynar Artichoke Liqueur,Cynar,campari,Italy,750,16.50,cynar.png,이미지 업데이트 필요 (현재 image_url null)
+UPDATE,stolichnaya-vodka,Stolichnaya Vodka,Stolichnaya,vodka,Russia,750,40.00,stoli.png,이미지 업데이트 필요 (현재 image_url null)
+UPDATE,tanqueray-london-dry-gin,Tanqueray London Dry Gin,Tanqueray,gin,England,750,47.30,tanqueray.png,이미지 업데이트 필요 (현재 image_url null)
+NEW,canadian-club-whisky,Canadian Club Whisky,Canadian Club,canadian-whisky,Canada,750,40.00,canadian_club.png,신규 등록 필요 - Canadian Whisky 카테고리 필요
+NEW,licor-43,Licor 43,Licor 43,licor-43,Spain,700,31.00,licor43.png,신규 등록 필요 - 바닐라 리큐르
+NEW,el-gobernador-pisco,El Gobernador Pisco,El Gobernador,pisco,Peru,750,40.00,el_gobernador.png,신규 등록 필요 - Pisco 카테고리 필요
+UPDATE_GENERIC,dry-vermouth-generic,Dry Vermouth (Generic),Multiple,dry-vermouth,Various,750,15-18,dry_vermouth.png,범용 드라이 베르무트 이미지로 여러 제품에 사용 가능

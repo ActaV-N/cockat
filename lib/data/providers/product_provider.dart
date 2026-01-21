@@ -1,3 +1,4 @@
+import 'package:flutter/foundation.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
@@ -74,32 +75,55 @@ class SelectedProductsNotifier extends StateNotifier<Set<String>> {
     return value?.toSet() ?? {};
   }
 
-  Future<void> toggle(String productId) async {
+  // Optimistic UI: Update state immediately, save in background
+  void toggle(String productId) {
+    final previousState = state; // Backup for rollback
+
+    // 1. Immediately update state (UI reflects instantly)
     if (state.contains(productId)) {
       state = Set.from(state)..remove(productId);
     } else {
       state = Set.from(state)..add(productId);
     }
-    await _save();
+
+    // 2. Save in background (fire-and-forget)
+    _save().catchError((error) {
+      // 3. Rollback on failure
+      state = previousState;
+      // TODO: Notify user of error
+      debugPrint('Failed to save product selection: $error');
+    });
   }
 
-  Future<void> add(String productId) async {
+  void add(String productId) {
     if (!state.contains(productId)) {
+      final previousState = state;
       state = Set.from(state)..add(productId);
-      await _save();
+      _save().catchError((error) {
+        state = previousState;
+        debugPrint('Failed to save product: $error');
+      });
     }
   }
 
-  Future<void> remove(String productId) async {
+  void remove(String productId) {
     if (state.contains(productId)) {
+      final previousState = state;
       state = Set.from(state)..remove(productId);
-      await _save();
+      _save().catchError((error) {
+        state = previousState;
+        debugPrint('Failed to remove product: $error');
+      });
     }
   }
 
-  Future<void> clear() async {
+  void clear() {
+    final previousState = state;
     state = {};
-    await _save();
+    _save().catchError((error) {
+      state = previousState;
+      debugPrint('Failed to clear products: $error');
+    });
   }
 
   Future<void> _save() async {

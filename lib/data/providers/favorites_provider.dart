@@ -1,3 +1,4 @@
+import 'package:flutter/foundation.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
@@ -27,22 +28,32 @@ class FavoriteCocktailsNotifier extends StateNotifier<Set<String>> {
   }
 
   /// 즐겨찾기 토글 (추가/제거)
-  /// 최대 개수 초과 시 false 반환
-  Future<FavoriteResult> toggle(String cocktailId) async {
+  /// Optimistic UI: 즉시 결과 반환, 백그라운드에서 저장
+  FavoriteResult toggle(String cocktailId) {
+    final previousState = state;
+    FavoriteResult result;
+
     if (state.contains(cocktailId)) {
       // 제거
       state = Set.from(state)..remove(cocktailId);
-      await _save();
-      return FavoriteResult.removed;
+      result = FavoriteResult.removed;
     } else {
       // 추가 - 최대 개수 확인
       if (state.length >= kMaxFavoritesForGuest) {
-        return FavoriteResult.limitReached;
+        return FavoriteResult.limitReached; // 즉시 반환
       }
       state = Set.from(state)..add(cocktailId);
-      await _save();
-      return FavoriteResult.added;
+      result = FavoriteResult.added;
     }
+
+    // 백그라운드에서 저장
+    _save().catchError((error) {
+      // 실패 시 롤백
+      state = previousState;
+      debugPrint('Failed to save favorites: $error');
+    });
+
+    return result; // 즉시 반환
   }
 
   /// 즐겨찾기에 추가

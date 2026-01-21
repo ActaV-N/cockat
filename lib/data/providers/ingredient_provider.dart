@@ -1,3 +1,4 @@
+import 'package:flutter/foundation.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:supabase_flutter/supabase_flutter.dart';
@@ -77,13 +78,23 @@ class SelectedIngredientsNotifier extends StateNotifier<Set<String>> {
     return value?.toSet() ?? {};
   }
 
-  Future<void> toggle(String ingredientId) async {
+  // Optimistic UI: Update state immediately, save in background
+  void toggle(String ingredientId) {
+    final previousState = state; // Backup for rollback
+
+    // 1. Immediately update state (UI reflects instantly)
     if (state.contains(ingredientId)) {
       state = Set.from(state)..remove(ingredientId);
     } else {
       state = Set.from(state)..add(ingredientId);
     }
-    await _save();
+
+    // 2. Save in background (fire-and-forget)
+    _save().catchError((error) {
+      // 3. Rollback on failure
+      state = previousState;
+      debugPrint('Failed to save ingredient selection: $error');
+    });
   }
 
   Future<void> add(String ingredientId) async {

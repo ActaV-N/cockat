@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 
+import '../../core/widgets/widgets.dart';
 import '../../data/models/models.dart';
 import '../../data/providers/providers.dart';
 import '../../l10n/app_localizations.dart';
@@ -14,32 +15,30 @@ class ProductsCatalogScreen extends ConsumerWidget {
     final productsAsync = ref.watch(catalogFilteredProductsProvider);
     final categoriesAsync = ref.watch(productCategoriesProvider);
     final selectedCategory = ref.watch(productCategoryFilterProvider);
+    final selectedCount = ref.watch(effectiveSelectedProductCountProvider);
 
     return Scaffold(
       appBar: AppBar(
         title: Text(l10n.products),
+        actions: [
+          if (selectedCount > 0)
+            TextButton.icon(
+              onPressed: () {
+                ref.read(effectiveProductsServiceProvider).clear();
+              },
+              icon: const Icon(Icons.clear_all),
+              label: Text(l10n.clearAll),
+            ),
+        ],
       ),
       body: Column(
         children: [
           // Search Bar
           Padding(
             padding: const EdgeInsets.all(16),
-            child: TextField(
-              decoration: InputDecoration(
-                hintText: l10n.searchProducts,
-                prefixIcon: const Icon(Icons.search),
-                suffixIcon: ref.watch(productSearchQueryProvider).isNotEmpty
-                    ? IconButton(
-                        icon: const Icon(Icons.clear),
-                        onPressed: () {
-                          ref.read(productSearchQueryProvider.notifier).state = '';
-                        },
-                      )
-                    : null,
-              ),
-              onChanged: (value) {
-                ref.read(productSearchQueryProvider.notifier).state = value;
-              },
+            child: SearchBarField(
+              hintText: l10n.searchProducts,
+              searchQueryProvider: productSearchQueryProvider,
             ),
           ),
 
@@ -53,6 +52,26 @@ class ProductsCatalogScreen extends ConsumerWidget {
             loading: () => const SizedBox.shrink(),
             error: (_, __) => const SizedBox.shrink(),
           ),
+
+          // Selected count chip
+          if (selectedCount > 0)
+            Padding(
+              padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
+              child: Row(
+                children: [
+                  Chip(
+                    avatar: Icon(
+                      Icons.check_circle,
+                      size: 18,
+                      color: Theme.of(context).colorScheme.primary,
+                    ),
+                    label: Text(l10n.productsSelected(selectedCount)),
+                    backgroundColor:
+                        Theme.of(context).colorScheme.primaryContainer,
+                  ),
+                ],
+              ),
+            ),
 
           // Product Grid
           Expanded(
@@ -178,7 +197,7 @@ class _ProductGrid extends ConsumerWidget {
       padding: const EdgeInsets.all(16),
       gridDelegate: const SliverGridDelegateWithFixedCrossAxisCount(
         crossAxisCount: 2,
-        childAspectRatio: 0.75,
+        childAspectRatio: 0.72,
         crossAxisSpacing: 12,
         mainAxisSpacing: 12,
       ),
@@ -197,11 +216,13 @@ class _ProductCard extends ConsumerWidget {
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
-    final isSelected = ref.watch(effectiveIsProductSelectedProvider(product.id));
+    final isSelected =
+        ref.watch(effectiveIsProductSelectedProvider(product.id));
     final theme = Theme.of(context);
 
     return Card(
       clipBehavior: Clip.antiAlias,
+      elevation: isSelected ? 4 : 1,
       shape: RoundedRectangleBorder(
         borderRadius: BorderRadius.circular(12),
         side: isSelected
@@ -215,117 +236,98 @@ class _ProductCard extends ConsumerWidget {
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.stretch,
           children: [
-            // Image
+            // 상단: 상품명 + 선택 인디케이터
+            _buildHeader(theme, isSelected),
+
+            // 중앙: 이미지
             Expanded(
-              flex: 3,
-              child: Stack(
-                fit: StackFit.expand,
-                children: [
-                  _ProductImage(imageUrl: product.imageUrl),
-                  if (isSelected)
-                    Positioned(
-                      top: 8,
-                      right: 8,
-                      child: Container(
-                        padding: const EdgeInsets.all(4),
-                        decoration: BoxDecoration(
-                          color: theme.colorScheme.primary,
-                          shape: BoxShape.circle,
-                        ),
-                        child: Icon(
-                          Icons.check,
-                          size: 16,
-                          color: theme.colorScheme.onPrimary,
-                        ),
-                      ),
-                    ),
-                ],
-              ),
-            ),
-            // Info
-            Expanded(
-              flex: 2,
               child: Padding(
-                padding: const EdgeInsets.all(8),
-                child: Column(
-                  crossAxisAlignment: CrossAxisAlignment.start,
-                  children: [
-                    if (product.brand != null)
-                      Text(
-                        product.brand!,
-                        style: theme.textTheme.labelSmall?.copyWith(
-                          color: theme.colorScheme.primary,
-                        ),
-                        maxLines: 1,
-                        overflow: TextOverflow.ellipsis,
-                      ),
-                    Text(
-                      product.name,
-                      style: theme.textTheme.titleSmall,
-                      maxLines: 2,
-                      overflow: TextOverflow.ellipsis,
-                    ),
-                    const Spacer(),
-                    if (product.formattedVolume != null || product.abv != null)
-                      Text(
-                        [
-                          if (product.formattedVolume != null)
-                            product.formattedVolume,
-                          if (product.abv != null) '${product.abv}%',
-                        ].join(' | '),
-                        style: theme.textTheme.bodySmall?.copyWith(
-                          color: theme.colorScheme.outline,
-                        ),
-                      ),
-                  ],
+                padding: const EdgeInsets.symmetric(horizontal: 12),
+                child: ProductImage(
+                  product: product,
+                  mode: ImageDisplayMode.thumbnail,
                 ),
               ),
             ),
+
+            // 하단: 브랜드 + 스펙
+            _buildFooter(theme),
           ],
         ),
       ),
     );
   }
-}
 
-class _ProductImage extends StatelessWidget {
-  final String? imageUrl;
-
-  const _ProductImage({this.imageUrl});
-
-  @override
-  Widget build(BuildContext context) {
-    if (imageUrl != null && imageUrl!.isNotEmpty) {
-      return Image.network(
-        imageUrl!,
-        fit: BoxFit.cover,
-        errorBuilder: (context, error, stackTrace) => _placeholder(context),
-        loadingBuilder: (context, child, loadingProgress) {
-          if (loadingProgress == null) return child;
-          return Center(
-            child: CircularProgressIndicator(
-              value: loadingProgress.expectedTotalBytes != null
-                  ? loadingProgress.cumulativeBytesLoaded /
-                      loadingProgress.expectedTotalBytes!
-                  : null,
+  Widget _buildHeader(ThemeData theme, bool isSelected) {
+    return Padding(
+      padding: const EdgeInsets.fromLTRB(12, 10, 8, 4),
+      child: Row(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          Expanded(
+            child: Text(
+              product.name,
+              style: theme.textTheme.titleSmall?.copyWith(
+                fontWeight: FontWeight.w600,
+              ),
+              maxLines: 2,
+              overflow: TextOverflow.ellipsis,
             ),
-          );
-        },
-      );
-    }
-    return _placeholder(context);
-  }
-
-  Widget _placeholder(BuildContext context) {
-    return Container(
-      color: Theme.of(context).colorScheme.surfaceContainerHighest,
-      child: Center(
-        child: Icon(
-          Icons.liquor,
-          size: 48,
-          color: Theme.of(context).colorScheme.outline,
-        ),
+          ),
+          const SizedBox(width: 4),
+          AnimatedSelectionIndicator(
+            isSelected: isSelected,
+            size: 22,
+          ),
+        ],
       ),
     );
+  }
+
+  Widget _buildFooter(ThemeData theme) {
+    final hasInfo = product.brand != null ||
+        product.formattedVolume != null ||
+        product.abv != null;
+
+    if (!hasInfo) {
+      return const SizedBox(height: 8);
+    }
+
+    return Padding(
+      padding: const EdgeInsets.fromLTRB(12, 4, 12, 10),
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        mainAxisSize: MainAxisSize.min,
+        children: [
+          if (product.brand != null)
+            Text(
+              product.brand!,
+              style: theme.textTheme.labelSmall?.copyWith(
+                color: theme.colorScheme.primary,
+              ),
+              maxLines: 1,
+              overflow: TextOverflow.ellipsis,
+            ),
+          if (product.formattedVolume != null || product.abv != null)
+            Text(
+              _formatSpecs(),
+              style: theme.textTheme.bodySmall?.copyWith(
+                color: theme.colorScheme.outline,
+              ),
+            ),
+        ],
+      ),
+    );
+  }
+
+  String _formatSpecs() {
+    final specs = <String>[];
+    if (product.formattedVolume != null) {
+      specs.add(product.formattedVolume!);
+    }
+    if (product.abv != null) {
+      specs.add('${product.abv}%');
+    }
+    return specs.join(' | ');
   }
 }

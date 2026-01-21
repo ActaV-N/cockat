@@ -7,6 +7,7 @@ import '../../data/providers/providers.dart';
 import '../../l10n/app_localizations.dart';
 import '../ingredients/ingredients_screen.dart';
 
+/// 상품(술병) 선택 화면
 class ProductsScreen extends ConsumerWidget {
   const ProductsScreen({super.key});
 
@@ -32,24 +33,23 @@ class ProductsScreen extends ConsumerWidget {
       ),
       body: productsAsync.when(
         data: (products) {
-          // If no products exist, show fallback to ingredient selection
           if (products.isEmpty) {
             return _EmptyProductsView(l10n: l10n);
           }
-          return _ProductsContent(
+          return _ProductsBody(
             products: products,
             selectedCount: selectedCount,
+            l10n: l10n,
           );
         },
         loading: () => const Center(child: CircularProgressIndicator()),
-        error: (error, stack) => Center(
-          child: Text('Error: $error'),
-        ),
+        error: (error, _) => Center(child: Text('Error: $error')),
       ),
     );
   }
 }
 
+/// 상품이 없을 때 표시되는 뷰
 class _EmptyProductsView extends StatelessWidget {
   final AppLocalizations l10n;
 
@@ -57,6 +57,8 @@ class _EmptyProductsView extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final theme = Theme.of(context);
+
     return Center(
       child: Padding(
         padding: const EdgeInsets.all(32),
@@ -66,31 +68,25 @@ class _EmptyProductsView extends StatelessWidget {
             Icon(
               Icons.liquor_outlined,
               size: 64,
-              color: Theme.of(context).colorScheme.outline,
+              color: theme.colorScheme.outline,
             ),
             const SizedBox(height: 16),
             Text(
               l10n.noProductsAvailable,
-              style: Theme.of(context).textTheme.titleMedium,
+              style: theme.textTheme.titleMedium,
               textAlign: TextAlign.center,
             ),
             const SizedBox(height: 8),
             Text(
               l10n.emptyBarPrompt,
-              style: Theme.of(context).textTheme.bodyMedium?.copyWith(
-                    color: Theme.of(context).colorScheme.outline,
-                  ),
+              style: theme.textTheme.bodyMedium?.copyWith(
+                color: theme.colorScheme.outline,
+              ),
               textAlign: TextAlign.center,
             ),
             const SizedBox(height: 24),
             FilledButton.tonal(
-              onPressed: () {
-                Navigator.of(context).push(
-                  MaterialPageRoute(
-                    builder: (context) => const IngredientsScreen(),
-                  ),
-                );
-              },
+              onPressed: () => _navigateToIngredients(context),
               child: Text(l10n.fallbackToIngredients),
             ),
           ],
@@ -100,102 +96,80 @@ class _EmptyProductsView extends StatelessWidget {
   }
 }
 
-class _ProductsContent extends ConsumerWidget {
+/// 상품 목록 본문
+class _ProductsBody extends ConsumerWidget {
   final List<Product> products;
   final int selectedCount;
+  final AppLocalizations l10n;
 
-  const _ProductsContent({
+  const _ProductsBody({
     required this.products,
     required this.selectedCount,
+    required this.l10n,
   });
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
-    final l10n = AppLocalizations.of(context)!;
+    final theme = Theme.of(context);
 
     return Column(
       children: [
-        // Search Bar
+        // 검색바
         Padding(
-          padding: const EdgeInsets.all(16),
-          child: TextField(
-            decoration: InputDecoration(
-              hintText: l10n.searchProducts,
-              prefixIcon: const Icon(Icons.search),
-              suffixIcon: ref.watch(productSearchQueryProvider).isNotEmpty
-                  ? IconButton(
-                      icon: const Icon(Icons.clear),
-                      onPressed: () {
-                        ref.read(productSearchQueryProvider.notifier).state = '';
-                      },
-                    )
-                  : null,
-            ),
-            onChanged: (value) {
-              ref.read(productSearchQueryProvider.notifier).state = value;
-            },
+          padding: const EdgeInsets.fromLTRB(16, 16, 16, 8),
+          child: SearchBarField(
+            hintText: l10n.searchProducts,
+            searchQueryProvider: productSearchQueryProvider,
           ),
         ),
 
-        // Selected count
-        if (selectedCount > 0)
-          Padding(
-            padding: const EdgeInsets.symmetric(horizontal: 16),
-            child: Row(
-              children: [
+        // 선택 개수 + 재료로 선택하기 버튼
+        Padding(
+          padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
+          child: Row(
+            children: [
+              if (selectedCount > 0)
                 Chip(
-                  avatar: const Icon(Icons.check_circle, size: 18),
+                  avatar: Icon(
+                    Icons.check_circle,
+                    size: 18,
+                    color: theme.colorScheme.primary,
+                  ),
                   label: Text(l10n.productsSelected(selectedCount)),
-                  backgroundColor: Theme.of(context).colorScheme.primaryContainer,
+                  backgroundColor: theme.colorScheme.primaryContainer,
                 ),
-                const Spacer(),
-                TextButton.icon(
-                  onPressed: () {
-                    Navigator.of(context).push(
-                      MaterialPageRoute(
-                        builder: (context) => const IngredientsScreen(),
-                      ),
-                    );
-                  },
-                  icon: const Icon(Icons.add, size: 18),
-                  label: Text(l10n.fallbackToIngredients),
-                ),
-              ],
-            ),
+              const Spacer(),
+              TextButton.icon(
+                onPressed: () => _navigateToIngredients(context),
+                icon: const Icon(Icons.category_outlined, size: 18),
+                label: Text(l10n.fallbackToIngredients),
+              ),
+            ],
           ),
+        ),
 
-        // Product Grid
+        // 상품 그리드
         Expanded(
-          child: _ProductGrid(products: products),
+          child: GridView.builder(
+            padding: const EdgeInsets.all(16),
+            gridDelegate: const SliverGridDelegateWithFixedCrossAxisCount(
+              crossAxisCount: 2,
+              childAspectRatio: 0.72,
+              crossAxisSpacing: 12,
+              mainAxisSpacing: 12,
+            ),
+            itemCount: products.length,
+            itemBuilder: (context, index) {
+              return _ProductCard(product: products[index]);
+            },
+          ),
         ),
       ],
     );
   }
 }
 
-class _ProductGrid extends ConsumerWidget {
-  final List<Product> products;
-
-  const _ProductGrid({required this.products});
-
-  @override
-  Widget build(BuildContext context, WidgetRef ref) {
-    return GridView.builder(
-      padding: const EdgeInsets.all(16),
-      gridDelegate: const SliverGridDelegateWithFixedCrossAxisCount(
-        crossAxisCount: 2,
-        childAspectRatio: 0.75,
-        crossAxisSpacing: 12,
-        mainAxisSpacing: 12,
-      ),
-      itemCount: products.length,
-      itemBuilder: (context, index) {
-        return _ProductCard(product: products[index]);
-      },
-    );
-  }
-}
-
+/// 상품 카드 위젯
 class _ProductCard extends ConsumerWidget {
   final Product product;
 
@@ -208,6 +182,7 @@ class _ProductCard extends ConsumerWidget {
 
     return Card(
       clipBehavior: Clip.antiAlias,
+      elevation: isSelected ? 4 : 1,
       shape: RoundedRectangleBorder(
         borderRadius: BorderRadius.circular(12),
         side: isSelected
@@ -221,80 +196,114 @@ class _ProductCard extends ConsumerWidget {
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.stretch,
           children: [
-            // Image
+            // 상단: 상품명 + 선택 인디케이터
+            _buildHeader(theme, isSelected),
+
+            // 중앙: 이미지
             Expanded(
-              flex: 3,
-              child: Stack(
-                fit: StackFit.expand,
-                children: [
-                  ProductImage(
-                    product: product,
-                    mode: ImageDisplayMode.thumbnail,
-                  ),
-                  if (isSelected)
-                    Positioned(
-                      top: 8,
-                      right: 8,
-                      child: Container(
-                        padding: const EdgeInsets.all(4),
-                        decoration: BoxDecoration(
-                          color: theme.colorScheme.primary,
-                          shape: BoxShape.circle,
-                        ),
-                        child: Icon(
-                          Icons.check,
-                          size: 16,
-                          color: theme.colorScheme.onPrimary,
-                        ),
-                      ),
-                    ),
-                ],
-              ),
-            ),
-            // Info
-            Expanded(
-              flex: 2,
               child: Padding(
-                padding: const EdgeInsets.all(8),
-                child: Column(
-                  crossAxisAlignment: CrossAxisAlignment.start,
-                  children: [
-                    if (product.brand != null)
-                      Text(
-                        product.brand!,
-                        style: theme.textTheme.labelSmall?.copyWith(
-                          color: theme.colorScheme.primary,
-                        ),
-                        maxLines: 1,
-                        overflow: TextOverflow.ellipsis,
-                      ),
-                    Text(
-                      product.name,
-                      style: theme.textTheme.titleSmall,
-                      maxLines: 2,
-                      overflow: TextOverflow.ellipsis,
-                    ),
-                    const Spacer(),
-                    if (product.formattedVolume != null ||
-                        product.abv != null)
-                      Text(
-                        [
-                          if (product.formattedVolume != null)
-                            product.formattedVolume,
-                          if (product.abv != null) '${product.abv}%',
-                        ].join(' | '),
-                        style: theme.textTheme.bodySmall?.copyWith(
-                          color: theme.colorScheme.outline,
-                        ),
-                      ),
-                  ],
+                padding: const EdgeInsets.symmetric(horizontal: 12),
+                child: ProductImage(
+                  product: product,
+                  mode: ImageDisplayMode.thumbnail,
                 ),
               ),
             ),
+
+            // 하단: 브랜드 + 스펙
+            _buildFooter(theme),
           ],
         ),
       ),
     );
   }
+
+  /// 카드 헤더: 상품명 + 선택 인디케이터
+  Widget _buildHeader(ThemeData theme, bool isSelected) {
+    return Padding(
+      padding: const EdgeInsets.fromLTRB(12, 10, 8, 4),
+      child: Row(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          // 상품명
+          Expanded(
+            child: Text(
+              product.name,
+              style: theme.textTheme.titleSmall?.copyWith(
+                fontWeight: FontWeight.w600,
+              ),
+              maxLines: 2,
+              overflow: TextOverflow.ellipsis,
+            ),
+          ),
+          const SizedBox(width: 4),
+          // 선택 인디케이터
+          AnimatedSelectionIndicator(
+            isSelected: isSelected,
+            size: 22,
+          ),
+        ],
+      ),
+    );
+  }
+
+  /// 카드 푸터: 브랜드 + 용량/도수
+  Widget _buildFooter(ThemeData theme) {
+    final hasInfo = product.brand != null ||
+        product.formattedVolume != null ||
+        product.abv != null;
+
+    if (!hasInfo) {
+      return const SizedBox(height: 8);
+    }
+
+    return Padding(
+      padding: const EdgeInsets.fromLTRB(12, 4, 12, 10),
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        mainAxisSize: MainAxisSize.min,
+        children: [
+          // 브랜드
+          if (product.brand != null)
+            Text(
+              product.brand!,
+              style: theme.textTheme.labelSmall?.copyWith(
+                color: theme.colorScheme.primary,
+              ),
+              maxLines: 1,
+              overflow: TextOverflow.ellipsis,
+            ),
+          // 용량 | 도수
+          if (product.formattedVolume != null || product.abv != null)
+            Text(
+              _formatSpecs(),
+              style: theme.textTheme.bodySmall?.copyWith(
+                color: theme.colorScheme.outline,
+              ),
+            ),
+        ],
+      ),
+    );
+  }
+
+  /// 용량/도수 포맷팅
+  String _formatSpecs() {
+    final specs = <String>[];
+    if (product.formattedVolume != null) {
+      specs.add(product.formattedVolume!);
+    }
+    if (product.abv != null) {
+      specs.add('${product.abv}%');
+    }
+    return specs.join(' | ');
+  }
 }
 
+/// 재료 선택 화면으로 이동
+void _navigateToIngredients(BuildContext context) {
+  Navigator.of(context).push(
+    MaterialPageRoute(
+      builder: (context) => const IngredientsScreen(),
+    ),
+  );
+}

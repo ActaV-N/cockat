@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 
+import '../../core/utils/unit_converter.dart';
 import '../../core/widgets/widgets.dart';
 import '../../data/models/models.dart';
 import '../../data/providers/providers.dart';
@@ -220,6 +221,7 @@ class _IngredientsList extends ConsumerWidget {
   @override
   Widget build(BuildContext context, WidgetRef ref) {
     final selectedIngredients = ref.watch(allSelectedIngredientIdsProvider);
+    final userUnit = ref.watch(effectiveUnitSystemProvider);
 
     return Card(
       child: Column(
@@ -234,7 +236,14 @@ class _IngredientsList extends ConsumerWidget {
                   : Theme.of(context).colorScheme.outline,
             ),
             title: Text(ingredient.name),
-            subtitle: Text(ingredient.formattedAmount),
+            subtitle: Text(
+              UnitConverter.formatAmount(
+                ingredient.amount,
+                ingredient.units,
+                userUnit,
+                amountMax: ingredient.amountMax,
+              ),
+            ),
             trailing: ingredient.optional
                 ? Chip(
                     label: Text(l10n.optional),
@@ -322,11 +331,9 @@ class _FavoriteButton extends ConsumerWidget {
         isFavorite ? Icons.favorite : Icons.favorite_border,
         color: isFavorite ? Colors.red : null,
       ),
-      onPressed: () async {
+      onPressed: () {
         final favoritesService = ref.read(effectiveFavoritesServiceProvider);
-        final result = await favoritesService.toggle(cocktailId);
-
-        if (!context.mounted) return;
+        final result = favoritesService.toggle(cocktailId);
 
         switch (result) {
           case FavoriteResult.added:
