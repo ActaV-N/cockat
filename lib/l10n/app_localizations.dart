@@ -421,6 +421,54 @@ abstract class AppLocalizations {
   /// In en, this message translates to:
   /// **'All Cocktails'**
   String get allCocktails;
+
+  /// No description provided for @favorites.
+  ///
+  /// In en, this message translates to:
+  /// **'Favorites'**
+  String get favorites;
+
+  /// No description provided for @addedToFavorites.
+  ///
+  /// In en, this message translates to:
+  /// **'Added to favorites'**
+  String get addedToFavorites;
+
+  /// No description provided for @removedFromFavorites.
+  ///
+  /// In en, this message translates to:
+  /// **'Removed from favorites'**
+  String get removedFromFavorites;
+
+  /// No description provided for @favoritesLimitReached.
+  ///
+  /// In en, this message translates to:
+  /// **'Favorites limit reached ({max}). Sign up for unlimited favorites!'**
+  String favoritesLimitReached(int max);
+
+  /// No description provided for @favoritesCount.
+  ///
+  /// In en, this message translates to:
+  /// **'{count} favorites'**
+  String favoritesCount(int count);
+
+  /// No description provided for @noFavorites.
+  ///
+  /// In en, this message translates to:
+  /// **'No favorites yet'**
+  String get noFavorites;
+
+  /// No description provided for @noFavoritesPrompt.
+  ///
+  /// In en, this message translates to:
+  /// **'Tap the heart icon on a cocktail to add it to your favorites'**
+  String get noFavoritesPrompt;
+
+  /// No description provided for @signUpForMore.
+  ///
+  /// In en, this message translates to:
+  /// **'Sign up for more'**
+  String get signUpForMore;
 }
 
 class _AppLocalizationsDelegate

@@ -187,4 +187,33 @@ class AppLocalizationsEn extends AppLocalizations {
 
   @override
   String get allCocktails => 'All Cocktails';
+
+  @override
+  String get favorites => 'Favorites';
+
+  @override
+  String get addedToFavorites => 'Added to favorites';
+
+  @override
+  String get removedFromFavorites => 'Removed from favorites';
+
+  @override
+  String favoritesLimitReached(int max) {
+    return 'Favorites limit reached ($max). Sign up for unlimited favorites!';
+  }
+
+  @override
+  String favoritesCount(int count) {
+    return '$count favorites';
+  }
+
+  @override
+  String get noFavorites => 'No favorites yet';
+
+  @override
+  String get noFavoritesPrompt =>
+      'Tap the heart icon on a cocktail to add it to your favorites';
+
+  @override
+  String get signUpForMore => 'Sign up for more';
 }

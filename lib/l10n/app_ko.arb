@@ -53,5 +53,13 @@
   "mapsTo": "종류: {ingredient}",
   "noProductsAvailable": "아직 등록된 상품이 없어요",
   "fallbackToIngredients": "재료 종류로 선택하기",
-  "allCocktails": "전체 칵테일"
+  "allCocktails": "전체 칵테일",
+  "favorites": "즐겨찾기",
+  "addedToFavorites": "즐겨찾기에 추가됨",
+  "removedFromFavorites": "즐겨찾기에서 제거됨",
+  "favoritesLimitReached": "즐겨찾기가 가득 찼어요 ({max}개). 회원가입하면 무제한으로 저장할 수 있어요!",
+  "favoritesCount": "즐겨찾기 {count}개",
+  "noFavorites": "즐겨찾기가 없어요",
+  "noFavoritesPrompt": "칵테일의 하트 아이콘을 눌러 즐겨찾기에 추가하세요",
+  "signUpForMore": "회원가입하고 더 이용하기"
 }

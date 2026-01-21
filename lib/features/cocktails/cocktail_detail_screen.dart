@@ -31,6 +31,9 @@ class CocktailDetailScreen extends ConsumerWidget {
               SliverAppBar(
                 expandedHeight: 200,
                 pinned: true,
+                actions: [
+                  _FavoriteButton(cocktailId: cocktail.id),
+                ],
                 flexibleSpace: FlexibleSpaceBar(
                   title: Text(
                     cocktail.name,
@@ -229,7 +232,7 @@ class _IngredientsList extends ConsumerWidget {
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
-    final selectedIngredients = ref.watch(selectedIngredientsProvider);
+    final selectedIngredients = ref.watch(allSelectedIngredientIdsProvider);
 
     return Card(
       child: Column(
@@ -311,6 +314,66 @@ class _InstructionsCard extends StatelessWidget {
           }).toList(),
         ),
       ),
+    );
+  }
+}
+
+class _FavoriteButton extends ConsumerWidget {
+  final String cocktailId;
+
+  const _FavoriteButton({required this.cocktailId});
+
+  @override
+  Widget build(BuildContext context, WidgetRef ref) {
+    final isFavorite = ref.watch(isFavoriteProvider(cocktailId));
+    final l10n = AppLocalizations.of(context)!;
+
+    return IconButton(
+      icon: Icon(
+        isFavorite ? Icons.favorite : Icons.favorite_border,
+        color: isFavorite ? Colors.red : null,
+      ),
+      onPressed: () async {
+        final notifier = ref.read(favoriteCocktailsProvider.notifier);
+        final result = await notifier.toggle(cocktailId);
+
+        if (!context.mounted) return;
+
+        switch (result) {
+          case FavoriteResult.added:
+            ScaffoldMessenger.of(context).showSnackBar(
+              SnackBar(
+                content: Text(l10n.addedToFavorites),
+                duration: const Duration(seconds: 2),
+              ),
+            );
+            break;
+          case FavoriteResult.removed:
+            ScaffoldMessenger.of(context).showSnackBar(
+              SnackBar(
+                content: Text(l10n.removedFromFavorites),
+                duration: const Duration(seconds: 2),
+              ),
+            );
+            break;
+          case FavoriteResult.limitReached:
+            ScaffoldMessenger.of(context).showSnackBar(
+              SnackBar(
+                content: Text(l10n.favoritesLimitReached(kMaxFavoritesForGuest)),
+                duration: const Duration(seconds: 3),
+                action: SnackBarAction(
+                  label: l10n.signUpForMore,
+                  onPressed: () {
+                    // TODO: Navigate to sign up screen
+                  },
+                ),
+              ),
+            );
+            break;
+          case FavoriteResult.alreadyExists:
+            break;
+        }
+      },
     );
   }
 }

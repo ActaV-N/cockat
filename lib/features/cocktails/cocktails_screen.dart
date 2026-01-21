@@ -47,10 +47,25 @@ class CocktailsScreen extends ConsumerWidget {
           Expanded(
             child: matchesAsync.when(
               data: (matches) {
+                final favoritesAsync = ref.watch(favoriteCocktailMatchesProvider);
+                final favorites = favoritesAsync.valueOrNull ?? [];
+                final searchQuery = ref.watch(cocktailSearchQueryProvider);
+                final showFavorites = searchQuery.isEmpty && favorites.isNotEmpty;
+
                 // When no products selected, show all cocktails
                 if (selectedCount == 0) {
                   return CustomScrollView(
                     slivers: [
+                      // Favorites Section (when not searching)
+                      if (showFavorites) ...[
+                        _SectionHeader(
+                          title: l10n.favorites,
+                          count: favorites.length,
+                          color: Colors.red,
+                        ),
+                        _CocktailGrid(matches: favorites, showStatus: false),
+                      ],
+
                       _SectionHeader(
                         title: l10n.allCocktails,
                         count: matches.length,
@@ -68,6 +83,16 @@ class CocktailsScreen extends ConsumerWidget {
 
                 return CustomScrollView(
                   slivers: [
+                    // Favorites Section (when not searching)
+                    if (showFavorites) ...[
+                      _SectionHeader(
+                        title: l10n.favorites,
+                        count: favorites.length,
+                        color: Colors.red,
+                      ),
+                      _CocktailGrid(matches: favorites),
+                    ],
+
                     // Can Make Section
                     if (canMake.isNotEmpty) ...[
                       _SectionHeader(

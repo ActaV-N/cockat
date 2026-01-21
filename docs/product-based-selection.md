@@ -325,7 +325,7 @@ WHERE p.is_default = true;  -- 각 재료당 기본 상품 지정
 
 ## 참고 자료
 
-- [Open Food Facts API](https://wiki.openfoodfacts.org/API)
+- [Open Food Facts API](https://openfoodfacts.github.io/openfoodfacts-server/api/)
 - [Supabase Storage](https://supabase.com/docs/guides/storage)
 - [mobile_scanner 패키지](https://pub.dev/packages/mobile_scanner)
 - [cached_network_image](https://pub.dev/packages/cached_network_image)

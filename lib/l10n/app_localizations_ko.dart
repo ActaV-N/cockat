@@ -185,4 +185,32 @@ class AppLocalizationsKo extends AppLocalizations {
 
   @override
   String get allCocktails => '전체 칵테일';
+
+  @override
+  String get favorites => '즐겨찾기';
+
+  @override
+  String get addedToFavorites => '즐겨찾기에 추가됨';
+
+  @override
+  String get removedFromFavorites => '즐겨찾기에서 제거됨';
+
+  @override
+  String favoritesLimitReached(int max) {
+    return '즐겨찾기가 가득 찼어요 ($max개). 회원가입하면 무제한으로 저장할 수 있어요!';
+  }
+
+  @override
+  String favoritesCount(int count) {
+    return '즐겨찾기 $count개';
+  }
+
+  @override
+  String get noFavorites => '즐겨찾기가 없어요';
+
+  @override
+  String get noFavoritesPrompt => '칵테일의 하트 아이콘을 눌러 즐겨찾기에 추가하세요';
+
+  @override
+  String get signUpForMore => '회원가입하고 더 이용하기';
 }

@@ -112,5 +112,27 @@
   },
   "noProductsAvailable": "No products available yet",
   "fallbackToIngredients": "Select by ingredient type instead",
-  "allCocktails": "All Cocktails"
+  "allCocktails": "All Cocktails",
+  "favorites": "Favorites",
+  "addedToFavorites": "Added to favorites",
+  "removedFromFavorites": "Removed from favorites",
+  "favoritesLimitReached": "Favorites limit reached ({max}). Sign up for unlimited favorites!",
+  "@favoritesLimitReached": {
+    "placeholders": {
+      "max": {
+        "type": "int"
+      }
+    }
+  },
+  "favoritesCount": "{count} favorites",
+  "@favoritesCount": {
+    "placeholders": {
+      "count": {
+        "type": "int"
+      }
+    }
+  },
+  "noFavorites": "No favorites yet",
+  "noFavoritesPrompt": "Tap the heart icon on a cocktail to add it to your favorites",
+  "signUpForMore": "Sign up for more"
 }
