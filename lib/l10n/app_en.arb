@@ -232,5 +232,34 @@
   "benefitFavorites": "Unlimited favorites",
   "benefitBackup": "Backup your bar",
   "allSet": "You're all set!",
-  "dataSyncMessage": "Your data will be synced across devices"
+  "dataSyncMessage": "Your data will be synced across devices",
+  "signUpSyncPrompt": "Sign up to sync your {count} selected items!",
+  "@signUpSyncPrompt": {
+    "placeholders": {
+      "count": {
+        "type": "int"
+      }
+    }
+  },
+  "loginClearDataNote": "Your local selections will be replaced with account data",
+  "general": "General",
+  "ingredientSettings": "Ingredient Settings",
+  "dataManagement": "Data Management",
+  "otherIngredients": "Other Ingredients",
+  "otherIngredientsDescription": "Manage ice, garnishes, mixers, and more",
+  "unitSettings": "Unit System",
+  "unitSettingsDescription": "Choose measurement units for recipes",
+  "resetSetupConfirm": "This will restart the setup process. Your selections will be reset. Continue?",
+  "unitChanged": "Unit system changed to {unit}",
+  "@unitChanged": {
+    "placeholders": {
+      "unit": {
+        "type": "String"
+      }
+    }
+  },
+  "cancel": "Cancel",
+  "confirm": "Confirm",
+  "mdsPick": "MD's Pick",
+  "viewAll": "View All"
 }

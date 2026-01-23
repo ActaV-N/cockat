@@ -477,4 +477,53 @@ class AppLocalizationsKo extends AppLocalizations {
 
   @override
   String get dataSyncMessage => '데이터가 여러 기기에서 동기화됩니다';
+
+  @override
+  String signUpSyncPrompt(int count) {
+    return '회원가입하면 선택한 $count개 항목을 연동할 수 있어요!';
+  }
+
+  @override
+  String get loginClearDataNote => '로그인하면 기존에 선택한 항목은 계정 데이터로 대체됩니다';
+
+  @override
+  String get general => '일반';
+
+  @override
+  String get ingredientSettings => '재료 설정';
+
+  @override
+  String get dataManagement => '데이터 관리';
+
+  @override
+  String get otherIngredients => '기타 재료';
+
+  @override
+  String get otherIngredientsDescription => '얼음, 가니시, 믹서 등을 관리합니다';
+
+  @override
+  String get unitSettings => '단위 설정';
+
+  @override
+  String get unitSettingsDescription => '레시피 측정 단위를 선택합니다';
+
+  @override
+  String get resetSetupConfirm => '초기 설정을 다시 시작합니다. 선택한 항목이 초기화됩니다. 계속하시겠습니까?';
+
+  @override
+  String unitChanged(String unit) {
+    return '단위가 $unit로 변경되었습니다';
+  }
+
+  @override
+  String get cancel => '취소';
+
+  @override
+  String get confirm => '확인';
+
+  @override
+  String get mdsPick => 'MD\'s Pick';
+
+  @override
+  String get viewAll => '더보기';
 }

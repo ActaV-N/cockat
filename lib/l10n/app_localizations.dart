@@ -973,6 +973,96 @@ abstract class AppLocalizations {
   /// In en, this message translates to:
   /// **'Your data will be synced across devices'**
   String get dataSyncMessage;
+
+  /// No description provided for @signUpSyncPrompt.
+  ///
+  /// In en, this message translates to:
+  /// **'Sign up to sync your {count} selected items!'**
+  String signUpSyncPrompt(int count);
+
+  /// No description provided for @loginClearDataNote.
+  ///
+  /// In en, this message translates to:
+  /// **'Your local selections will be replaced with account data'**
+  String get loginClearDataNote;
+
+  /// No description provided for @general.
+  ///
+  /// In en, this message translates to:
+  /// **'General'**
+  String get general;
+
+  /// No description provided for @ingredientSettings.
+  ///
+  /// In en, this message translates to:
+  /// **'Ingredient Settings'**
+  String get ingredientSettings;
+
+  /// No description provided for @dataManagement.
+  ///
+  /// In en, this message translates to:
+  /// **'Data Management'**
+  String get dataManagement;
+
+  /// No description provided for @otherIngredients.
+  ///
+  /// In en, this message translates to:
+  /// **'Other Ingredients'**
+  String get otherIngredients;
+
+  /// No description provided for @otherIngredientsDescription.
+  ///
+  /// In en, this message translates to:
+  /// **'Manage ice, garnishes, mixers, and more'**
+  String get otherIngredientsDescription;
+
+  /// No description provided for @unitSettings.
+  ///
+  /// In en, this message translates to:
+  /// **'Unit System'**
+  String get unitSettings;
+
+  /// No description provided for @unitSettingsDescription.
+  ///
+  /// In en, this message translates to:
+  /// **'Choose measurement units for recipes'**
+  String get unitSettingsDescription;
+
+  /// No description provided for @resetSetupConfirm.
+  ///
+  /// In en, this message translates to:
+  /// **'This will restart the setup process. Your selections will be reset. Continue?'**
+  String get resetSetupConfirm;
+
+  /// No description provided for @unitChanged.
+  ///
+  /// In en, this message translates to:
+  /// **'Unit system changed to {unit}'**
+  String unitChanged(String unit);
+
+  /// No description provided for @cancel.
+  ///
+  /// In en, this message translates to:
+  /// **'Cancel'**
+  String get cancel;
+
+  /// No description provided for @confirm.
+  ///
+  /// In en, this message translates to:
+  /// **'Confirm'**
+  String get confirm;
+
+  /// No description provided for @mdsPick.
+  ///
+  /// In en, this message translates to:
+  /// **'MD\'s Pick'**
+  String get mdsPick;
+
+  /// No description provided for @viewAll.
+  ///
+  /// In en, this message translates to:
+  /// **'View All'**
+  String get viewAll;
 }
 
 class _AppLocalizationsDelegate

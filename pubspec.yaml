@@ -33,6 +33,9 @@ dependencies:
   # Image Caching
   cached_network_image: ^3.4.1
 
+  # Carousel
+  carousel_slider: ^5.0.0
+
   # Navigation
   go_router: ^14.8.1
 

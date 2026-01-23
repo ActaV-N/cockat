@@ -145,5 +145,20 @@
   "benefitFavorites": "무제한 즐겨찾기",
   "benefitBackup": "내 술장 백업",
   "allSet": "준비 완료!",
-  "dataSyncMessage": "데이터가 여러 기기에서 동기화됩니다"
+  "dataSyncMessage": "데이터가 여러 기기에서 동기화됩니다",
+  "signUpSyncPrompt": "회원가입하면 선택한 {count}개 항목을 연동할 수 있어요!",
+  "loginClearDataNote": "로그인하면 기존에 선택한 항목은 계정 데이터로 대체됩니다",
+  "general": "일반",
+  "ingredientSettings": "재료 설정",
+  "dataManagement": "데이터 관리",
+  "otherIngredients": "기타 재료",
+  "otherIngredientsDescription": "얼음, 가니시, 믹서 등을 관리합니다",
+  "unitSettings": "단위 설정",
+  "unitSettingsDescription": "레시피 측정 단위를 선택합니다",
+  "resetSetupConfirm": "초기 설정을 다시 시작합니다. 선택한 항목이 초기화됩니다. 계속하시겠습니까?",
+  "unitChanged": "단위가 {unit}로 변경되었습니다",
+  "cancel": "취소",
+  "confirm": "확인",
+  "mdsPick": "MD's Pick",
+  "viewAll": "더보기"
 }

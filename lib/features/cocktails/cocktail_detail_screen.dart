@@ -29,10 +29,11 @@ class CocktailDetailScreen extends ConsumerWidget {
         return Scaffold(
           body: CustomScrollView(
             slivers: [
-              // App Bar
+              // App Bar with expanded image
               SliverAppBar(
-                expandedHeight: 200,
+                expandedHeight: 350,
                 pinned: true,
+                stretch: true,
                 actions: [
                   _FavoriteButton(cocktailId: cocktail.id),
                 ],
@@ -41,12 +42,40 @@ class CocktailDetailScreen extends ConsumerWidget {
                     cocktail.name,
                     style: const TextStyle(
                       fontWeight: FontWeight.bold,
+                      shadows: [
+                        Shadow(
+                          offset: Offset(0, 1),
+                          blurRadius: 4,
+                          color: Colors.black54,
+                        ),
+                      ],
                     ),
                   ),
-                  background: CocktailImage(
-                    cocktail: cocktail,
-                    mode: ImageDisplayMode.full,
-                    fit: BoxFit.cover,
+                  titlePadding: const EdgeInsets.only(left: 16, bottom: 16, right: 48),
+                  background: Stack(
+                    fit: StackFit.expand,
+                    children: [
+                      CocktailImage(
+                        cocktail: cocktail,
+                        mode: ImageDisplayMode.full,
+                        fit: BoxFit.cover,
+                      ),
+                      // Gradient overlay for better text readability
+                      Container(
+                        decoration: BoxDecoration(
+                          gradient: LinearGradient(
+                            begin: Alignment.topCenter,
+                            end: Alignment.bottomCenter,
+                            colors: [
+                              Colors.transparent,
+                              Colors.transparent,
+                              Colors.black.withValues(alpha: 0.7),
+                            ],
+                            stops: const [0.0, 0.5, 1.0],
+                          ),
+                        ),
+                      ),
+                    ],
                   ),
                 ),
               ),

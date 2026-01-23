@@ -60,6 +60,28 @@ final cocktailByIdProvider = Provider.family<AsyncValue<Cocktail?>, String>((ref
       );
 });
 
+// Featured cocktail IDs (MD's Pick) - hardcoded selection
+const featuredCocktailIds = [
+  'negroni',
+  'mojito',
+  'margarita',
+  'old-fashioned',
+  'espresso-martini',
+  'cosmopolitan',
+  'aperol-spritz',
+  'moscow-mule',
+];
+
+// Featured cocktails provider
+final featuredCocktailsProvider = Provider<AsyncValue<List<Cocktail>>>((ref) {
+  return ref.watch(cocktailsProvider).whenData(
+        (cocktails) => featuredCocktailIds
+            .map((id) => cocktails.firstWhereOrNull((c) => c.id == id))
+            .whereType<Cocktail>()
+            .toList(),
+      );
+});
+
 /// Combined ingredient IDs from both products and direct ingredient selection
 /// This allows both methods to work together
 /// 자동으로 비회원/회원 데이터 소스를 분기

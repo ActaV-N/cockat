@@ -487,4 +487,56 @@ class AppLocalizationsEn extends AppLocalizations {
 
   @override
   String get dataSyncMessage => 'Your data will be synced across devices';
+
+  @override
+  String signUpSyncPrompt(int count) {
+    return 'Sign up to sync your $count selected items!';
+  }
+
+  @override
+  String get loginClearDataNote =>
+      'Your local selections will be replaced with account data';
+
+  @override
+  String get general => 'General';
+
+  @override
+  String get ingredientSettings => 'Ingredient Settings';
+
+  @override
+  String get dataManagement => 'Data Management';
+
+  @override
+  String get otherIngredients => 'Other Ingredients';
+
+  @override
+  String get otherIngredientsDescription =>
+      'Manage ice, garnishes, mixers, and more';
+
+  @override
+  String get unitSettings => 'Unit System';
+
+  @override
+  String get unitSettingsDescription => 'Choose measurement units for recipes';
+
+  @override
+  String get resetSetupConfirm =>
+      'This will restart the setup process. Your selections will be reset. Continue?';
+
+  @override
+  String unitChanged(String unit) {
+    return 'Unit system changed to $unit';
+  }
+
+  @override
+  String get cancel => 'Cancel';
+
+  @override
+  String get confirm => 'Confirm';
+
+  @override
+  String get mdsPick => 'MD\'s Pick';
+
+  @override
+  String get viewAll => 'View All';
 }
