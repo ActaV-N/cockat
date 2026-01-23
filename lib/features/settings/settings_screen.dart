@@ -4,7 +4,6 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import '../../data/providers/providers.dart';
 import '../../l10n/app_localizations.dart';
 import '../auth/login_screen.dart';
-import '../onboarding/onboarding_screen.dart';
 
 class SettingsScreen extends ConsumerWidget {
   const SettingsScreen({super.key});
@@ -25,8 +24,11 @@ class SettingsScreen extends ConsumerWidget {
           _AccountSection(),
           const Divider(),
 
-          // Theme Section
-          _SectionHeader(title: l10n.theme),
+          // General Section (Theme & Language)
+          _SectionHeader(title: l10n.general),
+
+          // Theme
+          _SubSectionHeader(title: l10n.theme),
           _ThemeTile(
             title: l10n.systemMode,
             icon: Icons.brightness_auto,
@@ -52,10 +54,10 @@ class SettingsScreen extends ConsumerWidget {
             },
           ),
 
-          const Divider(),
+          const SizedBox(height: 8),
 
-          // Language Section
-          _SectionHeader(title: l10n.language),
+          // Language
+          _SubSectionHeader(title: l10n.language),
           _LanguageTile(
             title: 'System',
             subtitle: 'Use system language',
@@ -83,50 +85,6 @@ class SettingsScreen extends ConsumerWidget {
 
           const Divider(),
 
-          // Setup Section
-          _SectionHeader(title: 'Setup'),
-          ListTile(
-            leading: const Icon(Icons.refresh),
-            title: Text(l10n.reRunSetup),
-            subtitle: Text(l10n.reRunSetupDescription),
-            onTap: () async {
-              final confirmed = await showDialog<bool>(
-                context: context,
-                builder: (context) => AlertDialog(
-                  title: Text(l10n.reRunSetup),
-                  content: Text(l10n.reRunSetupDescription),
-                  actions: [
-                    TextButton(
-                      onPressed: () => Navigator.pop(context, false),
-                      child: Text(l10n.skip),
-                    ),
-                    FilledButton(
-                      onPressed: () => Navigator.pop(context, true),
-                      child: Text(l10n.getStarted),
-                    ),
-                  ],
-                ),
-              );
-
-              if (confirmed == true && context.mounted) {
-                await ref.read(onboardingServiceProvider).resetOnboarding();
-                if (context.mounted) {
-                  ScaffoldMessenger.of(context).showSnackBar(
-                    SnackBar(content: Text(l10n.setupReset)),
-                  );
-                  Navigator.of(context).pushAndRemoveUntil(
-                    MaterialPageRoute(
-                      builder: (_) => const OnboardingScreen(),
-                    ),
-                    (route) => false,
-                  );
-                }
-              }
-            },
-          ),
-
-          const Divider(),
-
           // About Section
           _SectionHeader(title: l10n.about),
           ListTile(
@@ -141,6 +99,8 @@ class SettingsScreen extends ConsumerWidget {
               // Could open URL to Bar Assistant repo
             },
           ),
+
+          const SizedBox(height: 32),
         ],
       ),
     );
@@ -161,6 +121,26 @@ class _SectionHeader extends StatelessWidget {
         style: Theme.of(context).textTheme.titleSmall?.copyWith(
               color: Theme.of(context).colorScheme.primary,
               fontWeight: FontWeight.bold,
+            ),
+      ),
+    );
+  }
+}
+
+class _SubSectionHeader extends StatelessWidget {
+  final String title;
+
+  const _SubSectionHeader({required this.title});
+
+  @override
+  Widget build(BuildContext context) {
+    return Padding(
+      padding: const EdgeInsets.fromLTRB(16, 8, 16, 4),
+      child: Text(
+        title,
+        style: Theme.of(context).textTheme.bodySmall?.copyWith(
+              color: Theme.of(context).colorScheme.onSurfaceVariant,
+              fontWeight: FontWeight.w500,
             ),
       ),
     );
@@ -248,35 +228,6 @@ class _AccountSection extends ConsumerWidget {
             ),
             title: Text(user.email ?? ''),
             subtitle: Text(l10n.account),
-          ),
-          ListTile(
-            leading: const Icon(Icons.sync),
-            title: Text(l10n.syncData),
-            subtitle: Text(l10n.comingSoon),
-            onTap: () {
-              ScaffoldMessenger.of(context).showSnackBar(
-                SnackBar(content: Text(l10n.featureComingSoon)),
-              );
-            },
-          ),
-          ListTile(
-            leading: Icon(
-              Icons.logout,
-              color: theme.colorScheme.error,
-            ),
-            title: Text(
-              l10n.logout,
-              style: TextStyle(color: theme.colorScheme.error),
-            ),
-            onTap: () async {
-              final authService = ref.read(authServiceProvider);
-              await authService.signOut();
-              if (context.mounted) {
-                ScaffoldMessenger.of(context).showSnackBar(
-                  SnackBar(content: Text(l10n.logoutSuccess)),
-                );
-              }
-            },
           ),
         ] else ...[
           ListTile(

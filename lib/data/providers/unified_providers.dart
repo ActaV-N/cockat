@@ -6,6 +6,7 @@ import 'auth_provider.dart';
 import 'cocktail_provider.dart';
 import 'favorites_provider.dart';
 import 'ingredient_provider.dart';
+import 'misc_item_provider.dart';
 import 'product_provider.dart';
 
 /// ============================================================
@@ -163,16 +164,18 @@ final effectiveIngredientIdsFromProductsProvider = Provider<Set<String>>((ref) {
   return ingredientIds;
 });
 
-/// 칵테일 매칭용 통합 재료 ID (상품 + 직접선택)
+/// 칵테일 매칭용 통합 재료 ID (상품 + 직접선택 + 기타재료)
 /// Stream providers를 watch하여 실시간 업데이트 보장
 final effectiveAllIngredientIdsProvider = Provider<Set<String>>((ref) {
   // Watch stream providers to ensure real-time updates for authenticated users
   ref.watch(userIngredientsDbProvider);
   ref.watch(userProductsDbProvider);
+  ref.watch(userMiscItemsDbProvider);
 
   final fromProducts = ref.watch(effectiveIngredientIdsFromProductsProvider);
   final directSelection = ref.watch(effectiveSelectedIngredientsProvider);
-  return {...fromProducts, ...directSelection};
+  final miscItems = ref.watch(effectiveSelectedMiscItemsProvider);
+  return {...fromProducts, ...directSelection, ...miscItems};
 });
 
 /// 통합 선택 개수 (상품 + 직접선택 재료)

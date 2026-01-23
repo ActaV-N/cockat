@@ -4,6 +4,7 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import '../models/models.dart';
 import 'auth_provider.dart';
 import 'ingredient_provider.dart';
+import 'misc_item_provider.dart';
 import 'product_provider.dart';
 import 'unified_providers.dart';
 
@@ -92,10 +93,11 @@ final allSelectedIngredientIdsProvider = Provider<Set<String>>((ref) {
     // 회원: 통합 Provider 사용
     return ref.watch(effectiveAllIngredientIdsProvider);
   } else {
-    // 비회원: 로컬 Provider 사용
+    // 비회원: 로컬 Provider 사용 (상품 + 직접선택 + 기타재료)
     final fromProducts = ref.watch(ingredientIdsFromProductsProvider);
     final directSelection = ref.watch(selectedIngredientsProvider);
-    return {...fromProducts, ...directSelection};
+    final miscItems = ref.watch(selectedMiscItemsLocalProvider);
+    return {...fromProducts, ...directSelection, ...miscItems};
   }
 });
 
