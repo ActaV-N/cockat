@@ -1,11 +1,12 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 
-import '../../core/utils/unit_converter.dart';
+import '../../core/theme/app_colors.dart';
 import '../../core/widgets/widgets.dart';
 import '../../data/models/models.dart';
 import '../../data/providers/providers.dart';
 import '../../l10n/app_localizations.dart';
+import 'widgets/ingredient_availability_card.dart';
 
 class CocktailDetailScreen extends ConsumerWidget {
   final String cocktailId;
@@ -40,13 +41,13 @@ class CocktailDetailScreen extends ConsumerWidget {
                 flexibleSpace: FlexibleSpaceBar(
                   title: Text(
                     cocktail.name,
-                    style: const TextStyle(
+                    style: TextStyle(
                       fontWeight: FontWeight.bold,
                       shadows: [
                         Shadow(
-                          offset: Offset(0, 1),
+                          offset: const Offset(0, 1),
                           blurRadius: 4,
-                          color: Colors.black54,
+                          color: AppColors.gray900.withValues(alpha: 0.54),
                         ),
                       ],
                     ),
@@ -69,7 +70,7 @@ class CocktailDetailScreen extends ConsumerWidget {
                             colors: [
                               Colors.transparent,
                               Colors.transparent,
-                              Colors.black.withValues(alpha: 0.7),
+                              AppColors.gray900.withValues(alpha: 0.7),
                             ],
                             stops: const [0.0, 0.5, 1.0],
                           ),
@@ -120,6 +121,7 @@ class CocktailDetailScreen extends ConsumerWidget {
                       _SectionTitle(title: l10n.ingredients),
                       const SizedBox(height: 8),
                       _IngredientsList(
+                        cocktailId: cocktail.id,
                         ingredients: cocktail.ingredients,
                         l10n: l10n,
                       ),
@@ -242,45 +244,57 @@ class _SectionTitle extends StatelessWidget {
 }
 
 class _IngredientsList extends ConsumerWidget {
+  final String cocktailId;
   final List<CocktailIngredient> ingredients;
   final AppLocalizations l10n;
 
-  const _IngredientsList({required this.ingredients, required this.l10n});
+  const _IngredientsList({
+    required this.cocktailId,
+    required this.ingredients,
+    required this.l10n,
+  });
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
-    final selectedIngredients = ref.watch(allSelectedIngredientIdsProvider);
+    final availabilityAsync =
+        ref.watch(cocktailIngredientAvailabilityProvider(cocktailId));
     final userUnit = ref.watch(effectiveUnitSystemProvider);
 
-    return Card(
-      child: Column(
-        children: ingredients.map((ingredient) {
-          final hasIngredient = selectedIngredients.contains(ingredient.id);
+    return availabilityAsync.when(
+      data: (availabilities) {
+        return Card(
+          child: Column(
+            children: ingredients.map((ingredient) {
+              final availability = availabilities.firstWhere(
+                (a) => a.ingredientId == ingredient.id,
+                orElse: () => IngredientAvailability(
+                  ingredientId: ingredient.id,
+                  ingredientName: ingredient.name,
+                  isOwned: false,
+                ),
+              );
 
-          return ListTile(
-            leading: Icon(
-              hasIngredient ? Icons.check_circle : Icons.circle_outlined,
-              color: hasIngredient
-                  ? Colors.green
-                  : Theme.of(context).colorScheme.outline,
-            ),
-            title: Text(ingredient.name),
-            subtitle: Text(
-              UnitConverter.formatAmount(
-                ingredient.amount,
-                ingredient.units,
-                userUnit,
-                amountMax: ingredient.amountMax,
-              ),
-            ),
-            trailing: ingredient.optional
-                ? Chip(
-                    label: Text(l10n.optional),
-                    visualDensity: VisualDensity.compact,
-                  )
-                : null,
-          );
-        }).toList(),
+              return IngredientAvailabilityCard(
+                ingredient: ingredient,
+                availability: availability,
+                userUnit: userUnit,
+                l10n: l10n,
+              );
+            }).toList(),
+          ),
+        );
+      },
+      loading: () => const Card(
+        child: Padding(
+          padding: EdgeInsets.all(24),
+          child: Center(child: CircularProgressIndicator()),
+        ),
+      ),
+      error: (error, stack) => Card(
+        child: Padding(
+          padding: const EdgeInsets.all(16),
+          child: Text('Error: $error'),
+        ),
       ),
     );
   }
@@ -358,7 +372,7 @@ class _FavoriteButton extends ConsumerWidget {
     return IconButton(
       icon: Icon(
         isFavorite ? Icons.favorite : Icons.favorite_border,
-        color: isFavorite ? Colors.red : null,
+        color: isFavorite ? AppColors.error : null,
       ),
       onPressed: () {
         final favoritesService = ref.read(effectiveFavoritesServiceProvider);

@@ -17,6 +17,7 @@ class _SplashScreenState extends ConsumerState<SplashScreen>
   late AnimationController _controller;
   late Animation<double> _fadeAnimation;
   late Animation<double> _scaleAnimation;
+  bool _navigationDone = false;
 
   @override
   void initState() {
@@ -42,16 +43,47 @@ class _SplashScreenState extends ConsumerState<SplashScreen>
 
     _controller.forward();
 
-    // Navigate after animation completes
-    Future.delayed(const Duration(milliseconds: 2000), () {
-      if (mounted) {
-        _navigateToNextScreen();
+    // Navigate after checking onboarding status
+    _checkAndNavigate();
+  }
+
+  Future<void> _checkAndNavigate() async {
+    // Minimum splash display time
+    await Future.delayed(const Duration(milliseconds: 1500));
+
+    // If authenticated, wait for DB loading to complete
+    if (ref.read(isAuthenticatedProvider)) {
+      final startTime = DateTime.now();
+      const timeout = Duration(seconds: 5);
+
+      // Wait for DB preferences to load (max 5 seconds)
+      while (DateTime.now().difference(startTime) < timeout) {
+        final dbPrefs = ref.read(userPreferencesDbProvider);
+        if (dbPrefs.hasValue || dbPrefs.hasError) {
+          break;
+        }
+        await Future.delayed(const Duration(milliseconds: 100));
       }
-    });
+    }
+
+    if (mounted && !_navigationDone) {
+      _navigationDone = true;
+      _navigateToNextScreen();
+    }
   }
 
   void _navigateToNextScreen() {
-    final onboardingCompleted = ref.read(effectiveOnboardingCompletedProvider);
+    final isAuthenticated = ref.read(isAuthenticatedProvider);
+    bool onboardingCompleted;
+
+    if (isAuthenticated) {
+      final dbPrefs = ref.read(userPreferencesDbProvider);
+      // Use DB value if available, otherwise fallback to local
+      onboardingCompleted = dbPrefs.valueOrNull?['onboarding_completed'] ??
+          ref.read(onboardingCompletedLocalProvider);
+    } else {
+      onboardingCompleted = ref.read(onboardingCompletedLocalProvider);
+    }
 
     final nextScreen = onboardingCompleted
         ? const HomeScreen()
@@ -98,26 +130,11 @@ class _SplashScreenState extends ConsumerState<SplashScreen>
           child: Column(
             mainAxisAlignment: MainAxisAlignment.center,
             children: [
-              // App Icon
-              Container(
-                width: 120,
-                height: 120,
-                decoration: BoxDecoration(
-                  color: colorScheme.primaryContainer,
-                  borderRadius: BorderRadius.circular(30),
-                  boxShadow: [
-                    BoxShadow(
-                      color: colorScheme.primary.withValues(alpha: 0.3),
-                      blurRadius: 20,
-                      offset: const Offset(0, 10),
-                    ),
-                  ],
-                ),
-                child: Icon(
-                  Icons.local_bar_rounded,
-                  size: 64,
-                  color: colorScheme.primary,
-                ),
+              // App Logo
+              Image.asset(
+                'assets/logos/cockat-transparent.png',
+                width: 150,
+                height: 150,
               ),
               const SizedBox(height: 24),
               // App Name

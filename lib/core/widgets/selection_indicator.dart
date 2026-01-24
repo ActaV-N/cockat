@@ -1,5 +1,7 @@
 import 'package:flutter/material.dart';
 
+import '../theme/app_colors.dart';
+
 class SelectionIndicator extends StatelessWidget {
   final bool isSelected;
   final double size;
@@ -38,7 +40,7 @@ class SelectionIndicator extends StatelessWidget {
         // Shadow for better visibility on any background
         boxShadow: [
           BoxShadow(
-            color: Colors.black.withValues(alpha: 0.2),
+            color: AppColors.gray900.withValues(alpha: 0.2),
             blurRadius: 4,
             offset: const Offset(0, 2),
           ),

@@ -1,5 +1,7 @@
 import 'package:flutter/material.dart';
 
+import '../theme/app_colors.dart';
+
 class AnimatedSelectionIndicator extends StatelessWidget {
   final bool isSelected;
   final double size;
@@ -21,16 +23,16 @@ class AnimatedSelectionIndicator extends StatelessWidget {
         shape: BoxShape.circle,
         color: isSelected
             ? theme.colorScheme.primary
-            : Colors.white.withValues(alpha: 0.9),
+            : AppColors.white.withValues(alpha: 0.9),
         border: Border.all(
           color: isSelected
-              ? Colors.white
+              ? AppColors.white
               : theme.colorScheme.outline,
           width: 2,
         ),
         boxShadow: [
           BoxShadow(
-            color: Colors.black.withValues(alpha: 0.4),
+            color: AppColors.gray900.withValues(alpha: 0.4),
             blurRadius: 6,
             offset: const Offset(0, 2),
           ),

@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 
+import '../../core/theme/app_colors.dart';
 import '../../core/widgets/widgets.dart';
 import '../../data/models/models.dart';
 import '../../l10n/app_localizations.dart';
@@ -170,13 +171,13 @@ class _CocktailCard extends StatelessWidget {
     final String label;
 
     if (match.canMake) {
-      color = Colors.green;
+      color = AppColors.success;
       label = l10n.canMake;
     } else if (match.missingCount == 1) {
-      color = Colors.orange;
+      color = AppColors.warning;
       label = l10n.oneMoreIngredient;
     } else {
-      color = Colors.grey;
+      color = AppColors.gray600;
       label = l10n.nMoreIngredients(match.missingCount);
     }
 
@@ -189,7 +190,7 @@ class _CocktailCard extends StatelessWidget {
       child: Text(
         label,
         style: Theme.of(context).textTheme.labelSmall?.copyWith(
-              color: Colors.white,
+              color: AppColors.white,
               fontWeight: FontWeight.w500,
             ),
       ),

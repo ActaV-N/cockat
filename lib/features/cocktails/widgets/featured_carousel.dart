@@ -2,6 +2,7 @@ import 'package:carousel_slider/carousel_slider.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 
+import '../../../core/theme/app_colors.dart';
 import '../../../core/widgets/widgets.dart';
 import '../../../data/models/models.dart';
 import '../../../data/providers/providers.dart';
@@ -32,12 +33,12 @@ class FeaturedCocktailCarousel extends ConsumerWidget {
                     width: 4,
                     height: 24,
                     decoration: BoxDecoration(
-                      color: Colors.amber,
+                      color: AppColors.coralPeach,
                       borderRadius: BorderRadius.circular(2),
                     ),
                   ),
                   const SizedBox(width: 8),
-                  const Icon(Icons.star, color: Colors.amber, size: 20),
+                  const Icon(Icons.star, color: AppColors.coralPeach, size: 20),
                   const SizedBox(width: 4),
                   Text(
                     l10n.mdsPick,
@@ -98,7 +99,7 @@ class _FeaturedCocktailCard extends StatelessWidget {
           borderRadius: BorderRadius.circular(16),
           boxShadow: [
             BoxShadow(
-              color: Colors.black.withValues(alpha: 0.2),
+              color: AppColors.gray900.withValues(alpha: 0.2),
               blurRadius: 8,
               offset: const Offset(0, 4),
             ),
@@ -123,7 +124,7 @@ class _FeaturedCocktailCard extends StatelessWidget {
                     end: Alignment.bottomCenter,
                     colors: [
                       Colors.transparent,
-                      Colors.black.withValues(alpha: 0.7),
+                      AppColors.gray900.withValues(alpha: 0.7),
                     ],
                     stops: const [0.5, 1.0],
                   ),
@@ -141,7 +142,7 @@ class _FeaturedCocktailCard extends StatelessWidget {
                     Text(
                       cocktail.name,
                       style: Theme.of(context).textTheme.titleLarge?.copyWith(
-                            color: Colors.white,
+                            color: AppColors.white,
                             fontWeight: FontWeight.bold,
                           ),
                       maxLines: 1,
@@ -151,16 +152,16 @@ class _FeaturedCocktailCard extends StatelessWidget {
                       const SizedBox(height: 4),
                       Row(
                         children: [
-                          const Icon(
+                          Icon(
                             Icons.local_bar,
-                            color: Colors.white70,
+                            color: AppColors.white.withValues(alpha: 0.7),
                             size: 14,
                           ),
                           const SizedBox(width: 4),
                           Text(
                             '${cocktail.abv!.toStringAsFixed(0)}% ABV',
                             style: Theme.of(context).textTheme.bodySmall?.copyWith(
-                                  color: Colors.white70,
+                                  color: AppColors.white.withValues(alpha: 0.7),
                                 ),
                           ),
                         ],

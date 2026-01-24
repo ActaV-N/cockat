@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 
+import '../../core/theme/app_colors.dart';
 import '../../core/widgets/widgets.dart';
 import '../../data/models/models.dart';
 import '../../data/providers/providers.dart';
@@ -215,12 +216,12 @@ class _SearchResults extends StatelessWidget {
   Widget? _buildStatusChip(
       BuildContext context, CocktailMatch match, AppLocalizations l10n) {
     if (match.canMake) {
-      return _StatusChip(label: l10n.canMake, color: Colors.green);
+      return _StatusChip(label: l10n.canMake, color: AppColors.success);
     } else if (match.missingCount == 1) {
-      return _StatusChip(label: l10n.oneMoreIngredient, color: Colors.orange);
+      return _StatusChip(label: l10n.oneMoreIngredient, color: AppColors.warning);
     } else if (match.missingCount > 1) {
       return _StatusChip(
-          label: l10n.nMoreIngredients(match.missingCount), color: Colors.grey);
+          label: l10n.nMoreIngredients(match.missingCount), color: AppColors.gray600);
     }
     return null;
   }

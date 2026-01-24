@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 
+import '../../core/theme/app_colors.dart';
 import '../../core/widgets/widgets.dart';
 import '../../data/models/models.dart';
 import '../../data/providers/providers.dart';
@@ -75,12 +76,12 @@ class CocktailsScreen extends ConsumerWidget {
                   _SectionHeader(
                     title: l10n.favorites,
                     count: favorites.length,
-                    color: Colors.red,
+                    color: AppColors.error,
                     onViewAll: () => _navigateToSection(
                       context,
                       l10n.favorites,
                       favorites,
-                      Colors.red,
+                      AppColors.error,
                       showStatus: false,
                     ),
                   ),
@@ -127,12 +128,12 @@ class CocktailsScreen extends ConsumerWidget {
                 _SectionHeader(
                   title: l10n.favorites,
                   count: favorites.length,
-                  color: Colors.red,
+                  color: AppColors.error,
                   onViewAll: () => _navigateToSection(
                     context,
                     l10n.favorites,
                     favorites,
-                    Colors.red,
+                    AppColors.error,
                   ),
                 ),
                 _CocktailGrid(matches: favorites.take(10).toList()),
@@ -143,12 +144,12 @@ class CocktailsScreen extends ConsumerWidget {
                 _SectionHeader(
                   title: l10n.canMake,
                   count: canMake.length,
-                  color: Colors.green,
+                  color: AppColors.success,
                   onViewAll: () => _navigateToSection(
                     context,
                     l10n.canMake,
                     canMake,
-                    Colors.green,
+                    AppColors.success,
                   ),
                 ),
                 _CocktailGrid(matches: canMake.take(10).toList()),
@@ -159,12 +160,12 @@ class CocktailsScreen extends ConsumerWidget {
                 _SectionHeader(
                   title: l10n.almostCanMake,
                   count: almostCanMake.length,
-                  color: Colors.orange,
+                  color: AppColors.warning,
                   onViewAll: () => _navigateToSection(
                     context,
                     l10n.almostCanMake,
                     almostCanMake,
-                    Colors.orange,
+                    AppColors.warning,
                   ),
                 ),
                 _CocktailGrid(matches: almostCanMake.take(10).toList()),
@@ -175,12 +176,12 @@ class CocktailsScreen extends ConsumerWidget {
                 _SectionHeader(
                   title: l10n.nMoreIngredients(2),
                   count: needMore.length,
-                  color: Colors.grey,
+                  color: AppColors.gray600,
                   onViewAll: () => _navigateToSection(
                     context,
                     l10n.nMoreIngredients(2),
                     needMore,
-                    Colors.grey,
+                    AppColors.gray600,
                   ),
                 ),
                 _CocktailGrid(matches: needMore.take(10).toList()),
@@ -392,13 +393,13 @@ class _CocktailCard extends StatelessWidget {
     final String label;
 
     if (match.canMake) {
-      color = Colors.green;
+      color = AppColors.success;
       label = l10n.canMake;
     } else if (match.missingCount == 1) {
-      color = Colors.orange;
+      color = AppColors.warning;
       label = l10n.oneMoreIngredient;
     } else {
-      color = Colors.grey;
+      color = AppColors.gray600;
       label = l10n.nMoreIngredients(match.missingCount);
     }
 
@@ -411,7 +412,7 @@ class _CocktailCard extends StatelessWidget {
       child: Text(
         label,
         style: Theme.of(context).textTheme.labelSmall?.copyWith(
-              color: Colors.white,
+              color: AppColors.white,
               fontWeight: FontWeight.w500,
             ),
       ),
