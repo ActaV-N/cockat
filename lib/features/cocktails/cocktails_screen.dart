@@ -36,7 +36,7 @@ class CocktailsScreen extends ConsumerWidget {
   @override
   Widget build(BuildContext context, WidgetRef ref) {
     final l10n = AppLocalizations.of(context)!;
-    final matchesAsync = ref.watch(filteredCocktailMatchesProvider);
+    final matchesAsync = ref.watch(cocktailMatchesProvider);
     final selectedCount = ref.watch(totalSelectedCountProvider);
 
     return Scaffold(

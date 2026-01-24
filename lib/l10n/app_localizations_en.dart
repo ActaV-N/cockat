@@ -539,4 +539,52 @@ class AppLocalizationsEn extends AppLocalizations {
 
   @override
   String get viewAll => 'View All';
+
+  @override
+  String get myBarProducts => 'Your Products';
+
+  @override
+  String get availableSubstitutes => 'Available Substitutes';
+
+  @override
+  String get ingredientNotOwned => 'You don\'t have this ingredient';
+
+  @override
+  String ingredientTypes(int count) {
+    return '$count types';
+  }
+
+  @override
+  String productCount(int count) {
+    return '$count products';
+  }
+
+  @override
+  String get description => 'Description';
+
+  @override
+  String get country => 'Country';
+
+  @override
+  String get alcoholContent => 'ABV';
+
+  @override
+  String get ingredientType => 'Ingredient Type';
+
+  @override
+  String get addToMyBar => 'Add to My Bar';
+
+  @override
+  String get removeFromMyBar => 'Remove from My Bar';
+
+  @override
+  String removeProductConfirm(String name) {
+    return 'Remove $name from your bar?';
+  }
+
+  @override
+  String get remove => 'Remove';
+
+  @override
+  String get productNotFound => 'Product not found';
 }

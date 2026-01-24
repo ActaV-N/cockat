@@ -4,6 +4,7 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import '../../data/models/models.dart';
 import '../../data/providers/providers.dart';
 import '../../l10n/app_localizations.dart';
+import 'product_detail_screen.dart';
 
 class MyBarScreen extends ConsumerWidget {
   const MyBarScreen({super.key});
@@ -11,7 +12,7 @@ class MyBarScreen extends ConsumerWidget {
   @override
   Widget build(BuildContext context, WidgetRef ref) {
     final l10n = AppLocalizations.of(context)!;
-    final ownedProductsAsync = ref.watch(effectiveSelectedProductsListProvider);
+    final ingredientGroupsAsync = ref.watch(ingredientGroupsForMyBarProvider);
     final selectedCount = ref.watch(effectiveSelectedProductCountProvider);
 
     return Scaffold(
@@ -28,13 +29,13 @@ class MyBarScreen extends ConsumerWidget {
             ),
         ],
       ),
-      body: ownedProductsAsync.when(
-        data: (products) {
-          if (products.isEmpty) {
+      body: ingredientGroupsAsync.when(
+        data: (groups) {
+          if (groups.isEmpty) {
             return _EmptyBarView(l10n: l10n);
           }
-          return _OwnedProductsContent(
-            products: products,
+          return _MyBarContent(
+            groups: groups,
             selectedCount: selectedCount,
           );
         },
@@ -86,154 +87,213 @@ class _EmptyBarView extends StatelessWidget {
   }
 }
 
-class _OwnedProductsContent extends ConsumerWidget {
-  final List<Product> products;
+class _MyBarContent extends StatelessWidget {
+  final List<IngredientGroup> groups;
   final int selectedCount;
 
-  const _OwnedProductsContent({
-    required this.products,
+  const _MyBarContent({
+    required this.groups,
     required this.selectedCount,
   });
 
   @override
-  Widget build(BuildContext context, WidgetRef ref) {
+  Widget build(BuildContext context) {
     final l10n = AppLocalizations.of(context)!;
 
-    return Column(
-      children: [
-        // Owned count info
-        Padding(
-          padding: const EdgeInsets.all(16),
-          child: Row(
-            children: [
-              Chip(
-                avatar: const Icon(Icons.inventory_2, size: 18),
-                label: Text(l10n.ownedProducts(selectedCount)),
-                backgroundColor: Theme.of(context).colorScheme.primaryContainer,
-              ),
-            ],
+    return CustomScrollView(
+      slivers: [
+        // Summary header
+        SliverToBoxAdapter(
+          child: Padding(
+            padding: const EdgeInsets.all(16),
+            child: Row(
+              children: [
+                Chip(
+                  avatar: const Icon(Icons.inventory_2, size: 18),
+                  label: Text(l10n.ownedProducts(selectedCount)),
+                  backgroundColor:
+                      Theme.of(context).colorScheme.primaryContainer,
+                ),
+                const SizedBox(width: 8),
+                Chip(
+                  avatar: const Icon(Icons.category_outlined, size: 18),
+                  label: Text(l10n.ingredientTypes(groups.length)),
+                  backgroundColor:
+                      Theme.of(context).colorScheme.secondaryContainer,
+                ),
+              ],
+            ),
           ),
         ),
 
-        // Product Grid
-        Expanded(
-          child: _ProductGrid(products: products),
-        ),
+        // Ingredient sections
+        for (final group in groups) ...[
+          _SectionHeader(
+            title: group.displayName,
+            count: group.productCount,
+          ),
+          _ProductGrid(products: group.products),
+        ],
+
+        const SliverPadding(padding: EdgeInsets.only(bottom: 16)),
       ],
     );
   }
 }
 
-class _ProductGrid extends ConsumerWidget {
+class _SectionHeader extends StatelessWidget {
+  final String title;
+  final int count;
+
+  const _SectionHeader({
+    required this.title,
+    required this.count,
+  });
+
+  @override
+  Widget build(BuildContext context) {
+    return SliverToBoxAdapter(
+      child: Padding(
+        padding: const EdgeInsets.fromLTRB(16, 16, 8, 8),
+        child: Row(
+          children: [
+            Container(
+              width: 4,
+              height: 24,
+              decoration: BoxDecoration(
+                color: Theme.of(context).colorScheme.primary,
+                borderRadius: BorderRadius.circular(2),
+              ),
+            ),
+            const SizedBox(width: 8),
+            Text(
+              title,
+              style: Theme.of(context).textTheme.titleMedium?.copyWith(
+                    fontWeight: FontWeight.bold,
+                  ),
+            ),
+            const SizedBox(width: 8),
+            Text(
+              '$count',
+              style: Theme.of(context).textTheme.bodyMedium?.copyWith(
+                    color: Theme.of(context).colorScheme.outline,
+                  ),
+            ),
+          ],
+        ),
+      ),
+    );
+  }
+}
+
+class _ProductGrid extends StatelessWidget {
   final List<Product> products;
 
   const _ProductGrid({required this.products});
 
   @override
-  Widget build(BuildContext context, WidgetRef ref) {
-    return GridView.builder(
-      padding: const EdgeInsets.all(16),
-      gridDelegate: const SliverGridDelegateWithFixedCrossAxisCount(
-        crossAxisCount: 2,
-        childAspectRatio: 0.75,
-        crossAxisSpacing: 12,
-        mainAxisSpacing: 12,
+  Widget build(BuildContext context) {
+    return SliverPadding(
+      padding: const EdgeInsets.symmetric(horizontal: 16),
+      sliver: SliverGrid(
+        gridDelegate: const SliverGridDelegateWithFixedCrossAxisCount(
+          crossAxisCount: 2,
+          childAspectRatio: 0.75,
+          crossAxisSpacing: 12,
+          mainAxisSpacing: 12,
+        ),
+        delegate: SliverChildBuilderDelegate(
+          (context, index) => _ProductCard(product: products[index]),
+          childCount: products.length,
+        ),
       ),
-      itemCount: products.length,
-      itemBuilder: (context, index) {
-        return _ProductCard(product: products[index]);
-      },
     );
   }
 }
 
-class _ProductCard extends ConsumerWidget {
+class _ProductCard extends StatelessWidget {
   final Product product;
 
   const _ProductCard({required this.product});
 
   @override
-  Widget build(BuildContext context, WidgetRef ref) {
+  Widget build(BuildContext context) {
     final theme = Theme.of(context);
 
     return Card(
       clipBehavior: Clip.antiAlias,
-      shape: RoundedRectangleBorder(
-        borderRadius: BorderRadius.circular(12),
-        side: BorderSide(color: theme.colorScheme.primary, width: 2),
-      ),
       child: InkWell(
         onTap: () {
-          // Remove from bar
-          ref.read(effectiveProductsServiceProvider).toggle(product.id);
+          Navigator.push(
+            context,
+            MaterialPageRoute(
+              builder: (context) => ProductDetailScreen(productId: product.id),
+            ),
+          );
         },
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.stretch,
           children: [
-            // Image
+            // Product image
             Expanded(
               flex: 3,
-              child: Stack(
-                fit: StackFit.expand,
-                children: [
-                  _ProductImage(imageUrl: product.imageUrl),
-                  // Remove button
-                  Positioned(
-                    top: 8,
-                    right: 8,
-                    child: Container(
-                      padding: const EdgeInsets.all(4),
-                      decoration: BoxDecoration(
-                        color: theme.colorScheme.errorContainer,
-                        shape: BoxShape.circle,
-                      ),
-                      child: Icon(
-                        Icons.remove,
-                        size: 16,
-                        color: theme.colorScheme.onErrorContainer,
-                      ),
-                    ),
-                  ),
-                ],
-              ),
+              child: _ProductImage(imageUrl: product.imageUrl),
             ),
-            // Info
-            Expanded(
-              flex: 2,
-              child: Padding(
-                padding: const EdgeInsets.all(8),
-                child: Column(
-                  crossAxisAlignment: CrossAxisAlignment.start,
-                  children: [
-                    if (product.brand != null)
-                      Text(
-                        product.brand!,
-                        style: theme.textTheme.labelSmall?.copyWith(
-                          color: theme.colorScheme.primary,
-                        ),
-                        maxLines: 1,
-                        overflow: TextOverflow.ellipsis,
-                      ),
+            // Info section
+            Padding(
+              padding: const EdgeInsets.all(10),
+              child: Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                mainAxisSize: MainAxisSize.min,
+                children: [
+                  // Brand
+                  if (product.brand != null)
                     Text(
-                      product.name,
-                      style: theme.textTheme.titleSmall,
-                      maxLines: 2,
+                      product.brand!,
+                      style: theme.textTheme.labelSmall?.copyWith(
+                        color: theme.colorScheme.primary,
+                      ),
+                      maxLines: 1,
                       overflow: TextOverflow.ellipsis,
                     ),
-                    const Spacer(),
-                    if (product.formattedVolume != null || product.abv != null)
-                      Text(
-                        [
-                          if (product.formattedVolume != null)
-                            product.formattedVolume,
-                          if (product.abv != null) '${product.abv}%',
-                        ].join(' | '),
-                        style: theme.textTheme.bodySmall?.copyWith(
+                  // Product name
+                  Text(
+                    product.name,
+                    style: theme.textTheme.titleSmall?.copyWith(
+                      fontWeight: FontWeight.bold,
+                    ),
+                    maxLines: 2,
+                    overflow: TextOverflow.ellipsis,
+                  ),
+                  // Volume & ABV
+                  if (product.formattedVolume != null || product.abv != null) ...[
+                    const SizedBox(height: 4),
+                    Row(
+                      children: [
+                        Icon(
+                          Icons.local_bar,
+                          size: 12,
                           color: theme.colorScheme.outline,
                         ),
-                      ),
+                        const SizedBox(width: 4),
+                        Expanded(
+                          child: Text(
+                            [
+                              if (product.formattedVolume != null)
+                                product.formattedVolume,
+                              if (product.abv != null) '${product.abv}%',
+                            ].join(' · '),
+                            style: theme.textTheme.labelSmall?.copyWith(
+                              color: theme.colorScheme.outline,
+                            ),
+                            maxLines: 1,
+                            overflow: TextOverflow.ellipsis,
+                          ),
+                        ),
+                      ],
+                    ),
                   ],
-                ),
+                ],
               ),
             ),
           ],

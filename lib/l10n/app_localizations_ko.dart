@@ -526,4 +526,52 @@ class AppLocalizationsKo extends AppLocalizations {
 
   @override
   String get viewAll => '더보기';
+
+  @override
+  String get myBarProducts => '내 술장 보유';
+
+  @override
+  String get availableSubstitutes => '사용 가능한 대체재';
+
+  @override
+  String get ingredientNotOwned => '이 재료를 보유하고 있지 않습니다';
+
+  @override
+  String ingredientTypes(int count) {
+    return '$count개 종류';
+  }
+
+  @override
+  String productCount(int count) {
+    return '$count개 상품';
+  }
+
+  @override
+  String get description => '설명';
+
+  @override
+  String get country => '원산지';
+
+  @override
+  String get alcoholContent => '도수';
+
+  @override
+  String get ingredientType => '재료 종류';
+
+  @override
+  String get addToMyBar => '내 술장에 추가';
+
+  @override
+  String get removeFromMyBar => '내 술장에서 제거';
+
+  @override
+  String removeProductConfirm(String name) {
+    return '$name을(를) 내 술장에서 제거할까요?';
+  }
+
+  @override
+  String get remove => '제거';
+
+  @override
+  String get productNotFound => '상품을 찾을 수 없습니다';
 }

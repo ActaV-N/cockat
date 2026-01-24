@@ -160,5 +160,19 @@
   "cancel": "취소",
   "confirm": "확인",
   "mdsPick": "MD's Pick",
-  "viewAll": "더보기"
+  "viewAll": "더보기",
+  "myBarProducts": "내 술장 보유",
+  "availableSubstitutes": "사용 가능한 대체재",
+  "ingredientNotOwned": "이 재료를 보유하고 있지 않습니다",
+  "ingredientTypes": "{count}개 종류",
+  "productCount": "{count}개 상품",
+  "description": "설명",
+  "country": "원산지",
+  "alcoholContent": "도수",
+  "ingredientType": "재료 종류",
+  "addToMyBar": "내 술장에 추가",
+  "removeFromMyBar": "내 술장에서 제거",
+  "removeProductConfirm": "{name}을(를) 내 술장에서 제거할까요?",
+  "remove": "제거",
+  "productNotFound": "상품을 찾을 수 없습니다"
 }

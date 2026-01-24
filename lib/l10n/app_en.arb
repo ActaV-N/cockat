@@ -261,5 +261,40 @@
   "cancel": "Cancel",
   "confirm": "Confirm",
   "mdsPick": "MD's Pick",
-  "viewAll": "View All"
+  "viewAll": "View All",
+  "myBarProducts": "Your Products",
+  "availableSubstitutes": "Available Substitutes",
+  "ingredientNotOwned": "You don't have this ingredient",
+  "ingredientTypes": "{count} types",
+  "@ingredientTypes": {
+    "placeholders": {
+      "count": {
+        "type": "int"
+      }
+    }
+  },
+  "productCount": "{count} products",
+  "@productCount": {
+    "placeholders": {
+      "count": {
+        "type": "int"
+      }
+    }
+  },
+  "description": "Description",
+  "country": "Country",
+  "alcoholContent": "ABV",
+  "ingredientType": "Ingredient Type",
+  "addToMyBar": "Add to My Bar",
+  "removeFromMyBar": "Remove from My Bar",
+  "removeProductConfirm": "Remove {name} from your bar?",
+  "@removeProductConfirm": {
+    "placeholders": {
+      "name": {
+        "type": "String"
+      }
+    }
+  },
+  "remove": "Remove",
+  "productNotFound": "Product not found"
 }

@@ -24,8 +24,9 @@ class _CocktailSearchScreenState extends ConsumerState<CocktailSearchScreen> {
   void initState() {
     super.initState();
     _controller = TextEditingController();
-    // Auto-focus the search field when the screen opens
+    // Auto-focus the search field and clear previous query when the screen opens
     WidgetsBinding.instance.addPostFrameCallback((_) {
+      ref.read(cocktailSearchQueryProvider.notifier).state = '';
       _focusNode.requestFocus();
     });
   }
@@ -34,10 +35,6 @@ class _CocktailSearchScreenState extends ConsumerState<CocktailSearchScreen> {
   void dispose() {
     _controller.dispose();
     _focusNode.dispose();
-    // Clear search query when leaving the screen
-    WidgetsBinding.instance.addPostFrameCallback((_) {
-      ref.read(cocktailSearchQueryProvider.notifier).state = '';
-    });
     super.dispose();
   }
 

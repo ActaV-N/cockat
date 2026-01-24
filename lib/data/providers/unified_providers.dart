@@ -403,3 +403,72 @@ class EffectiveIngredientsService {
     }
   }
 }
+
+// ==================== 내 술장 그룹핑 ====================
+
+/// Ingredient별로 그룹화된 소유 상품 (내 술장용)
+final ingredientGroupsForMyBarProvider =
+    Provider<AsyncValue<List<IngredientGroup>>>((ref) {
+  final productsAsync = ref.watch(effectiveSelectedProductsListProvider);
+  final ingredientsAsync = ref.watch(ingredientsProvider);
+
+  return productsAsync.whenData((products) {
+    final ingredientsList = ingredientsAsync.valueOrNull ?? [];
+    final ingredientsMap = {for (var i in ingredientsList) i.id: i};
+
+    // Ingredient별로 그룹화
+    final grouped = <String, List<Product>>{};
+    for (final product in products) {
+      final key = product.ingredientId ?? '_other';
+      grouped.putIfAbsent(key, () => []).add(product);
+    }
+
+    // 각 그룹을 상품명으로 정렬
+    for (final entry in grouped.entries) {
+      entry.value.sort((a, b) => a.name.compareTo(b.name));
+    }
+
+    // IngredientGroup 목록 생성
+    final groups = <IngredientGroup>[];
+    for (final entry in grouped.entries) {
+      final ingredientId = entry.key;
+      final groupProducts = entry.value;
+
+      if (ingredientId == '_other') {
+        groups.add(IngredientGroup(
+          ingredientId: ingredientId,
+          ingredientName: 'Other',
+          ingredientNameKo: '기타',
+          products: groupProducts,
+        ));
+      } else {
+        final ingredient = ingredientsMap[ingredientId];
+        if (ingredient != null) {
+          groups.add(IngredientGroup(
+            ingredientId: ingredientId,
+            ingredientName: ingredient.name,
+            ingredientNameKo: ingredient.nameKo,
+            ingredient: ingredient,
+            products: groupProducts,
+          ));
+        } else {
+          // Ingredient를 찾을 수 없는 경우
+          groups.add(IngredientGroup(
+            ingredientId: ingredientId,
+            ingredientName: ingredientId,
+            products: groupProducts,
+          ));
+        }
+      }
+    }
+
+    // Ingredient 이름으로 정렬 (기타는 맨 뒤)
+    groups.sort((a, b) {
+      if (a.ingredientId == '_other') return 1;
+      if (b.ingredientId == '_other') return -1;
+      return a.ingredientName.compareTo(b.ingredientName);
+    });
+
+    return groups;
+  });
+});

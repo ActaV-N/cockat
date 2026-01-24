@@ -5,6 +5,7 @@ import '../../../core/utils/unit_converter.dart';
 import '../../../data/models/models.dart';
 import '../../../data/providers/onboarding_provider.dart';
 import '../../../l10n/app_localizations.dart';
+import '../../products/product_detail_screen.dart';
 
 /// 재료별 소유 정보를 표시하는 확장 가능한 카드
 class IngredientAvailabilityCard extends StatelessWidget {
@@ -185,23 +186,39 @@ class IngredientAvailabilityCard extends StatelessWidget {
   }
 
   Widget _buildProductItem(BuildContext context, Product product) {
-    return Padding(
-      padding: const EdgeInsets.symmetric(vertical: 4),
-      child: Row(
-        children: [
-          Icon(
-            Icons.liquor,
-            size: 16,
-            color: Theme.of(context).colorScheme.primary,
+    return InkWell(
+      onTap: () {
+        Navigator.push(
+          context,
+          MaterialPageRoute(
+            builder: (context) => ProductDetailScreen(productId: product.id),
           ),
-          const SizedBox(width: 8),
-          Expanded(
-            child: Text(
-              product.displayName,
-              style: Theme.of(context).textTheme.bodyMedium,
+        );
+      },
+      borderRadius: BorderRadius.circular(8),
+      child: Padding(
+        padding: const EdgeInsets.symmetric(vertical: 8, horizontal: 4),
+        child: Row(
+          children: [
+            Icon(
+              Icons.liquor,
+              size: 16,
+              color: Theme.of(context).colorScheme.primary,
             ),
-          ),
-        ],
+            const SizedBox(width: 8),
+            Expanded(
+              child: Text(
+                product.displayName,
+                style: Theme.of(context).textTheme.bodyMedium,
+              ),
+            ),
+            Icon(
+              Icons.chevron_right,
+              size: 16,
+              color: Theme.of(context).colorScheme.outline,
+            ),
+          ],
+        ),
       ),
     );
   }
@@ -239,14 +256,41 @@ class IngredientAvailabilityCard extends StatelessWidget {
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: substitute.ownedProducts
                     .map(
-                      (product) => Padding(
-                        padding: const EdgeInsets.symmetric(vertical: 2),
-                        child: Text(
-                          '• ${product.displayName}',
-                          style:
-                              Theme.of(context).textTheme.bodySmall?.copyWith(
-                                    color: AppColors.warning,
-                                  ),
+                      (product) => InkWell(
+                        onTap: () {
+                          Navigator.push(
+                            context,
+                            MaterialPageRoute(
+                              builder: (context) =>
+                                  ProductDetailScreen(productId: product.id),
+                            ),
+                          );
+                        },
+                        borderRadius: BorderRadius.circular(4),
+                        child: Padding(
+                          padding: const EdgeInsets.symmetric(
+                            vertical: 4,
+                            horizontal: 4,
+                          ),
+                          child: Row(
+                            children: [
+                              Text(
+                                '• ${product.displayName}',
+                                style: Theme.of(context)
+                                    .textTheme
+                                    .bodySmall
+                                    ?.copyWith(
+                                      color: AppColors.warning,
+                                    ),
+                              ),
+                              const Spacer(),
+                              Icon(
+                                Icons.chevron_right,
+                                size: 14,
+                                color: AppColors.warning.withValues(alpha: 0.7),
+                              ),
+                            ],
+                          ),
                         ),
                       ),
                     )

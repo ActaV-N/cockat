@@ -1063,6 +1063,90 @@ abstract class AppLocalizations {
   /// In en, this message translates to:
   /// **'View All'**
   String get viewAll;
+
+  /// No description provided for @myBarProducts.
+  ///
+  /// In en, this message translates to:
+  /// **'Your Products'**
+  String get myBarProducts;
+
+  /// No description provided for @availableSubstitutes.
+  ///
+  /// In en, this message translates to:
+  /// **'Available Substitutes'**
+  String get availableSubstitutes;
+
+  /// No description provided for @ingredientNotOwned.
+  ///
+  /// In en, this message translates to:
+  /// **'You don\'t have this ingredient'**
+  String get ingredientNotOwned;
+
+  /// No description provided for @ingredientTypes.
+  ///
+  /// In en, this message translates to:
+  /// **'{count} types'**
+  String ingredientTypes(int count);
+
+  /// No description provided for @productCount.
+  ///
+  /// In en, this message translates to:
+  /// **'{count} products'**
+  String productCount(int count);
+
+  /// No description provided for @description.
+  ///
+  /// In en, this message translates to:
+  /// **'Description'**
+  String get description;
+
+  /// No description provided for @country.
+  ///
+  /// In en, this message translates to:
+  /// **'Country'**
+  String get country;
+
+  /// No description provided for @alcoholContent.
+  ///
+  /// In en, this message translates to:
+  /// **'ABV'**
+  String get alcoholContent;
+
+  /// No description provided for @ingredientType.
+  ///
+  /// In en, this message translates to:
+  /// **'Ingredient Type'**
+  String get ingredientType;
+
+  /// No description provided for @addToMyBar.
+  ///
+  /// In en, this message translates to:
+  /// **'Add to My Bar'**
+  String get addToMyBar;
+
+  /// No description provided for @removeFromMyBar.
+  ///
+  /// In en, this message translates to:
+  /// **'Remove from My Bar'**
+  String get removeFromMyBar;
+
+  /// No description provided for @removeProductConfirm.
+  ///
+  /// In en, this message translates to:
+  /// **'Remove {name} from your bar?'**
+  String removeProductConfirm(String name);
+
+  /// No description provided for @remove.
+  ///
+  /// In en, this message translates to:
+  /// **'Remove'**
+  String get remove;
+
+  /// No description provided for @productNotFound.
+  ///
+  /// In en, this message translates to:
+  /// **'Product not found'**
+  String get productNotFound;
 }
 
 class _AppLocalizationsDelegate
