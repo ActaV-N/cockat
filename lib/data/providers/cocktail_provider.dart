@@ -8,37 +8,62 @@ import 'misc_item_provider.dart';
 import 'product_provider.dart';
 import 'unified_providers.dart';
 
-// All cocktails from Supabase with ingredients
+// ============ 헬퍼 함수 ============
+
+/// 페이지네이션으로 모든 cocktail_ingredients 가져오기 (limit 1000 우회)
+Future<List<Map<String, dynamic>>> _fetchAllCocktailIngredientIds(
+  dynamic supabase,
+) async {
+  final List<Map<String, dynamic>> allData = [];
+  int offset = 0;
+  const int limit = 1000;
+
+  while (true) {
+    final response = await supabase
+        .from('cocktail_ingredients')
+        .select('cocktail_id, ingredient_id, is_optional')
+        .order('id')
+        .range(offset, offset + limit - 1);
+
+    final list = response as List;
+    for (final item in list) {
+      allData.add(item as Map<String, dynamic>);
+    }
+
+    if (list.length < limit) break;
+    offset += limit;
+  }
+
+  return allData;
+}
+
+// ============ 기본 Providers ============
+
+// All cocktails from Supabase (기본 정보만, 재료는 lazy load)
 final cocktailsProvider = FutureProvider<List<Cocktail>>((ref) async {
   final supabase = ref.watch(supabaseClientProvider);
 
-  // Fetch cocktails
+  // Fetch cocktails (기본 정보만)
   final cocktailsResponse = await supabase
       .from('cocktails')
       .select()
       .order('name');
 
-  // Fetch cocktail ingredients with ingredient details
-  final ingredientsResponse = await supabase
-      .from('cocktail_ingredients')
-      .select('*, ingredients(name, name_ko)')
-      .order('sort_order');
+  // 페이지네이션으로 모든 ingredient_id 가져오기 (매칭용)
+  final ingredientIds = await _fetchAllCocktailIngredientIds(supabase);
 
-  // Group ingredients by cocktail
-  final ingredientsByCocktail = <String, List<CocktailIngredient>>{};
-  for (final row in ingredientsResponse) {
+  // Group ingredient IDs by cocktail (매칭 계산용, 상세 정보 없이 ID만)
+  final ingredientIdsByCocktail = <String, List<CocktailIngredient>>{};
+  for (final row in ingredientIds) {
     final cocktailId = row['cocktail_id'] as String;
-    final ingredient = row['ingredients'] as Map<String, dynamic>?;
-
-    ingredientsByCocktail.putIfAbsent(cocktailId, () => []).add(
+    ingredientIdsByCocktail.putIfAbsent(cocktailId, () => []).add(
           CocktailIngredient(
             id: row['ingredient_id'] as String,
-            name: ingredient?['name'] as String? ?? row['ingredient_id'] as String,
-            sort: row['sort_order'] as int? ?? 0,
-            amount: (row['amount'] as num?)?.toDouble() ?? 0,
-            units: row['units'] as String? ?? '',
+            name: row['ingredient_id'] as String, // 임시 이름 (상세 페이지에서 로드)
+            sort: 0,
+            amount: 0,
+            units: '',
             optional: row['is_optional'] as bool? ?? false,
-            note: row['note'] as String?,
           ),
         );
   }
@@ -46,9 +71,65 @@ final cocktailsProvider = FutureProvider<List<Cocktail>>((ref) async {
   return (cocktailsResponse as List)
       .map((row) => Cocktail.fromSupabase(
             row as Map<String, dynamic>,
-            ingredients: ingredientsByCocktail[row['id']] ?? [],
+            ingredients: ingredientIdsByCocktail[row['id']] ?? [],
           ))
       .toList();
+});
+
+// ============ Lazy Loading Providers ============
+
+/// 특정 칵테일의 상세 재료 정보 (상세 페이지용)
+final cocktailIngredientsProvider =
+    FutureProvider.family<List<CocktailIngredient>, String>((ref, cocktailId) async {
+  final supabase = ref.watch(supabaseClientProvider);
+
+  final response = await supabase
+      .from('cocktail_ingredients')
+      .select('*, ingredients(name, name_ko)')
+      .eq('cocktail_id', cocktailId)
+      .order('sort_order');
+
+  return (response as List).map((row) {
+    final ingredient = row['ingredients'] as Map<String, dynamic>?;
+    return CocktailIngredient(
+      id: row['ingredient_id'] as String,
+      name: ingredient?['name'] as String? ?? row['ingredient_id'] as String,
+      sort: row['sort_order'] as int? ?? 0,
+      amount: (row['amount'] as num?)?.toDouble() ?? 0,
+      units: row['units'] as String? ?? '',
+      optional: row['is_optional'] as bool? ?? false,
+      note: row['note'] as String?,
+    );
+  }).toList();
+});
+
+/// 재료 정보가 포함된 완전한 칵테일 (상세 페이지용)
+final cocktailWithIngredientsProvider =
+    FutureProvider.family<Cocktail?, String>((ref, cocktailId) async {
+  final cocktailsAsync = ref.watch(cocktailsProvider);
+  final cocktails = cocktailsAsync.valueOrNull;
+  if (cocktails == null) return null;
+
+  final cocktail = cocktails.firstWhereOrNull((c) => c.id == cocktailId);
+  if (cocktail == null) return null;
+
+  // 상세 재료 정보 로드
+  final ingredients = await ref.watch(cocktailIngredientsProvider(cocktailId).future);
+
+  return Cocktail(
+    id: cocktail.id,
+    name: cocktail.name,
+    nameKo: cocktail.nameKo,
+    instructions: cocktail.instructions,
+    description: cocktail.description,
+    garnish: cocktail.garnish,
+    abv: cocktail.abv,
+    tags: cocktail.tags,
+    glass: cocktail.glass,
+    method: cocktail.method,
+    imageUrl: cocktail.imageUrl,
+    ingredients: ingredients,
+  );
 });
 
 // Search query for cocktails

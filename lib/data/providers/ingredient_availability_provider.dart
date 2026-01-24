@@ -12,7 +12,9 @@ import 'unified_providers.dart';
 final cocktailIngredientAvailabilityProvider =
     Provider.family<AsyncValue<List<IngredientAvailability>>, String>(
   (ref, cocktailId) {
-    final cocktailAsync = ref.watch(cocktailByIdProvider(cocktailId));
+    // 해당 칵테일의 상세 재료 정보 로드 (lazy loading)
+    final cocktailIngredientsAsync =
+        ref.watch(cocktailIngredientsProvider(cocktailId));
     final ingredientsAsync = ref.watch(ingredientsProvider);
     final productsAsync = ref.watch(productsProvider);
 
@@ -25,8 +27,8 @@ final cocktailIngredientAvailabilityProvider =
         ? ref.watch(effectiveSelectedIngredientsProvider)
         : ref.watch(selectedIngredientsProvider);
 
-    return cocktailAsync.whenData((cocktail) {
-      if (cocktail == null) return [];
+    return cocktailIngredientsAsync.whenData((cocktailIngredients) {
+      if (cocktailIngredients.isEmpty) return <IngredientAvailability>[];
 
       final ingredients = ingredientsAsync.valueOrNull ?? [];
       final products = productsAsync.valueOrNull ?? [];
@@ -55,7 +57,7 @@ final cocktailIngredientAvailabilityProvider =
         ...productsByIngredient.keys,
       };
 
-      return cocktail.ingredients.map((cocktailIngredient) {
+      return cocktailIngredients.map((cocktailIngredient) {
         final ingredientId = cocktailIngredient.id;
         final ingredient = ingredientMap[ingredientId];
 

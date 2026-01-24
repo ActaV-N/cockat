@@ -15,7 +15,8 @@ class CocktailDetailScreen extends ConsumerWidget {
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
-    final cocktailAsync = ref.watch(cocktailByIdProvider(cocktailId));
+    // 상세 재료 정보가 포함된 칵테일 로드 (lazy loading)
+    final cocktailAsync = ref.watch(cocktailWithIngredientsProvider(cocktailId));
     final l10n = AppLocalizations.of(context)!;
 
     return cocktailAsync.when(
