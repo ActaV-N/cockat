@@ -241,3 +241,84 @@ final ingredientIdsFromProductsProvider = Provider<Set<String>>((ref) {
 
   return ingredientIds;
 });
+
+// Recent product searches (persisted locally)
+final recentProductSearchesProvider =
+    StateNotifierProvider<RecentSearchesNotifier, List<String>>((ref) {
+  final prefs = ref.watch(sharedPreferencesProvider);
+  return RecentSearchesNotifier(prefs, 'recent_product_searches');
+});
+
+class RecentSearchesNotifier extends StateNotifier<List<String>> {
+  final SharedPreferences _prefs;
+  final String _key;
+  static const _maxItems = 10;
+
+  RecentSearchesNotifier(this._prefs, this._key)
+      : super(_prefs.getStringList(_key) ?? []);
+
+  void addSearch(String query) {
+    if (query.trim().isEmpty) return;
+
+    final trimmed = query.trim();
+    // Remove if exists and add to front
+    final updated = [
+      trimmed,
+      ...state.where((s) => s.toLowerCase() != trimmed.toLowerCase()),
+    ].take(_maxItems).toList();
+
+    state = updated;
+    _prefs.setStringList(_key, updated);
+  }
+
+  void removeSearch(String query) {
+    state = state.where((s) => s != query).toList();
+    _prefs.setStringList(_key, state);
+  }
+
+  void clearAll() {
+    state = [];
+    _prefs.remove(_key);
+  }
+}
+
+// Sort options for products
+enum ProductSortOption {
+  nameAsc,
+  nameDesc,
+  brandAsc,
+  brandDesc,
+  abvAsc,
+  abvDesc,
+}
+
+final productSortOptionProvider =
+    StateProvider<ProductSortOption>((ref) => ProductSortOption.brandAsc);
+
+// Sorted and filtered products
+final sortedCatalogProductsProvider = Provider<AsyncValue<List<Product>>>((ref) {
+  final productsAsync = ref.watch(catalogFilteredProductsProvider);
+  final sortOption = ref.watch(productSortOptionProvider);
+
+  return productsAsync.whenData((products) {
+    final sorted = [...products];
+
+    switch (sortOption) {
+      case ProductSortOption.nameAsc:
+        sorted.sort((a, b) => a.name.compareTo(b.name));
+      case ProductSortOption.nameDesc:
+        sorted.sort((a, b) => b.name.compareTo(a.name));
+      case ProductSortOption.brandAsc:
+        sorted.sort((a, b) => (a.brand ?? '').compareTo(b.brand ?? ''));
+      case ProductSortOption.brandDesc:
+        sorted.sort((a, b) => (b.brand ?? '').compareTo(a.brand ?? ''));
+      case ProductSortOption.abvAsc:
+        sorted.sort((a, b) => (a.abv ?? 0).compareTo(b.abv ?? 0));
+      case ProductSortOption.abvDesc:
+        sorted.sort((a, b) => (b.abv ?? 0).compareTo(a.abv ?? 0));
+    }
+
+    return sorted;
+  });
+});
+

@@ -154,148 +154,18 @@ class _ProductsBody extends ConsumerWidget {
             padding: const EdgeInsets.all(16),
             gridDelegate: const SliverGridDelegateWithFixedCrossAxisCount(
               crossAxisCount: 2,
-              childAspectRatio: 0.72,
+              childAspectRatio: 0.7,
               crossAxisSpacing: 12,
               mainAxisSpacing: 12,
             ),
             itemCount: products.length,
             itemBuilder: (context, index) {
-              return _ProductCard(product: products[index]);
+              return ProductCard(product: products[index]);
             },
           ),
         ),
       ],
     );
-  }
-}
-
-/// 상품 카드 위젯
-class _ProductCard extends ConsumerWidget {
-  final Product product;
-
-  const _ProductCard({required this.product});
-
-  @override
-  Widget build(BuildContext context, WidgetRef ref) {
-    final isSelected = ref.watch(effectiveIsProductSelectedProvider(product.id));
-    final theme = Theme.of(context);
-
-    return Card(
-      clipBehavior: Clip.antiAlias,
-      elevation: isSelected ? 4 : 1,
-      shape: RoundedRectangleBorder(
-        borderRadius: BorderRadius.circular(12),
-        side: isSelected
-            ? BorderSide(color: theme.colorScheme.primary, width: 2)
-            : BorderSide.none,
-      ),
-      child: InkWell(
-        onTap: () {
-          ref.read(effectiveProductsServiceProvider).toggle(product.id);
-        },
-        child: Column(
-          crossAxisAlignment: CrossAxisAlignment.stretch,
-          children: [
-            // 상단: 상품명 + 선택 인디케이터
-            _buildHeader(theme, isSelected),
-
-            // 중앙: 이미지
-            Expanded(
-              child: Padding(
-                padding: const EdgeInsets.symmetric(horizontal: 12),
-                child: ProductImage(
-                  product: product,
-                  mode: ImageDisplayMode.thumbnail,
-                ),
-              ),
-            ),
-
-            // 하단: 브랜드 + 스펙
-            _buildFooter(theme),
-          ],
-        ),
-      ),
-    );
-  }
-
-  /// 카드 헤더: 상품명 + 선택 인디케이터
-  Widget _buildHeader(ThemeData theme, bool isSelected) {
-    return Padding(
-      padding: const EdgeInsets.fromLTRB(12, 10, 8, 4),
-      child: Row(
-        crossAxisAlignment: CrossAxisAlignment.start,
-        children: [
-          // 상품명
-          Expanded(
-            child: Text(
-              product.name,
-              style: theme.textTheme.titleSmall?.copyWith(
-                fontWeight: FontWeight.w600,
-              ),
-              maxLines: 2,
-              overflow: TextOverflow.ellipsis,
-            ),
-          ),
-          const SizedBox(width: 4),
-          // 선택 인디케이터
-          AnimatedSelectionIndicator(
-            isSelected: isSelected,
-            size: 22,
-          ),
-        ],
-      ),
-    );
-  }
-
-  /// 카드 푸터: 브랜드 + 용량/도수
-  Widget _buildFooter(ThemeData theme) {
-    final hasInfo = product.brand != null ||
-        product.formattedVolume != null ||
-        product.abv != null;
-
-    if (!hasInfo) {
-      return const SizedBox(height: 8);
-    }
-
-    return Padding(
-      padding: const EdgeInsets.fromLTRB(12, 4, 12, 10),
-      child: Column(
-        crossAxisAlignment: CrossAxisAlignment.start,
-        mainAxisSize: MainAxisSize.min,
-        children: [
-          // 브랜드
-          if (product.brand != null)
-            Text(
-              product.brand!,
-              style: theme.textTheme.labelSmall?.copyWith(
-                color: theme.colorScheme.primary,
-              ),
-              maxLines: 1,
-              overflow: TextOverflow.ellipsis,
-            ),
-          // 용량 | 도수
-          if (product.formattedVolume != null || product.abv != null)
-            Text(
-              _formatSpecs(),
-              style: theme.textTheme.bodySmall?.copyWith(
-                color: theme.colorScheme.outline,
-              ),
-            ),
-        ],
-      ),
-    );
-  }
-
-  /// 용량/도수 포맷팅
-  String _formatSpecs() {
-    final specs = <String>[];
-    if (product.formattedVolume != null) {
-      specs.add(product.formattedVolume!);
-    }
-    if (product.abv != null) {
-      specs.add('${product.abv}%');
-    }
-    return specs.join(' | ');
   }
 }
 

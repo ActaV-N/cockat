@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 
+import '../../core/widgets/widgets.dart';
 import '../../data/models/models.dart';
 import '../../data/providers/providers.dart';
 import '../../l10n/app_localizations.dart';
@@ -61,12 +62,8 @@ class _EmptyBarView extends StatelessWidget {
         child: Column(
           mainAxisAlignment: MainAxisAlignment.center,
           children: [
-            Icon(
-              Icons.inventory_2_outlined,
-              size: 64,
-              color: Theme.of(context).colorScheme.outline,
-            ),
-            const SizedBox(height: 16),
+            const CockatLogo.watermark(),
+            const SizedBox(height: 24),
             Text(
               l10n.myBarEmpty,
               style: Theme.of(context).textTheme.titleMedium,
@@ -198,147 +195,28 @@ class _ProductGrid extends StatelessWidget {
       sliver: SliverGrid(
         gridDelegate: const SliverGridDelegateWithFixedCrossAxisCount(
           crossAxisCount: 2,
-          childAspectRatio: 0.75,
+          childAspectRatio: 0.7,
           crossAxisSpacing: 12,
           mainAxisSpacing: 12,
         ),
         delegate: SliverChildBuilderDelegate(
-          (context, index) => _ProductCard(product: products[index]),
-          childCount: products.length,
-        ),
-      ),
-    );
-  }
-}
-
-class _ProductCard extends StatelessWidget {
-  final Product product;
-
-  const _ProductCard({required this.product});
-
-  @override
-  Widget build(BuildContext context) {
-    final theme = Theme.of(context);
-
-    return Card(
-      clipBehavior: Clip.antiAlias,
-      child: InkWell(
-        onTap: () {
-          Navigator.push(
-            context,
-            MaterialPageRoute(
-              builder: (context) => ProductDetailScreen(productId: product.id),
-            ),
-          );
-        },
-        child: Column(
-          crossAxisAlignment: CrossAxisAlignment.stretch,
-          children: [
-            // Product image
-            Expanded(
-              flex: 3,
-              child: _ProductImage(imageUrl: product.imageUrl),
-            ),
-            // Info section
-            Padding(
-              padding: const EdgeInsets.all(10),
-              child: Column(
-                crossAxisAlignment: CrossAxisAlignment.start,
-                mainAxisSize: MainAxisSize.min,
-                children: [
-                  // Brand
-                  if (product.brand != null)
-                    Text(
-                      product.brand!,
-                      style: theme.textTheme.labelSmall?.copyWith(
-                        color: theme.colorScheme.primary,
-                      ),
-                      maxLines: 1,
-                      overflow: TextOverflow.ellipsis,
-                    ),
-                  // Product name
-                  Text(
-                    product.name,
-                    style: theme.textTheme.titleSmall?.copyWith(
-                      fontWeight: FontWeight.bold,
-                    ),
-                    maxLines: 2,
-                    overflow: TextOverflow.ellipsis,
+          (context, index) {
+            final product = products[index];
+            return ProductCard(
+              product: product,
+              showSelectionIndicator: false,
+              onTap: () {
+                Navigator.push(
+                  context,
+                  MaterialPageRoute(
+                    builder: (context) =>
+                        ProductDetailScreen(productId: product.id),
                   ),
-                  // Volume & ABV
-                  if (product.formattedVolume != null || product.abv != null) ...[
-                    const SizedBox(height: 4),
-                    Row(
-                      children: [
-                        Icon(
-                          Icons.local_bar,
-                          size: 12,
-                          color: theme.colorScheme.outline,
-                        ),
-                        const SizedBox(width: 4),
-                        Expanded(
-                          child: Text(
-                            [
-                              if (product.formattedVolume != null)
-                                product.formattedVolume,
-                              if (product.abv != null) '${product.abv}%',
-                            ].join(' · '),
-                            style: theme.textTheme.labelSmall?.copyWith(
-                              color: theme.colorScheme.outline,
-                            ),
-                            maxLines: 1,
-                            overflow: TextOverflow.ellipsis,
-                          ),
-                        ),
-                      ],
-                    ),
-                  ],
-                ],
-              ),
-            ),
-          ],
-        ),
-      ),
-    );
-  }
-}
-
-class _ProductImage extends StatelessWidget {
-  final String? imageUrl;
-
-  const _ProductImage({this.imageUrl});
-
-  @override
-  Widget build(BuildContext context) {
-    if (imageUrl != null && imageUrl!.isNotEmpty) {
-      return Image.network(
-        imageUrl!,
-        fit: BoxFit.cover,
-        errorBuilder: (context, error, stackTrace) => _placeholder(context),
-        loadingBuilder: (context, child, loadingProgress) {
-          if (loadingProgress == null) return child;
-          return Center(
-            child: CircularProgressIndicator(
-              value: loadingProgress.expectedTotalBytes != null
-                  ? loadingProgress.cumulativeBytesLoaded /
-                      loadingProgress.expectedTotalBytes!
-                  : null,
-            ),
-          );
-        },
-      );
-    }
-    return _placeholder(context);
-  }
-
-  Widget _placeholder(BuildContext context) {
-    return Container(
-      color: Theme.of(context).colorScheme.surfaceContainerHighest,
-      child: Center(
-        child: Icon(
-          Icons.liquor,
-          size: 48,
-          color: Theme.of(context).colorScheme.outline,
+                );
+              },
+            );
+          },
+          childCount: products.length,
         ),
       ),
     );
