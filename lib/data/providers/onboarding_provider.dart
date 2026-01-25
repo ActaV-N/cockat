@@ -101,13 +101,19 @@ final userPreferencesDbProvider =
 
 // ==================== Unified Providers (Auto-switch) ====================
 
-/// Unified onboarding completed status
+/// Unified onboarding completed status (with local fallback)
 final effectiveOnboardingCompletedProvider = Provider<bool>((ref) {
   final isAuthenticated = ref.watch(isAuthenticatedProvider);
 
   if (isAuthenticated) {
     final dbPrefs = ref.watch(userPreferencesDbProvider);
-    return dbPrefs.valueOrNull?['onboarding_completed'] ?? false;
+    final localValue = ref.read(onboardingCompletedLocalProvider);
+
+    return dbPrefs.when(
+      data: (prefs) => prefs?['onboarding_completed'] ?? localValue,
+      loading: () => localValue, // Use local value while loading
+      error: (e, s) => localValue, // Fallback to local on error
+    );
   } else {
     return ref.watch(onboardingCompletedLocalProvider);
   }
@@ -252,7 +258,67 @@ class OnboardingService {
     _ref.invalidate(userIngredientsDbProvider);
     _ref.invalidate(userFavoritesDbProvider);
   }
+
+  /// Sync DB preferences to local (for offline support after login)
+  Future<void> syncDbToLocal() async {
+    final supabase = _ref.read(supabaseClientProvider);
+    final userId = _ref.read(currentUserIdProvider);
+    if (userId == null) return;
+
+    try {
+      final response = await supabase
+          .from('user_preferences')
+          .select()
+          .eq('user_id', userId)
+          .maybeSingle();
+
+      if (response != null) {
+        // Sync DB values to local storage
+        final onboardingCompleted = response['onboarding_completed'] ?? false;
+        final unitSystem = UnitSystem.fromString(response['unit_system'] ?? 'ml');
+
+        await _ref.read(onboardingCompletedLocalProvider.notifier).setCompleted(onboardingCompleted);
+        await _ref.read(unitSystemLocalProvider.notifier).setUnitSystem(unitSystem);
+      }
+    } catch (e) {
+      // Ignore errors (offline, etc.)
+    }
+  }
+
+  /// Clear all local data (used after login to use DB data only)
+  Future<void> clearLocalData() async {
+    // Clear local preferences
+    await _ref.read(onboardingCompletedLocalProvider.notifier).setCompleted(true);
+    await _ref.read(unitSystemLocalProvider.notifier).setUnitSystem(UnitSystem.ml);
+
+    // Clear selected products (sync method, uses fire-and-forget pattern)
+    _ref.read(selectedProductsProvider.notifier).clear();
+
+    // Clear selected misc items
+    await _ref.read(selectedMiscItemsLocalProvider.notifier).clear();
+
+    // Clear selected ingredients
+    await _ref.read(selectedIngredientsProvider.notifier).clear();
+
+    // Clear favorites
+    await _ref.read(favoriteCocktailsProvider.notifier).clear();
+  }
 }
+
+// ==================== Local Data Detection ====================
+
+/// Check if user has any local data (products, misc items, ingredients, favorites)
+final hasLocalDataProvider = Provider<bool>((ref) {
+  final products = ref.watch(selectedProductsProvider);
+  final miscItems = ref.watch(selectedMiscItemsLocalProvider);
+  final ingredients = ref.watch(selectedIngredientsProvider);
+  final favorites = ref.watch(favoriteCocktailsProvider);
+
+  return products.isNotEmpty ||
+      miscItems.isNotEmpty ||
+      ingredients.isNotEmpty ||
+      favorites.isNotEmpty;
+});
 
 // ==================== Onboarding Step Management ====================
 

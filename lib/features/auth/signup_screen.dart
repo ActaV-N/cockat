@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 
+import '../../core/widgets/widgets.dart';
 import '../../data/providers/providers.dart';
 import '../../l10n/app_localizations.dart';
 import 'login_screen.dart';
@@ -117,6 +118,12 @@ class _SignUpScreenState extends ConsumerState<SignUpScreen> {
             child: Column(
               crossAxisAlignment: CrossAxisAlignment.stretch,
               children: [
+                // Logo
+                const Center(
+                  child: CockatLogo(size: LogoSize.header),
+                ),
+                const SizedBox(height: 32),
+
                 // Header
                 Text(
                   l10n.createAccount,
@@ -131,7 +138,7 @@ class _SignUpScreenState extends ConsumerState<SignUpScreen> {
                     color: theme.colorScheme.onSurfaceVariant,
                   ),
                 ),
-                const SizedBox(height: 32),
+                const SizedBox(height: 24),
 
                 // Email Field
                 TextFormField(

@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 
+import '../../../core/widgets/widgets.dart';
 import '../../../data/providers/providers.dart';
 import '../../../l10n/app_localizations.dart';
 
@@ -106,67 +107,17 @@ class _OnboardingProductsPageState
                 );
               }
 
-              return ListView.builder(
+              return GridView.builder(
                 padding: const EdgeInsets.symmetric(horizontal: 16),
+                gridDelegate: const SliverGridDelegateWithFixedCrossAxisCount(
+                  crossAxisCount: 2,
+                  childAspectRatio: 0.7,
+                  crossAxisSpacing: 12,
+                  mainAxisSpacing: 12,
+                ),
                 itemCount: filtered.length,
                 itemBuilder: (context, index) {
-                  final product = filtered[index];
-                  final isSelected = selectedProducts.contains(product.id);
-
-                  return Card(
-                    margin: const EdgeInsets.symmetric(vertical: 4),
-                    child: ListTile(
-                      leading: product.imageUrl != null
-                          ? ClipRRect(
-                              borderRadius: BorderRadius.circular(8),
-                              child: Image.network(
-                                product.imageUrl!,
-                                width: 48,
-                                height: 48,
-                                fit: BoxFit.cover,
-                                errorBuilder: (_, __, ___) => Container(
-                                  width: 48,
-                                  height: 48,
-                                  color: colorScheme.surfaceContainerHighest,
-                                  child: Icon(
-                                    Icons.liquor,
-                                    color: colorScheme.onSurfaceVariant,
-                                  ),
-                                ),
-                              ),
-                            )
-                          : Container(
-                              width: 48,
-                              height: 48,
-                              decoration: BoxDecoration(
-                                color: colorScheme.surfaceContainerHighest,
-                                borderRadius: BorderRadius.circular(8),
-                              ),
-                              child: Icon(
-                                Icons.liquor,
-                                color: colorScheme.onSurfaceVariant,
-                              ),
-                            ),
-                      title: Text(product.displayName),
-                      subtitle: product.formattedVolume != null
-                          ? Text(
-                              product.formattedVolume!,
-                              style: TextStyle(
-                                color: colorScheme.onSurfaceVariant,
-                              ),
-                            )
-                          : null,
-                      trailing: Checkbox(
-                        value: isSelected,
-                        onChanged: (_) => ref
-                            .read(effectiveProductsServiceProvider)
-                            .toggle(product.id),
-                      ),
-                      onTap: () => ref
-                          .read(effectiveProductsServiceProvider)
-                          .toggle(product.id),
-                    ),
-                  );
+                  return ProductCard(product: filtered[index]);
                 },
               );
             },

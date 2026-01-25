@@ -1,9 +1,9 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 
+import '../../core/widgets/widgets.dart';
 import '../../data/providers/providers.dart';
 import '../../l10n/app_localizations.dart';
-import 'migration_dialog.dart';
 import 'signup_screen.dart';
 
 class LoginScreen extends ConsumerStatefulWidget {
@@ -48,11 +48,12 @@ class _LoginScreenState extends ConsumerState<LoginScreen> {
         SnackBar(content: Text(l10n.loginSuccess)),
       );
 
-      // 로컬 데이터 마이그레이션 다이얼로그 표시
-      await MigrationDialog.showIfNeeded(context, ref);
+      // Clear local data and sync DB preferences to local
+      await ref.read(onboardingServiceProvider).clearLocalData();
+      await ref.read(onboardingServiceProvider).syncDbToLocal();
 
       if (!mounted) return;
-      Navigator.of(context).pop();
+      Navigator.of(context).pop(true); // Return true to indicate successful login
     } else {
       ScaffoldMessenger.of(context).showSnackBar(
         SnackBar(
@@ -167,6 +168,12 @@ class _LoginScreenState extends ConsumerState<LoginScreen> {
             child: Column(
               crossAxisAlignment: CrossAxisAlignment.stretch,
               children: [
+                // Logo
+                const Center(
+                  child: CockatLogo(size: LogoSize.header),
+                ),
+                const SizedBox(height: 32),
+
                 // Header
                 Text(
                   l10n.welcomeBack,
@@ -181,7 +188,7 @@ class _LoginScreenState extends ConsumerState<LoginScreen> {
                     color: theme.colorScheme.onSurfaceVariant,
                   ),
                 ),
-                const SizedBox(height: 32),
+                const SizedBox(height: 24),
 
                 // Email Field
                 TextFormField(

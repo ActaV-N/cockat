@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 
+import '../../../core/widgets/widgets.dart';
 import '../../../data/providers/providers.dart';
 import '../../../l10n/app_localizations.dart';
 import '../../auth/login_screen.dart';
@@ -21,6 +22,13 @@ class OnboardingAuthPage extends ConsumerWidget {
     final l10n = AppLocalizations.of(context)!;
     final colorScheme = Theme.of(context).colorScheme;
     final isAuthenticated = ref.watch(isAuthenticatedProvider);
+    final hasLocalData = ref.watch(hasLocalDataProvider);
+
+    // Calculate local data count for message
+    final localDataCount = ref.watch(selectedProductsProvider).length +
+        ref.watch(selectedMiscItemsLocalProvider).length +
+        ref.watch(selectedIngredientsProvider).length +
+        ref.watch(favoriteCocktailsProvider).length;
 
     // If already authenticated, show success and complete
     if (isAuthenticated) {
@@ -34,12 +42,8 @@ class OnboardingAuthPage extends ConsumerWidget {
           padding: const EdgeInsets.all(24),
           child: Column(
             children: [
-              Icon(
-                Icons.cloud_sync_rounded,
-                size: 64,
-                color: colorScheme.primary,
-              ),
-              const SizedBox(height: 16),
+              const CockatLogo(size: LogoSize.header),
+              const SizedBox(height: 24),
               Text(
                 l10n.onboardingAuthTitle,
                 style: Theme.of(context).textTheme.headlineSmall?.copyWith(
@@ -106,6 +110,35 @@ class OnboardingAuthPage extends ConsumerWidget {
             child: Column(
               mainAxisSize: MainAxisSize.min,
               children: [
+                // Show sync prompt if user has local data
+                if (hasLocalData) ...[
+                  Container(
+                    padding: const EdgeInsets.all(12),
+                    margin: const EdgeInsets.only(bottom: 12),
+                    decoration: BoxDecoration(
+                      color: colorScheme.primaryContainer.withValues(alpha: 0.5),
+                      borderRadius: BorderRadius.circular(12),
+                    ),
+                    child: Row(
+                      children: [
+                        Icon(
+                          Icons.info_outline,
+                          size: 20,
+                          color: colorScheme.primary,
+                        ),
+                        const SizedBox(width: 8),
+                        Expanded(
+                          child: Text(
+                            l10n.signUpSyncPrompt(localDataCount),
+                            style: Theme.of(context).textTheme.bodySmall?.copyWith(
+                                  color: colorScheme.onPrimaryContainer,
+                                ),
+                          ),
+                        ),
+                      ],
+                    ),
+                  ),
+                ],
                 SizedBox(
                   width: double.infinity,
                   child: FilledButton(
@@ -121,6 +154,17 @@ class OnboardingAuthPage extends ConsumerWidget {
                     child: Text(l10n.login),
                   ),
                 ),
+                // Show note about login clearing local data
+                if (hasLocalData) ...[
+                  const SizedBox(height: 4),
+                  Text(
+                    l10n.loginClearDataNote,
+                    style: Theme.of(context).textTheme.bodySmall?.copyWith(
+                          color: colorScheme.onSurfaceVariant,
+                        ),
+                    textAlign: TextAlign.center,
+                  ),
+                ],
                 const SizedBox(height: 8),
                 TextButton(
                   onPressed: onSkip,
@@ -141,7 +185,7 @@ class OnboardingAuthPage extends ConsumerWidget {
       ),
     );
     if (result == true && context.mounted) {
-      // User signed up successfully, migrate data and complete
+      // User signed up successfully, migrate local data to DB
       await ref.read(onboardingServiceProvider).migrateLocalToDb();
       onComplete();
     }
@@ -154,8 +198,8 @@ class OnboardingAuthPage extends ConsumerWidget {
       ),
     );
     if (result == true && context.mounted) {
-      // User logged in successfully, migrate data and complete
-      await ref.read(onboardingServiceProvider).migrateLocalToDb();
+      // User logged in successfully, clear local data and use DB data
+      await ref.read(onboardingServiceProvider).clearLocalData();
       onComplete();
     }
   }
