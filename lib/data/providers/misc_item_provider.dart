@@ -8,6 +8,23 @@ import 'settings_provider.dart';
 
 // ==================== Misc Items Data ====================
 
+/// Mapping from ingredient_id to misc_item_id
+/// Used to check misc_items ownership for cocktail ingredients
+final ingredientMiscMappingProvider =
+    FutureProvider<Map<String, String>>((ref) async {
+  final supabase = ref.watch(supabaseClientProvider);
+
+  final response = await supabase
+      .from('ingredient_misc_mapping')
+      .select('ingredient_id, misc_item_id');
+
+  final mapping = <String, String>{};
+  for (final row in response as List) {
+    mapping[row['ingredient_id'] as String] = row['misc_item_id'] as String;
+  }
+  return mapping;
+});
+
 /// All misc items from Supabase
 final miscItemsProvider = FutureProvider<List<MiscItem>>((ref) async {
   final supabase = ref.watch(supabaseClientProvider);

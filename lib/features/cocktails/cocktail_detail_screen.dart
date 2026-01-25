@@ -18,6 +18,7 @@ class CocktailDetailScreen extends ConsumerWidget {
     // 상세 재료 정보가 포함된 칵테일 로드 (lazy loading)
     final cocktailAsync = ref.watch(cocktailWithIngredientsProvider(cocktailId));
     final l10n = AppLocalizations.of(context)!;
+    final locale = ref.watch(currentLocaleCodeProvider);
 
     return cocktailAsync.when(
       data: (cocktail) {
@@ -41,7 +42,7 @@ class CocktailDetailScreen extends ConsumerWidget {
                 ],
                 flexibleSpace: FlexibleSpaceBar(
                   title: Text(
-                    cocktail.name,
+                    cocktail.getLocalizedName(locale),
                     style: TextStyle(
                       fontWeight: FontWeight.bold,
                       shadows: [
@@ -105,10 +106,10 @@ class CocktailDetailScreen extends ConsumerWidget {
                       ],
 
                       // Description
-                      if (cocktail.description != null &&
-                          cocktail.description!.isNotEmpty) ...[
+                      if (cocktail.getLocalizedDescription(locale) != null &&
+                          cocktail.getLocalizedDescription(locale)!.isNotEmpty) ...[
                         Text(
-                          cocktail.description!,
+                          cocktail.getLocalizedDescription(locale)!,
                           style: Theme.of(context).textTheme.bodyMedium,
                         ),
                         const SizedBox(height: 24),
@@ -131,18 +132,18 @@ class CocktailDetailScreen extends ConsumerWidget {
                       // Instructions
                       _SectionTitle(title: l10n.instructions),
                       const SizedBox(height: 8),
-                      _InstructionsCard(instructions: cocktail.instructions),
+                      _InstructionsCard(instructions: cocktail.getLocalizedInstructions(locale)),
 
                       // Garnish
-                      if (cocktail.garnish != null &&
-                          cocktail.garnish!.isNotEmpty) ...[
+                      if (cocktail.getLocalizedGarnish(locale) != null &&
+                          cocktail.getLocalizedGarnish(locale)!.isNotEmpty) ...[
                         const SizedBox(height: 24),
                         _SectionTitle(title: l10n.garnish),
                         const SizedBox(height: 8),
                         Card(
                           child: ListTile(
                             leading: const Icon(Icons.eco),
-                            title: Text(cocktail.garnish!),
+                            title: Text(cocktail.getLocalizedGarnish(locale)!),
                           ),
                         ),
                       ],

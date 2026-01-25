@@ -167,6 +167,7 @@ final featuredCocktailsProvider = Provider<AsyncValue<List<Cocktail>>>((ref) {
 /// Combined ingredient IDs from both products and direct ingredient selection
 /// This allows both methods to work together
 /// 자동으로 비회원/회원 데이터 소스를 분기
+/// misc_items는 ingredient_misc_mapping을 통해 ingredient_id로 변환
 final allSelectedIngredientIdsProvider = Provider<Set<String>>((ref) {
   final isAuthenticated = ref.watch(isAuthenticatedProvider);
 
@@ -177,8 +178,22 @@ final allSelectedIngredientIdsProvider = Provider<Set<String>>((ref) {
     // 비회원: 로컬 Provider 사용 (상품 + 직접선택 + 기타재료)
     final fromProducts = ref.watch(ingredientIdsFromProductsProvider);
     final directSelection = ref.watch(selectedIngredientsProvider);
-    final miscItems = ref.watch(selectedMiscItemsLocalProvider);
-    return {...fromProducts, ...directSelection, ...miscItems};
+    final selectedMiscItemIds = ref.watch(selectedMiscItemsLocalProvider);
+
+    // misc_items 매핑 테이블을 통해 ingredient_id로 변환
+    final mappingAsync = ref.watch(ingredientMiscMappingProvider);
+    final mapping = mappingAsync.valueOrNull ?? {};
+
+    // 선택된 misc_item_id를 ingredient_id로 변환
+    final ingredientIdsFromMisc = <String>{};
+    for (final entry in mapping.entries) {
+      // entry.key = ingredient_id, entry.value = misc_item_id
+      if (selectedMiscItemIds.contains(entry.value)) {
+        ingredientIdsFromMisc.add(entry.key);
+      }
+    }
+
+    return {...fromProducts, ...directSelection, ...ingredientIdsFromMisc};
   }
 });
 

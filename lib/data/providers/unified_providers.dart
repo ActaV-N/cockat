@@ -166,6 +166,7 @@ final effectiveIngredientIdsFromProductsProvider = Provider<Set<String>>((ref) {
 
 /// 칵테일 매칭용 통합 재료 ID (상품 + 직접선택 + 기타재료)
 /// Stream providers를 watch하여 실시간 업데이트 보장
+/// misc_items는 ingredient_misc_mapping을 통해 ingredient_id로 변환
 final effectiveAllIngredientIdsProvider = Provider<Set<String>>((ref) {
   // Watch stream providers to ensure real-time updates for authenticated users
   ref.watch(userIngredientsDbProvider);
@@ -174,8 +175,22 @@ final effectiveAllIngredientIdsProvider = Provider<Set<String>>((ref) {
 
   final fromProducts = ref.watch(effectiveIngredientIdsFromProductsProvider);
   final directSelection = ref.watch(effectiveSelectedIngredientsProvider);
-  final miscItems = ref.watch(effectiveSelectedMiscItemsProvider);
-  return {...fromProducts, ...directSelection, ...miscItems};
+  final selectedMiscItemIds = ref.watch(effectiveSelectedMiscItemsProvider);
+
+  // misc_items 매핑 테이블을 통해 ingredient_id로 변환
+  final mappingAsync = ref.watch(ingredientMiscMappingProvider);
+  final mapping = mappingAsync.valueOrNull ?? {};
+
+  // 선택된 misc_item_id를 ingredient_id로 변환
+  final ingredientIdsFromMisc = <String>{};
+  for (final entry in mapping.entries) {
+    // entry.key = ingredient_id, entry.value = misc_item_id
+    if (selectedMiscItemIds.contains(entry.value)) {
+      ingredientIdsFromMisc.add(entry.key);
+    }
+  }
+
+  return {...fromProducts, ...directSelection, ...ingredientIdsFromMisc};
 });
 
 /// 통합 선택 개수 (상품 + 직접선택 재료)

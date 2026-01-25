@@ -4,6 +4,7 @@ import '../models/models.dart';
 import 'auth_provider.dart';
 import 'cocktail_provider.dart';
 import 'ingredient_provider.dart';
+import 'misc_item_provider.dart';
 import 'product_provider.dart';
 import 'unified_providers.dart';
 
@@ -26,6 +27,11 @@ final cocktailIngredientAvailabilityProvider =
     final selectedIngredientIds = isAuthenticated
         ? ref.watch(effectiveSelectedIngredientsProvider)
         : ref.watch(selectedIngredientsProvider);
+
+    // misc_items 관련 데이터
+    final selectedMiscItemIds = ref.watch(effectiveSelectedMiscItemsProvider);
+    final ingredientMiscMappingAsync = ref.watch(ingredientMiscMappingProvider);
+    final miscMapping = ingredientMiscMappingAsync.valueOrNull ?? {};
 
     return cocktailIngredientsAsync.whenData((cocktailIngredients) {
       if (cocktailIngredients.isEmpty) return <IngredientAvailability>[];
@@ -51,21 +57,35 @@ final cocktailIngredientAvailabilityProvider =
         }
       }
 
-      // 소유한 재료 ID 집합 (제품 기반 + 직접 선택)
+      // 소유한 재료 ID 집합 (제품 기반 + 직접 선택 + misc_items)
       final allOwnedIngredientIds = <String>{
         ...selectedIngredientIds,
         ...productsByIngredient.keys,
       };
 
+      // misc_items 매핑을 통해 소유한 재료 ID 추가
+      for (final entry in miscMapping.entries) {
+        if (selectedMiscItemIds.contains(entry.value)) {
+          allOwnedIngredientIds.add(entry.key);
+        }
+      }
+
       return cocktailIngredients.map((cocktailIngredient) {
         final ingredientId = cocktailIngredient.id;
         final ingredient = ingredientMap[ingredientId];
 
-        // 1. 직접 소유 여부 확인
+        // 1. 소유 여부 확인 (제품, 직접 선택, misc_items)
         final directlyOwned = selectedIngredientIds.contains(ingredientId);
         final ownedProductsForIngredient =
             productsByIngredient[ingredientId] ?? [];
-        final isOwned = directlyOwned || ownedProductsForIngredient.isNotEmpty;
+
+        // misc_items 매핑을 통한 소유 확인
+        final miscItemId = miscMapping[ingredientId];
+        final miscOwned =
+            miscItemId != null && selectedMiscItemIds.contains(miscItemId);
+
+        final isOwned =
+            directlyOwned || ownedProductsForIngredient.isNotEmpty || miscOwned;
 
         // 2. 대체재 확인 (소유하지 않은 경우에만)
         final availableSubstitutes = <SubstituteInfo>[];
@@ -107,6 +127,7 @@ final cocktailIngredientAvailabilityProvider =
           isOwned: isOwned,
           ownedProducts: ownedProductsForIngredient,
           availableSubstitutes: availableSubstitutes,
+          ownedViaMiscItem: miscOwned,
         );
       }).toList();
     });

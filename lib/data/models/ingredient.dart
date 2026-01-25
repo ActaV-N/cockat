@@ -109,6 +109,14 @@ class Ingredient {
     );
   }
 
+  /// Get localized name based on locale
+  String getLocalizedName(String locale) {
+    if (locale == 'ko' && nameKo != null && nameKo!.isNotEmpty) {
+      return nameKo!;
+    }
+    return name;
+  }
+
   @override
   bool operator ==(Object other) {
     if (identical(this, other)) return true;

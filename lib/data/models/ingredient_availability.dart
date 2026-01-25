@@ -11,7 +11,7 @@ class IngredientAvailability {
   /// 재료명
   final String ingredientName;
 
-  /// 소유 여부 (직접 소유 또는 제품 보유)
+  /// 소유 여부 (직접 소유 또는 제품 보유 또는 misc_items 보유)
   final bool isOwned;
 
   /// 이 재료를 제공하는 소유 제품들
@@ -20,12 +20,16 @@ class IngredientAvailability {
   /// 사용 가능한 대체재 정보
   final List<SubstituteInfo> availableSubstitutes;
 
+  /// misc_items를 통한 소유 여부
+  final bool ownedViaMiscItem;
+
   const IngredientAvailability({
     required this.ingredientId,
     required this.ingredientName,
     required this.isOwned,
     this.ownedProducts = const [],
     this.availableSubstitutes = const [],
+    this.ownedViaMiscItem = false,
   });
 
   /// 직접 소유 또는 대체재로 사용 가능

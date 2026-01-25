@@ -61,3 +61,19 @@ class LocaleNotifier extends StateNotifier<Locale?> {
     }
   }
 }
+
+/// Returns the current locale code as a string (e.g., 'en', 'ko')
+/// Falls back to 'en' if no locale is set or system locale is not supported
+final currentLocaleCodeProvider = Provider<String>((ref) {
+  final locale = ref.watch(localeProvider);
+  if (locale != null) {
+    return locale.languageCode;
+  }
+  // Fall back to system locale if available, otherwise 'en'
+  final systemLocale = WidgetsBinding.instance.platformDispatcher.locale;
+  final supportedLocales = ['en', 'ko'];
+  if (supportedLocales.contains(systemLocale.languageCode)) {
+    return systemLocale.languageCode;
+  }
+  return 'en';
+});

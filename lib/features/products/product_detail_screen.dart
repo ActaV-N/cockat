@@ -54,6 +54,7 @@ class _ProductDetailContent extends ConsumerWidget {
   @override
   Widget build(BuildContext context, WidgetRef ref) {
     final l10n = AppLocalizations.of(context)!;
+    final locale = ref.watch(currentLocaleCodeProvider);
 
     return Scaffold(
       body: CustomScrollView(
@@ -89,7 +90,7 @@ class _ProductDetailContent extends ConsumerWidget {
 
                   // Product Name
                   Text(
-                    product.name,
+                    product.getLocalizedName(locale),
                     style: Theme.of(context).textTheme.headlineMedium?.copyWith(
                           fontWeight: FontWeight.bold,
                         ),
@@ -101,8 +102,8 @@ class _ProductDetailContent extends ConsumerWidget {
                   const SizedBox(height: 24),
 
                   // Description
-                  if (product.description != null &&
-                      product.description!.isNotEmpty) ...[
+                  if (product.getLocalizedDescription(locale) != null &&
+                      product.getLocalizedDescription(locale)!.isNotEmpty) ...[
                     Text(
                       l10n.description,
                       style: Theme.of(context).textTheme.titleMedium?.copyWith(
@@ -111,7 +112,7 @@ class _ProductDetailContent extends ConsumerWidget {
                     ),
                     const SizedBox(height: 8),
                     Text(
-                      product.description!,
+                      product.getLocalizedDescription(locale)!,
                       style: Theme.of(context).textTheme.bodyLarge,
                     ),
                     const SizedBox(height: 24),
@@ -285,6 +286,7 @@ class _IngredientInfo extends ConsumerWidget {
     if (product.ingredientId == null) return const SizedBox.shrink();
 
     final ingredientAsync = ref.watch(ingredientByIdProvider(product.ingredientId!));
+    final locale = ref.watch(currentLocaleCodeProvider);
 
     return ingredientAsync.when(
       data: (ingredient) {
@@ -319,7 +321,7 @@ class _IngredientInfo extends ConsumerWidget {
               ),
               const SizedBox(height: 8),
               Text(
-                ingredient.nameKo ?? ingredient.name,
+                ingredient.getLocalizedName(locale),
                 style: Theme.of(context).textTheme.bodyLarge,
               ),
               if (ingredient.category != null) ...[

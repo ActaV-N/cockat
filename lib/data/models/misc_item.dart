@@ -44,7 +44,7 @@ class MiscItem {
 
   /// Get localized name based on locale
   String getLocalizedName(String locale) {
-    if (locale == 'ko' && nameKo != null) {
+    if (locale == 'ko' && nameKo != null && nameKo!.isNotEmpty) {
       return nameKo!;
     }
     return name;

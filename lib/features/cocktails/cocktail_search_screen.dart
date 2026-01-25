@@ -106,12 +106,8 @@ class _SearchHint extends StatelessWidget {
       child: Column(
         mainAxisAlignment: MainAxisAlignment.center,
         children: [
-          Icon(
-            Icons.search,
-            size: 64,
-            color: Theme.of(context).colorScheme.outline,
-          ),
-          const SizedBox(height: 16),
+          const CockatLogo.watermark(),
+          const SizedBox(height: 24),
           Text(
             l10n.searchCocktails,
             style: Theme.of(context).textTheme.titleMedium?.copyWith(
@@ -137,12 +133,8 @@ class _EmptySearchResult extends StatelessWidget {
       child: Column(
         mainAxisAlignment: MainAxisAlignment.center,
         children: [
-          Icon(
-            Icons.search_off,
-            size: 64,
-            color: Theme.of(context).colorScheme.outline,
-          ),
-          const SizedBox(height: 16),
+          const CockatLogo.watermark(),
+          const SizedBox(height: 24),
           Text(
             l10n.noResultsFound,
             style: Theme.of(context).textTheme.titleMedium,
@@ -160,14 +152,15 @@ class _EmptySearchResult extends StatelessWidget {
   }
 }
 
-class _SearchResults extends StatelessWidget {
+class _SearchResults extends ConsumerWidget {
   final List<CocktailMatch> matches;
 
   const _SearchResults({required this.matches});
 
   @override
-  Widget build(BuildContext context) {
+  Widget build(BuildContext context, WidgetRef ref) {
     final l10n = AppLocalizations.of(context)!;
+    final locale = ref.watch(currentLocaleCodeProvider);
 
     return ListView.builder(
       padding: const EdgeInsets.symmetric(vertical: 8),
@@ -185,7 +178,7 @@ class _SearchResults extends StatelessWidget {
             borderRadius: BorderRadius.circular(8),
           ),
           title: Text(
-            cocktail.name,
+            cocktail.getLocalizedName(locale),
             maxLines: 1,
             overflow: TextOverflow.ellipsis,
           ),

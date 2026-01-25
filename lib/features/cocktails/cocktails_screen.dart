@@ -295,16 +295,17 @@ class _CocktailGrid extends StatelessWidget {
   }
 }
 
-class _CocktailCard extends StatelessWidget {
+class _CocktailCard extends ConsumerWidget {
   final CocktailMatch match;
   final bool showStatus;
 
   const _CocktailCard({required this.match, this.showStatus = true});
 
   @override
-  Widget build(BuildContext context) {
+  Widget build(BuildContext context, WidgetRef ref) {
     final cocktail = match.cocktail;
     final l10n = AppLocalizations.of(context)!;
+    final locale = ref.watch(currentLocaleCodeProvider);
 
     return Card(
       clipBehavior: Clip.antiAlias,
@@ -352,7 +353,7 @@ class _CocktailCard extends StatelessWidget {
                 children: [
                   // Cocktail name
                   Text(
-                    cocktail.name,
+                    cocktail.getLocalizedName(locale),
                     style: Theme.of(context).textTheme.titleSmall?.copyWith(
                           fontWeight: FontWeight.bold,
                         ),

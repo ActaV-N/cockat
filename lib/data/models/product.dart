@@ -5,11 +5,13 @@ import 'package:flutter/foundation.dart';
 class Product {
   final String id;
   final String name;
+  final String? nameKo;
   final String? brand;
   final String? ingredientId; // Maps to ingredient type
 
   // Product info
   final String? description;
+  final String? descriptionKo;
   final String? country;
   final int? volumeMl;
   final double? abv;
@@ -26,9 +28,11 @@ class Product {
   const Product({
     required this.id,
     required this.name,
+    this.nameKo,
     this.brand,
     this.ingredientId,
     this.description,
+    this.descriptionKo,
     this.country,
     this.volumeMl,
     this.abv,
@@ -43,9 +47,11 @@ class Product {
     return Product(
       id: row['id'] as String,
       name: row['name'] as String,
+      nameKo: row['name_ko'] as String?,
       brand: row['brand'] as String?,
       ingredientId: row['ingredient_id'] as String?,
       description: row['description'] as String?,
+      descriptionKo: row['description_ko'] as String?,
       country: row['country'] as String?,
       volumeMl: row['volume_ml'] as int?,
       abv: (row['abv'] as num?)?.toDouble(),
@@ -61,9 +67,11 @@ class Product {
     return {
       'id': id,
       'name': name,
+      'name_ko': nameKo,
       'brand': brand,
       'ingredient_id': ingredientId,
       'description': description,
+      'description_ko': descriptionKo,
       'country': country,
       'volume_ml': volumeMl,
       'abv': abv,
@@ -78,9 +86,11 @@ class Product {
   Product copyWith({
     String? id,
     String? name,
+    String? nameKo,
     String? brand,
     String? ingredientId,
     String? description,
+    String? descriptionKo,
     String? country,
     int? volumeMl,
     double? abv,
@@ -93,9 +103,11 @@ class Product {
     return Product(
       id: id ?? this.id,
       name: name ?? this.name,
+      nameKo: nameKo ?? this.nameKo,
       brand: brand ?? this.brand,
       ingredientId: ingredientId ?? this.ingredientId,
       description: description ?? this.description,
+      descriptionKo: descriptionKo ?? this.descriptionKo,
       country: country ?? this.country,
       volumeMl: volumeMl ?? this.volumeMl,
       abv: abv ?? this.abv,
@@ -122,6 +134,31 @@ class Product {
       return '${(volumeMl! / 1000).toStringAsFixed(1)}L';
     }
     return '${volumeMl}ml';
+  }
+
+  /// Get localized name based on locale
+  String getLocalizedName(String locale) {
+    if (locale == 'ko' && nameKo != null && nameKo!.isNotEmpty) {
+      return nameKo!;
+    }
+    return name;
+  }
+
+  /// Get localized description based on locale
+  String? getLocalizedDescription(String locale) {
+    if (locale == 'ko' && descriptionKo != null && descriptionKo!.isNotEmpty) {
+      return descriptionKo;
+    }
+    return description;
+  }
+
+  /// Get localized display name with brand
+  String getLocalizedDisplayName(String locale) {
+    final localizedName = getLocalizedName(locale);
+    if (brand != null && !localizedName.toLowerCase().startsWith(brand!.toLowerCase())) {
+      return '$brand $localizedName';
+    }
+    return localizedName;
   }
 
   @override

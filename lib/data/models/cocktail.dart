@@ -7,9 +7,12 @@ class Cocktail {
   final String name;
   final String? nameKo;
   final String instructions;
+  final String? instructionsKo;
   final String? description;
+  final String? descriptionKo;
   final String? source;
   final String? garnish;
+  final String? garnishKo;
   final double? abv;
   final List<String> tags;
   final String? glass;
@@ -22,9 +25,12 @@ class Cocktail {
     required this.name,
     this.nameKo,
     required this.instructions,
+    this.instructionsKo,
     this.description,
+    this.descriptionKo,
     this.source,
     this.garnish,
+    this.garnishKo,
     this.abv,
     this.tags = const [],
     this.glass,
@@ -39,9 +45,12 @@ class Cocktail {
       name: json['name'] as String,
       nameKo: json['name_ko'] as String?,
       instructions: json['instructions'] as String? ?? '',
+      instructionsKo: json['instructions_ko'] as String?,
       description: json['description'] as String?,
+      descriptionKo: json['description_ko'] as String?,
       source: json['source'] as String?,
       garnish: json['garnish'] as String?,
+      garnishKo: json['garnish_ko'] as String?,
       abv: (json['abv'] as num?)?.toDouble(),
       tags: (json['tags'] as List<dynamic>?)
               ?.map((e) => e.toString())
@@ -67,8 +76,11 @@ class Cocktail {
       name: row['name'] as String,
       nameKo: row['name_ko'] as String?,
       instructions: row['instructions'] as String? ?? '',
+      instructionsKo: row['instructions_ko'] as String?,
       description: row['description'] as String?,
+      descriptionKo: row['description_ko'] as String?,
       garnish: row['garnish'] as String?,
+      garnishKo: row['garnish_ko'] as String?,
       abv: (row['abv'] as num?)?.toDouble(),
       tags: (row['tags'] as List<dynamic>?)
               ?.map((e) => e.toString())
@@ -87,9 +99,12 @@ class Cocktail {
       'name': name,
       'name_ko': nameKo,
       'instructions': instructions,
+      'instructions_ko': instructionsKo,
       'description': description,
+      'description_ko': descriptionKo,
       'source': source,
       'garnish': garnish,
+      'garnish_ko': garnishKo,
       'abv': abv,
       'tags': tags,
       'glass': glass,
@@ -106,8 +121,11 @@ class Cocktail {
       'name': name,
       'name_ko': nameKo,
       'instructions': instructions,
+      'instructions_ko': instructionsKo,
       'description': description,
+      'description_ko': descriptionKo,
       'garnish': garnish,
+      'garnish_ko': garnishKo,
       'abv': abv,
       'tags': tags,
       'glass': glass,
@@ -131,6 +149,38 @@ class Cocktail {
   /// Get all ingredient IDs including optional
   Set<String> get allIngredientIds =>
       ingredients.map((i) => i.id).toSet();
+
+  /// Get localized name based on locale
+  String getLocalizedName(String locale) {
+    if (locale == 'ko' && nameKo != null && nameKo!.isNotEmpty) {
+      return nameKo!;
+    }
+    return name;
+  }
+
+  /// Get localized description based on locale
+  String? getLocalizedDescription(String locale) {
+    if (locale == 'ko' && descriptionKo != null && descriptionKo!.isNotEmpty) {
+      return descriptionKo;
+    }
+    return description;
+  }
+
+  /// Get localized instructions based on locale
+  String getLocalizedInstructions(String locale) {
+    if (locale == 'ko' && instructionsKo != null && instructionsKo!.isNotEmpty) {
+      return instructionsKo!;
+    }
+    return instructions;
+  }
+
+  /// Get localized garnish based on locale
+  String? getLocalizedGarnish(String locale) {
+    if (locale == 'ko' && garnishKo != null && garnishKo!.isNotEmpty) {
+      return garnishKo;
+    }
+    return garnish;
+  }
 
   @override
   bool operator ==(Object other) {
