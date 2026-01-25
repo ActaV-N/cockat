@@ -63,7 +63,26 @@ class AppTheme {
       navigationBarTheme: NavigationBarThemeData(
         elevation: 0,
         backgroundColor: colorScheme.surface,
-        indicatorColor: colorScheme.primaryContainer,
+        indicatorColor: AppColors.coralPeach.withValues(alpha: 0.2),
+        iconTheme: WidgetStateProperty.resolveWith((states) {
+          if (states.contains(WidgetState.selected)) {
+            return const IconThemeData(color: AppColors.coralDeep);
+          }
+          return const IconThemeData(color: AppColors.gray600);
+        }),
+        labelTextStyle: WidgetStateProperty.resolveWith((states) {
+          if (states.contains(WidgetState.selected)) {
+            return const TextStyle(
+              color: AppColors.coralDeep,
+              fontSize: 12,
+              fontWeight: FontWeight.w500,
+            );
+          }
+          return const TextStyle(
+            color: AppColors.gray600,
+            fontSize: 12,
+          );
+        }),
         labelBehavior: NavigationDestinationLabelBehavior.alwaysShow,
       ),
       dividerTheme: const DividerThemeData(
@@ -133,7 +152,26 @@ class AppTheme {
       navigationBarTheme: NavigationBarThemeData(
         elevation: 0,
         backgroundColor: AppColors.navBarDark,
-        indicatorColor: colorScheme.primaryContainer,
+        indicatorColor: AppColors.coralDeep.withValues(alpha: 0.25),
+        iconTheme: WidgetStateProperty.resolveWith((states) {
+          if (states.contains(WidgetState.selected)) {
+            return const IconThemeData(color: AppColors.coralPeach);
+          }
+          return const IconThemeData(color: AppColors.gray600);
+        }),
+        labelTextStyle: WidgetStateProperty.resolveWith((states) {
+          if (states.contains(WidgetState.selected)) {
+            return const TextStyle(
+              color: AppColors.coralPeach,
+              fontSize: 12,
+              fontWeight: FontWeight.w500,
+            );
+          }
+          return const TextStyle(
+            color: AppColors.gray600,
+            fontSize: 12,
+          );
+        }),
         labelBehavior: NavigationDestinationLabelBehavior.alwaysShow,
       ),
       dividerTheme: const DividerThemeData(
