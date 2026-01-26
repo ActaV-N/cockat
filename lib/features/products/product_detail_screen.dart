@@ -133,6 +133,7 @@ class _ProductDetailContent extends ConsumerWidget {
       bottomNavigationBar: _BottomActionButton(
         product: product,
         isOwned: isOwned,
+        locale: locale,
       ),
     );
   }
@@ -346,10 +347,12 @@ class _IngredientInfo extends ConsumerWidget {
 class _BottomActionButton extends ConsumerWidget {
   final Product product;
   final bool isOwned;
+  final String locale;
 
   const _BottomActionButton({
     required this.product,
     required this.isOwned,
+    required this.locale,
   });
 
   @override
@@ -379,7 +382,7 @@ class _BottomActionButton extends ConsumerWidget {
                 context: context,
                 builder: (dialogContext) => AlertDialog(
                   title: Text(l10n.removeFromMyBar),
-                  content: Text(l10n.removeProductConfirm(product.displayName)),
+                  content: Text(l10n.removeProductConfirm(product.getLocalizedDisplayName(locale))),
                   actions: [
                     TextButton(
                       onPressed: () => Navigator.pop(dialogContext),

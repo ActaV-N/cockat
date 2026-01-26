@@ -15,6 +15,7 @@ class MyBarScreen extends ConsumerWidget {
     final l10n = AppLocalizations.of(context)!;
     final ingredientGroupsAsync = ref.watch(ingredientGroupsForMyBarProvider);
     final selectedCount = ref.watch(effectiveSelectedProductCountProvider);
+    final locale = ref.watch(currentLocaleCodeProvider);
 
     return Scaffold(
       appBar: AppBar(
@@ -38,6 +39,7 @@ class MyBarScreen extends ConsumerWidget {
           return _MyBarContent(
             groups: groups,
             selectedCount: selectedCount,
+            locale: locale,
           );
         },
         loading: () => const Center(child: CircularProgressIndicator()),
@@ -87,10 +89,12 @@ class _EmptyBarView extends StatelessWidget {
 class _MyBarContent extends StatelessWidget {
   final List<IngredientGroup> groups;
   final int selectedCount;
+  final String locale;
 
   const _MyBarContent({
     required this.groups,
     required this.selectedCount,
+    required this.locale,
   });
 
   @override
@@ -126,7 +130,7 @@ class _MyBarContent extends StatelessWidget {
         // Ingredient sections
         for (final group in groups) ...[
           _SectionHeader(
-            title: group.displayName,
+            title: group.getLocalizedDisplayName(locale),
             count: group.productCount,
           ),
           _ProductGrid(products: group.products),

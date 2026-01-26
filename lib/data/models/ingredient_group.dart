@@ -20,10 +20,18 @@ class IngredientGroup {
     required this.products,
   });
 
-  /// 표시용 이름 (한국어 우선)
-  String get displayName {
-    return ingredientNameKo ?? ingredientName;
+  /// 로케일 기반 표시용 이름
+  String getLocalizedDisplayName(String locale) {
+    if (locale == 'ko' &&
+        ingredientNameKo != null &&
+        ingredientNameKo!.isNotEmpty) {
+      return ingredientNameKo!;
+    }
+    return ingredientName;
   }
+
+  /// @deprecated Use getLocalizedDisplayName instead
+  String get displayName => ingredientName;
 
   /// 상품 개수
   int get productCount => products.length;

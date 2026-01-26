@@ -16,7 +16,9 @@ class AnimatedSelectionIndicator extends StatelessWidget {
   Widget build(BuildContext context) {
     final theme = Theme.of(context);
 
-    return Container(
+    return AnimatedContainer(
+      duration: const Duration(milliseconds: 200),
+      curve: Curves.easeInOut,
       width: size,
       height: size,
       decoration: BoxDecoration(
@@ -25,9 +27,7 @@ class AnimatedSelectionIndicator extends StatelessWidget {
             ? theme.colorScheme.primary
             : AppColors.white.withValues(alpha: 0.9),
         border: Border.all(
-          color: isSelected
-              ? AppColors.white
-              : theme.colorScheme.outline,
+          color: isSelected ? AppColors.white : theme.colorScheme.outline,
           width: 2,
         ),
         boxShadow: [
@@ -38,13 +38,18 @@ class AnimatedSelectionIndicator extends StatelessWidget {
           ),
         ],
       ),
-      child: isSelected
-          ? Icon(
-              Icons.check,
-              size: size * 0.6,
-              color: theme.colorScheme.onPrimary,
-            )
-          : null,
+      child: Center(
+        child: AnimatedContainer(
+          duration: const Duration(milliseconds: 200),
+          curve: Curves.easeInOut,
+          width: isSelected ? size * 0.4 : 0,
+          height: isSelected ? size * 0.4 : 0,
+          decoration: const BoxDecoration(
+            shape: BoxShape.circle,
+            color: AppColors.white,
+          ),
+        ),
+      ),
     );
   }
 }

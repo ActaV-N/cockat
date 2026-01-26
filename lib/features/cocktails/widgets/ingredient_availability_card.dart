@@ -13,6 +13,7 @@ class IngredientAvailabilityCard extends StatelessWidget {
   final IngredientAvailability availability;
   final UnitSystem userUnit;
   final AppLocalizations l10n;
+  final String locale;
 
   const IngredientAvailabilityCard({
     super.key,
@@ -20,6 +21,7 @@ class IngredientAvailabilityCard extends StatelessWidget {
     required this.availability,
     required this.userUnit,
     required this.l10n,
+    required this.locale,
   });
 
   @override
@@ -208,7 +210,7 @@ class IngredientAvailabilityCard extends StatelessWidget {
             const SizedBox(width: 8),
             Expanded(
               child: Text(
-                product.displayName,
+                product.getLocalizedDisplayName(locale),
                 style: Theme.of(context).textTheme.bodyMedium,
               ),
             ),
@@ -275,7 +277,7 @@ class IngredientAvailabilityCard extends StatelessWidget {
                           child: Row(
                             children: [
                               Text(
-                                '• ${product.displayName}',
+                                '• ${product.getLocalizedDisplayName(locale)}',
                                 style: Theme.of(context)
                                     .textTheme
                                     .bodySmall
