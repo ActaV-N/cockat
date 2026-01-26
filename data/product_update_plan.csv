@@ -1,9 +1,22 @@
-action,product_id,name,brand,ingredient_id,country,volume_ml,abv,image_file,notes
-UPDATE,beefeater-london-dry-gin,Beefeater London Dry Gin,Beefeater,gin,England,750,40.00,beefeater.png,이미지 업데이트 필요 (현재 image_url null)
-UPDATE,cynar-artichoke-liqueur,Cynar Artichoke Liqueur,Cynar,campari,Italy,750,16.50,cynar.png,이미지 업데이트 필요 (현재 image_url null)
-UPDATE,stolichnaya-vodka,Stolichnaya Vodka,Stolichnaya,vodka,Russia,750,40.00,stoli.png,이미지 업데이트 필요 (현재 image_url null)
-UPDATE,tanqueray-london-dry-gin,Tanqueray London Dry Gin,Tanqueray,gin,England,750,47.30,tanqueray.png,이미지 업데이트 필요 (현재 image_url null)
-NEW,canadian-club-whisky,Canadian Club Whisky,Canadian Club,canadian-whisky,Canada,750,40.00,canadian_club.png,신규 등록 필요 - Canadian Whisky 카테고리 필요
-NEW,licor-43,Licor 43,Licor 43,licor-43,Spain,700,31.00,licor43.png,신규 등록 필요 - 바닐라 리큐르
-NEW,el-gobernador-pisco,El Gobernador Pisco,El Gobernador,pisco,Peru,750,40.00,el_gobernador.png,신규 등록 필요 - Pisco 카테고리 필요
-UPDATE_GENERIC,dry-vermouth-generic,Dry Vermouth (Generic),Multiple,dry-vermouth,Various,750,15-18,dry_vermouth.png,범용 드라이 베르무트 이미지로 여러 제품에 사용 가능
+action,product_id,name,name_ko,brand,ingredient_id,country,volume_ml,abv,image_file,notes
+UPDATE,averna-amaro,Averna Amaro,아베르나 아마로,Averna,amaro-averna,Italy,750,29.00,amaro_averna.png,기존 제품 이미지 추가
+UPDATE,cointreau-liqueur,Cointreau,콩트로,Cointreau,triple-sec,France,750,40.00,cointreau.png,기존 제품 이미지 추가
+UPDATE,disaronno-amaretto,Disaronno Originale Amaretto,디사론노 오리지날 아마레토,Disaronno,amaretto,Italy,750,28.00,disaronno.png,기존 제품 이미지 추가
+UPDATE,don-julio-blanco,Don Julio Blanco,돈 훌리오 블랑코,Don Julio,tequila-blanco,Mexico,750,40.00,donjulio_blanco.png,기존 제품 이미지 추가
+UPDATE,goslings-black-seal-rum,Gosling's Black Seal Rum,고슬링스 블랙 씰 럼,Gosling's,dark-rum,Bermuda,750,40.00,goslings.png,기존 제품 이미지 추가
+UPDATE,havana-club-anejo-3,Havana Club Anejo 3 Anos,하바나 클럽 아네호 3년,Havana Club,white-rum,Cuba,750,40.00,havana_club.png,기존 제품 이미지 추가
+UPDATE,hendricks-gin,Hendrick's Gin,헨드릭스 진,Hendrick's,gin,Scotland,750,44.00,hendricks.png,기존 제품 이미지 추가
+UPDATE,johnnie-walker-black,Johnnie Walker Black Label,조니 워커 블랙,Johnnie Walker,blended-scotch,Scotland,750,40.00,johnnie_walker_black_label.png,기존 제품 이미지 추가
+UPDATE,noilly-prat-dry,Noilly Prat Original Dry Vermouth,노일리 프랏 드라이,Noilly Prat,dry-vermouth,France,750,18.00,noilly_part.png,기존 제품 이미지 추가
+UPDATE,tia-maria-coffee-liqueur,Tia Maria Coffee Liqueur,티아 마리아 커피 리큐르,Tia Maria,coffee-liqueur,Jamaica,750,20.00,tia_maria.png,기존 제품 이미지 추가
+INSERT,51-cachaca,Cachaca 51,카샤사 51,51,cachaca,Brazil,750,40.00,51_cachaca.png,신규 등록 - 브라질 카샤사
+INSERT,amaro-dell-etna,Amaro dell'Etna,아마로 델에트나,Dell'Etna,amaro,Italy,750,32.00,amaro_delle_etna.png,신규 등록 - 시칠리아 아마로
+INSERT,empress-1908-gin,Empress 1908 Gin,엠프레스 1908 진,Empress,gin,Canada,750,42.50,empress.png,신규 등록 - 버터플라이 피 진
+INSERT,frangelico-liqueur,Frangelico,프랑젤리코,Frangelico,hazelnut-liqueur,Italy,750,20.00,frangelico.png,신규 등록 - 헤이즐넛 리큐르 (ingredient 추가 필요)
+INSERT,jameson-irish-whiskey,Jameson Irish Whiskey,제임슨 아이리쉬 위스키,Jameson,irish-whiskey,Ireland,750,40.00,jameson.png,신규 등록 - 아이리쉬 위스키
+INSERT,lionello-vermouth,Lionello Stock Vermouth,리오넬로 스톡 베르무트,Lionello Stock,sweet-vermouth,Italy,750,16.00,lionello_vermouth.png,신규 등록 - 스위트 베르무트
+INSERT,skyy-vodka,SKYY Vodka,스카이 보드카,SKYY,vodka,USA,750,40.00,skyy_vodka.png,신규 등록 - 미국 보드카
+INSERT,st-germain-liqueur,St-Germain Elderflower Liqueur,생제르맹 엘더플라워 리큐르,St-Germain,st-germain,France,750,20.00,st_germain.png,신규 등록 - 엘더플라워 리큐르
+INSERT,tanqueray-no-ten,Tanqueray No. Ten,탱커레이 넘버 텐,Tanqueray,gin,Scotland,750,47.30,tanqueray_no_ten.png,신규 등록 - 프리미엄 진
+INSERT,veuve-clicquot-brut,Veuve Clicquot Brut,뵈브 클리코 브뤼,Veuve Clicquot,champagne,France,750,12.00,veuve_clicquot.png,신규 등록 - 샴페인
+INSERT,woodford-reserve-bourbon,Woodford Reserve Bourbon,우드포드 리저브 버번,Woodford Reserve,bourbon-whiskey,USA,750,45.20,woodford_reserve.png,신규 등록 - 프리미엄 버번
