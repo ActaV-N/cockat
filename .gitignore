@@ -49,6 +49,7 @@ app.*.map.json
 .env.*
 *.env
 lib/core/config/env.dart
+*.p8
 
 # iOS
 **/ios/Pods/
