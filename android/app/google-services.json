@@ -1,0 +1,29 @@
+{
+  "project_info": {
+    "project_number": "397501394788",
+    "project_id": "cockat-a7382",
+    "storage_bucket": "cockat-a7382.firebasestorage.app"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:397501394788:android:381ba70a9888292e55d471",
+        "android_client_info": {
+          "package_name": "com.cockat.cockat"
+        }
+      },
+      "oauth_client": [],
+      "api_key": [
+        {
+          "current_key": "AIzaSyDLsaANUBrGth5jZL-LbDAIZotFPvE-fTo"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": []
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}

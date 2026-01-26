@@ -8,15 +8,36 @@ import '../../data/providers/providers.dart';
 import '../../l10n/app_localizations.dart';
 import 'widgets/ingredient_availability_card.dart';
 
-class CocktailDetailScreen extends ConsumerWidget {
+class CocktailDetailScreen extends ConsumerStatefulWidget {
   final String cocktailId;
 
   const CocktailDetailScreen({super.key, required this.cocktailId});
 
   @override
-  Widget build(BuildContext context, WidgetRef ref) {
+  ConsumerState<CocktailDetailScreen> createState() =>
+      _CocktailDetailScreenState();
+}
+
+class _CocktailDetailScreenState extends ConsumerState<CocktailDetailScreen> {
+  bool _hasLoggedView = false;
+
+  void _logCocktailView(Cocktail cocktail, String locale) {
+    if (_hasLoggedView) return;
+    _hasLoggedView = true;
+
+    final analytics = ref.read(analyticsServiceProvider);
+    analytics.logScreenView(screenName: 'CocktailDetail');
+    analytics.logViewCocktail(
+      cocktailId: cocktail.id,
+      cocktailName: cocktail.getLocalizedName(locale),
+    );
+  }
+
+  @override
+  Widget build(BuildContext context) {
     // 상세 재료 정보가 포함된 칵테일 로드 (lazy loading)
-    final cocktailAsync = ref.watch(cocktailWithIngredientsProvider(cocktailId));
+    final cocktailAsync =
+        ref.watch(cocktailWithIngredientsProvider(widget.cocktailId));
     final l10n = AppLocalizations.of(context)!;
     final locale = ref.watch(currentLocaleCodeProvider);
 
@@ -28,6 +49,8 @@ class CocktailDetailScreen extends ConsumerWidget {
             body: const Center(child: Text('Cocktail not found')),
           );
         }
+
+        _logCocktailView(cocktail, locale);
 
         return Scaffold(
           body: CustomScrollView(
@@ -126,6 +149,7 @@ class CocktailDetailScreen extends ConsumerWidget {
                         cocktailId: cocktail.id,
                         ingredients: cocktail.ingredients,
                         l10n: l10n,
+                        locale: locale,
                       ),
                       const SizedBox(height: 24),
 
@@ -249,11 +273,13 @@ class _IngredientsList extends ConsumerWidget {
   final String cocktailId;
   final List<CocktailIngredient> ingredients;
   final AppLocalizations l10n;
+  final String locale;
 
   const _IngredientsList({
     required this.cocktailId,
     required this.ingredients,
     required this.l10n,
+    required this.locale,
   });
 
   @override
@@ -281,6 +307,7 @@ class _IngredientsList extends ConsumerWidget {
                 availability: availability,
                 userUnit: userUnit,
                 l10n: l10n,
+                locale: locale,
               );
             }).toList(),
           ),

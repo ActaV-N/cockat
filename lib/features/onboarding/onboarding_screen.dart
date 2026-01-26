@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 
+import '../../core/services/analytics_service.dart';
 import '../../data/providers/providers.dart';
 import '../../l10n/app_localizations.dart';
 import '../home/home_screen.dart';
@@ -24,6 +25,8 @@ class _OnboardingScreenState extends ConsumerState<OnboardingScreen> {
   void initState() {
     super.initState();
     _pageController = PageController();
+    AnalyticsService().logOnboardingStart();
+    AnalyticsService().logScreenView(screenName: 'Onboarding');
   }
 
   @override
@@ -53,6 +56,7 @@ class _OnboardingScreenState extends ConsumerState<OnboardingScreen> {
   }
 
   Future<void> _skipToHome() async {
+    AnalyticsService().logOnboardingSkip(stepIndex: _currentPage);
     await ref.read(onboardingServiceProvider).completeOnboarding();
     if (mounted) {
       Navigator.of(context).pushReplacement(
@@ -69,6 +73,7 @@ class _OnboardingScreenState extends ConsumerState<OnboardingScreen> {
   }
 
   Future<void> _completeOnboarding() async {
+    AnalyticsService().logOnboardingComplete();
     await ref.read(onboardingServiceProvider).completeOnboarding();
     if (mounted) {
       Navigator.of(context).pushReplacement(

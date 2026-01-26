@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:supabase_flutter/supabase_flutter.dart';
 
+import '../../core/services/analytics_service.dart';
 import '../../core/widgets/widgets.dart';
 import '../../data/providers/providers.dart';
 import '../../l10n/app_localizations.dart';
@@ -31,6 +32,7 @@ class _LoginScreenState extends ConsumerState<LoginScreen> {
         // OAuth 로그인 성공 시 (signed_in 이벤트)
         if (authState.event == AuthChangeEvent.signedIn && _isProcessingOAuth) {
           _isProcessingOAuth = false;
+          AnalyticsService().logLogin(method: 'oauth');
 
           if (!mounted) return;
 
@@ -74,6 +76,7 @@ class _LoginScreenState extends ConsumerState<LoginScreen> {
     final l10n = AppLocalizations.of(context)!;
 
     if (result.isSuccess) {
+      AnalyticsService().logLogin(method: 'email');
       ScaffoldMessenger.of(context).showSnackBar(
         SnackBar(content: Text(l10n.loginSuccess)),
       );

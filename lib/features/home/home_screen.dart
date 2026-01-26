@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 
+import '../../data/providers/providers.dart';
 import '../../l10n/app_localizations.dart';
 import '../cocktails/cocktails_screen.dart';
 import '../products/my_bar_screen.dart';
@@ -16,6 +17,20 @@ class HomeScreen extends ConsumerStatefulWidget {
 
 class _HomeScreenState extends ConsumerState<HomeScreen> {
   int _selectedIndex = 0;
+
+  static const _screenNames = ['Cocktails', 'MyBar', 'Products', 'Profile'];
+
+  @override
+  void initState() {
+    super.initState();
+    _logScreenView(0);
+  }
+
+  void _logScreenView(int index) {
+    ref.read(analyticsServiceProvider).logScreenView(
+          screenName: _screenNames[index],
+        );
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -39,6 +54,7 @@ class _HomeScreenState extends ConsumerState<HomeScreen> {
           setState(() {
             _selectedIndex = index;
           });
+          _logScreenView(index);
         },
         destinations: [
           NavigationDestination(

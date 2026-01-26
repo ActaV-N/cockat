@@ -19,6 +19,7 @@ class CocktailSearchScreen extends ConsumerStatefulWidget {
 class _CocktailSearchScreenState extends ConsumerState<CocktailSearchScreen> {
   late final TextEditingController _controller;
   final FocusNode _focusNode = FocusNode();
+  String _lastLoggedQuery = '';
 
   @override
   void initState() {
@@ -28,6 +29,7 @@ class _CocktailSearchScreenState extends ConsumerState<CocktailSearchScreen> {
     WidgetsBinding.instance.addPostFrameCallback((_) {
       ref.read(cocktailSearchQueryProvider.notifier).state = '';
       _focusNode.requestFocus();
+      ref.read(analyticsServiceProvider).logScreenView(screenName: 'CocktailSearch');
     });
   }
 
@@ -40,6 +42,11 @@ class _CocktailSearchScreenState extends ConsumerState<CocktailSearchScreen> {
 
   void _onSearchChanged(String value) {
     ref.read(cocktailSearchQueryProvider.notifier).state = value;
+    // Log search when user has typed at least 2 characters
+    if (value.length >= 2 && value != _lastLoggedQuery) {
+      _lastLoggedQuery = value;
+      ref.read(analyticsServiceProvider).logSearch(searchTerm: value);
+    }
   }
 
   void _clearSearch() {
@@ -62,10 +69,11 @@ class _CocktailSearchScreenState extends ConsumerState<CocktailSearchScreen> {
           focusNode: _focusNode,
           onChanged: _onSearchChanged,
           textInputAction: TextInputAction.search,
+          textAlignVertical: TextAlignVertical.center,
           decoration: InputDecoration(
             hintText: l10n.searchCocktails,
             border: InputBorder.none,
-            contentPadding: const EdgeInsets.symmetric(horizontal: 16),
+            contentPadding: const EdgeInsets.symmetric(horizontal: 16, vertical: 12),
             suffixIcon: searchQuery.isNotEmpty
                 ? IconButton(
                     icon: const Icon(Icons.clear),
