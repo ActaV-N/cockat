@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 
+import '../../core/widgets/app_footer.dart';
 import '../../data/providers/providers.dart';
 import '../../l10n/app_localizations.dart';
 import '../auth/login_screen.dart';
@@ -42,7 +43,7 @@ class ProfileScreen extends ConsumerWidget {
                   child: Column(
                     mainAxisAlignment: MainAxisAlignment.center,
                     children: [
-                      const SizedBox(height: 16),
+                      const SizedBox(height: 48),
                       CircleAvatar(
                         radius: 40,
                         backgroundColor: colorScheme.primary,
@@ -55,7 +56,10 @@ class ProfileScreen extends ConsumerWidget {
                       const SizedBox(height: 12),
                       Text(
                         isAuthenticated
-                            ? (user.email ?? l10n.profile)
+                            ? (user.userMetadata?['full_name'] as String? ??
+                                user.userMetadata?['name'] as String? ??
+                                user.email ??
+                                l10n.profile)
                             : l10n.guestUser,
                         style: Theme.of(context).textTheme.titleLarge?.copyWith(
                               fontWeight: FontWeight.bold,
@@ -180,7 +184,8 @@ class ProfileScreen extends ConsumerWidget {
                 ),
               ],
 
-              const SizedBox(height: 32),
+              // Footer
+              const AppFooter(),
             ]),
           ),
         ],

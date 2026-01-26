@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:supabase_flutter/supabase_flutter.dart';
 
 import '../../core/widgets/widgets.dart';
 import '../../data/providers/providers.dart';
@@ -23,6 +24,33 @@ class _SignUpScreenState extends ConsumerState<SignUpScreen> {
   bool _isLoading = false;
   bool _obscurePassword = true;
   bool _obscureConfirmPassword = true;
+  bool _isProcessingOAuth = false;
+
+  @override
+  void initState() {
+    super.initState();
+    // OAuth 콜백 후 auth 상태 변경 감지
+    ref.listenManual(authStateChangesProvider, (previous, next) {
+      next.whenData((authState) async {
+        if (authState.event == AuthChangeEvent.signedIn && _isProcessingOAuth) {
+          _isProcessingOAuth = false;
+
+          if (!mounted) return;
+
+          final l10n = AppLocalizations.of(context)!;
+          ScaffoldMessenger.of(context).showSnackBar(
+            SnackBar(content: Text(l10n.loginSuccess)),
+          );
+
+          await ref.read(onboardingServiceProvider).clearLocalData();
+          await ref.read(onboardingServiceProvider).syncDbToLocal();
+
+          if (!mounted) return;
+          Navigator.of(context).pop(true);
+        }
+      });
+    });
+  }
 
   @override
   void dispose() {
@@ -64,7 +92,10 @@ class _SignUpScreenState extends ConsumerState<SignUpScreen> {
   }
 
   Future<void> _signUpWithGoogle() async {
-    setState(() => _isLoading = true);
+    setState(() {
+      _isLoading = true;
+      _isProcessingOAuth = true;
+    });
 
     final authService = ref.read(authServiceProvider);
     final result = await authService.signInWithGoogle();
@@ -73,6 +104,7 @@ class _SignUpScreenState extends ConsumerState<SignUpScreen> {
     setState(() => _isLoading = false);
 
     if (!result.isSuccess && !result.isPending) {
+      _isProcessingOAuth = false;
       ScaffoldMessenger.of(context).showSnackBar(
         SnackBar(
           content: Text(result.errorMessage ?? 'Google sign up failed'),
@@ -83,7 +115,10 @@ class _SignUpScreenState extends ConsumerState<SignUpScreen> {
   }
 
   Future<void> _signUpWithApple() async {
-    setState(() => _isLoading = true);
+    setState(() {
+      _isLoading = true;
+      _isProcessingOAuth = true;
+    });
 
     final authService = ref.read(authServiceProvider);
     final result = await authService.signInWithApple();
@@ -92,6 +127,7 @@ class _SignUpScreenState extends ConsumerState<SignUpScreen> {
     setState(() => _isLoading = false);
 
     if (!result.isSuccess && !result.isPending) {
+      _isProcessingOAuth = false;
       ScaffoldMessenger.of(context).showSnackBar(
         SnackBar(
           content: Text(result.errorMessage ?? 'Apple sign up failed'),

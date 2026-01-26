@@ -174,5 +174,7 @@
   "removeFromMyBar": "내 술장에서 제거",
   "removeProductConfirm": "{name}을(를) 내 술장에서 제거할까요?",
   "remove": "제거",
-  "productNotFound": "상품을 찾을 수 없습니다"
+  "productNotFound": "상품을 찾을 수 없습니다",
+  "footerContact": "문의: dltmdwns0721@kakao.com",
+  "footerCopyright": "© 2026 Cockat"
 }

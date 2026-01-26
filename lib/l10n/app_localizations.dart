@@ -1147,6 +1147,18 @@ abstract class AppLocalizations {
   /// In en, this message translates to:
   /// **'Product not found'**
   String get productNotFound;
+
+  /// No description provided for @footerContact.
+  ///
+  /// In en, this message translates to:
+  /// **'Contact: dltmdwns0721@kakao.com'**
+  String get footerContact;
+
+  /// No description provided for @footerCopyright.
+  ///
+  /// In en, this message translates to:
+  /// **'© 2026 Cockat'**
+  String get footerCopyright;
 }
 
 class _AppLocalizationsDelegate

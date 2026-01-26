@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:supabase_flutter/supabase_flutter.dart';
 
 import '../../core/widgets/widgets.dart';
 import '../../data/providers/providers.dart';
@@ -19,6 +20,35 @@ class _LoginScreenState extends ConsumerState<LoginScreen> {
   final _passwordController = TextEditingController();
   bool _isLoading = false;
   bool _obscurePassword = true;
+  bool _isProcessingOAuth = false;
+
+  @override
+  void initState() {
+    super.initState();
+    // OAuth 콜백 후 auth 상태 변경 감지
+    ref.listenManual(authStateChangesProvider, (previous, next) {
+      next.whenData((authState) async {
+        // OAuth 로그인 성공 시 (signed_in 이벤트)
+        if (authState.event == AuthChangeEvent.signedIn && _isProcessingOAuth) {
+          _isProcessingOAuth = false;
+
+          if (!mounted) return;
+
+          final l10n = AppLocalizations.of(context)!;
+          ScaffoldMessenger.of(context).showSnackBar(
+            SnackBar(content: Text(l10n.loginSuccess)),
+          );
+
+          // Sync data
+          await ref.read(onboardingServiceProvider).clearLocalData();
+          await ref.read(onboardingServiceProvider).syncDbToLocal();
+
+          if (!mounted) return;
+          Navigator.of(context).pop(true);
+        }
+      });
+    });
+  }
 
   @override
   void dispose() {
@@ -65,7 +95,10 @@ class _LoginScreenState extends ConsumerState<LoginScreen> {
   }
 
   Future<void> _signInWithGoogle() async {
-    setState(() => _isLoading = true);
+    setState(() {
+      _isLoading = true;
+      _isProcessingOAuth = true;
+    });
 
     final authService = ref.read(authServiceProvider);
     final result = await authService.signInWithGoogle();
@@ -74,6 +107,7 @@ class _LoginScreenState extends ConsumerState<LoginScreen> {
     setState(() => _isLoading = false);
 
     if (!result.isSuccess && !result.isPending) {
+      _isProcessingOAuth = false;
       ScaffoldMessenger.of(context).showSnackBar(
         SnackBar(
           content: Text(result.errorMessage ?? 'Google login failed'),
@@ -84,7 +118,10 @@ class _LoginScreenState extends ConsumerState<LoginScreen> {
   }
 
   Future<void> _signInWithApple() async {
-    setState(() => _isLoading = true);
+    setState(() {
+      _isLoading = true;
+      _isProcessingOAuth = true;
+    });
 
     final authService = ref.read(authServiceProvider);
     final result = await authService.signInWithApple();
@@ -93,6 +130,7 @@ class _LoginScreenState extends ConsumerState<LoginScreen> {
     setState(() => _isLoading = false);
 
     if (!result.isSuccess && !result.isPending) {
+      _isProcessingOAuth = false;
       ScaffoldMessenger.of(context).showSnackBar(
         SnackBar(
           content: Text(result.errorMessage ?? 'Apple login failed'),

@@ -1,5 +1,6 @@
 import 'dart:async';
 
+import 'package:flutter/foundation.dart' show kIsWeb;
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:supabase_flutter/supabase_flutter.dart';
 
@@ -89,7 +90,12 @@ class AuthService {
     try {
       final response = await _supabase.auth.signInWithOAuth(
         OAuthProvider.google,
-        redirectTo: 'io.supabase.cockat://login-callback',
+        redirectTo: kIsWeb ? null : 'io.supabase.cockat://login-callback',
+        authScreenLaunchMode:
+            kIsWeb ? LaunchMode.platformDefault : LaunchMode.externalApplication,
+        queryParams: {
+          'prompt': 'select_account', // 항상 계정 선택 화면 표시
+        },
       );
 
       if (response) {
@@ -110,7 +116,9 @@ class AuthService {
     try {
       final response = await _supabase.auth.signInWithOAuth(
         OAuthProvider.apple,
-        redirectTo: 'io.supabase.cockat://login-callback',
+        redirectTo: kIsWeb ? null : 'io.supabase.cockat://login-callback',
+        authScreenLaunchMode:
+            kIsWeb ? LaunchMode.platformDefault : LaunchMode.externalApplication,
       );
 
       if (response) {

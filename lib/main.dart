@@ -21,6 +21,9 @@ void main() async {
   await Supabase.initialize(
     url: SupabaseConfig.url,
     anonKey: SupabaseConfig.anonKey,
+    authOptions: const FlutterAuthClientOptions(
+      authFlowType: AuthFlowType.pkce,
+    ),
   );
 
   final prefs = await SharedPreferences.getInstance();
@@ -58,6 +61,20 @@ class CockatApp extends ConsumerWidget {
         GlobalCupertinoLocalizations.delegate,
       ],
       home: const SplashScreen(),
+      // OAuth 콜백 딥링크를 빈 페이지로 처리 (Supabase가 auth 처리)
+      onGenerateRoute: (settings) {
+        // login-callback 경로는 Supabase가 이미 처리함
+        // 빈 페이지 반환하여 에러 방지
+        if (settings.name?.contains('login-callback') == true ||
+            settings.name?.contains('://') == true) {
+          return MaterialPageRoute(
+            builder: (_) => const Scaffold(
+              body: Center(child: CircularProgressIndicator()),
+            ),
+          );
+        }
+        return null;
+      },
     );
   }
 }

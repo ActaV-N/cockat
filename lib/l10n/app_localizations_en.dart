@@ -587,4 +587,10 @@ class AppLocalizationsEn extends AppLocalizations {
 
   @override
   String get productNotFound => 'Product not found';
+
+  @override
+  String get footerContact => 'Contact: dltmdwns0721@kakao.com';
+
+  @override
+  String get footerCopyright => '© 2026 Cockat';
 }

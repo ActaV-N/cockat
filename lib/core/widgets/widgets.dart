@@ -7,3 +7,4 @@ export 'search_bar_field.dart';
 export 'selection_indicator.dart';
 export 'animated_selection_indicator.dart';
 export 'product_card.dart';
+export 'app_footer.dart';

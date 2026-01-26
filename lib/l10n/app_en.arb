@@ -296,5 +296,7 @@
     }
   },
   "remove": "Remove",
-  "productNotFound": "Product not found"
+  "productNotFound": "Product not found",
+  "footerContact": "Contact: dltmdwns0721@kakao.com",
+  "footerCopyright": "© 2026 Cockat"
 }
