@@ -1151,7 +1151,7 @@ abstract class AppLocalizations {
   /// No description provided for @footerContact.
   ///
   /// In en, this message translates to:
-  /// **'Contact: dltmdwns0721@kakao.com'**
+  /// **'Contact: liam.leeson5108@gmail.com'**
   String get footerContact;
 
   /// No description provided for @footerCopyright.

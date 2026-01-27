@@ -6,7 +6,7 @@ import '../../l10n/app_localizations.dart';
 class AppFooter extends StatelessWidget {
   const AppFooter({super.key});
 
-  static const String _contactEmail = 'dltmdwns0721@kakao.com';
+  static const String _contactEmail = 'liam.leeson5108@gmail.com';
 
   Future<void> _launchEmail(BuildContext context) async {
     final Uri emailUri = Uri(

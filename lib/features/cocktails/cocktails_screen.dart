@@ -407,7 +407,7 @@ class _CocktailCard extends ConsumerWidget {
     return Container(
       padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 4),
       decoration: BoxDecoration(
-        color: color.withValues(alpha: 0.7),
+        color: color.withValues(alpha: 0.85),
         borderRadius: BorderRadius.circular(4),
       ),
       child: Text(

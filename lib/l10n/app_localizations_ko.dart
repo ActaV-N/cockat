@@ -576,7 +576,7 @@ class AppLocalizationsKo extends AppLocalizations {
   String get productNotFound => '상품을 찾을 수 없습니다';
 
   @override
-  String get footerContact => '문의: dltmdwns0721@kakao.com';
+  String get footerContact => '문의: liam.leeson5108@gmail.com';
 
   @override
   String get footerCopyright => '© 2026 Cockat';
