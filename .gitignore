@@ -73,3 +73,6 @@ supabase/.temp/
 
 # Local prompts
 prompts/
+
+# Local image files for upload
+data/images/
