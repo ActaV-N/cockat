@@ -1,0 +1,2 @@
+action,cocktail_id,name,name_ko,glass,method,abv,image_file,notes
+UPDATE,espresso-martini,Espresso Martini,에스프레소 마티니,coupe,shake,12.00,espresso_martini.png,기존 칵테일 이미지 업데이트
