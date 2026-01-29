@@ -1225,6 +1225,192 @@ abstract class AppLocalizations {
   /// In en, this message translates to:
   /// **'Loading...'**
   String get loading;
+
+  /// No description provided for @myCocktails.
+  ///
+  /// In en, this message translates to:
+  /// **'My Cocktails'**
+  String get myCocktails;
+
+  /// No description provided for @myCocktailsDescription.
+  ///
+  /// In en, this message translates to:
+  /// **'Create and manage your own recipes'**
+  String get myCocktailsDescription;
+
+  /// No description provided for @createCocktail.
+  ///
+  /// In en, this message translates to:
+  /// **'Create Cocktail'**
+  String get createCocktail;
+
+  /// No description provided for @editCocktail.
+  ///
+  /// In en, this message translates to:
+  /// **'Edit Cocktail'**
+  String get editCocktail;
+
+  /// No description provided for @cocktailName.
+  ///
+  /// In en, this message translates to:
+  /// **'Cocktail Name'**
+  String get cocktailName;
+
+  /// No description provided for @cocktailNameHint.
+  ///
+  /// In en, this message translates to:
+  /// **'e.g., My Signature Martini'**
+  String get cocktailNameHint;
+
+  /// No description provided for @cocktailDescription.
+  ///
+  /// In en, this message translates to:
+  /// **'Description (optional)'**
+  String get cocktailDescription;
+
+  /// No description provided for @cocktailDescriptionHint.
+  ///
+  /// In en, this message translates to:
+  /// **'Describe your cocktail'**
+  String get cocktailDescriptionHint;
+
+  /// No description provided for @cocktailInstructions.
+  ///
+  /// In en, this message translates to:
+  /// **'Instructions'**
+  String get cocktailInstructions;
+
+  /// No description provided for @cocktailInstructionsHint.
+  ///
+  /// In en, this message translates to:
+  /// **'Write detailed instructions for making this cocktail'**
+  String get cocktailInstructionsHint;
+
+  /// No description provided for @addIngredient.
+  ///
+  /// In en, this message translates to:
+  /// **'Add Ingredient'**
+  String get addIngredient;
+
+  /// No description provided for @ingredientName.
+  ///
+  /// In en, this message translates to:
+  /// **'Ingredient Name'**
+  String get ingredientName;
+
+  /// No description provided for @ingredientAmount.
+  ///
+  /// In en, this message translates to:
+  /// **'Amount'**
+  String get ingredientAmount;
+
+  /// No description provided for @ingredientUnit.
+  ///
+  /// In en, this message translates to:
+  /// **'Unit'**
+  String get ingredientUnit;
+
+  /// No description provided for @customIngredient.
+  ///
+  /// In en, this message translates to:
+  /// **'Custom'**
+  String get customIngredient;
+
+  /// No description provided for @selectIngredient.
+  ///
+  /// In en, this message translates to:
+  /// **'Select Ingredient'**
+  String get selectIngredient;
+
+  /// No description provided for @noUserCocktails.
+  ///
+  /// In en, this message translates to:
+  /// **'No cocktails yet'**
+  String get noUserCocktails;
+
+  /// No description provided for @noUserCocktailsPrompt.
+  ///
+  /// In en, this message translates to:
+  /// **'Create your own recipe!'**
+  String get noUserCocktailsPrompt;
+
+  /// No description provided for @saveCocktail.
+  ///
+  /// In en, this message translates to:
+  /// **'Save'**
+  String get saveCocktail;
+
+  /// No description provided for @cocktailSaved.
+  ///
+  /// In en, this message translates to:
+  /// **'Cocktail saved'**
+  String get cocktailSaved;
+
+  /// No description provided for @cocktailDeleted.
+  ///
+  /// In en, this message translates to:
+  /// **'Cocktail deleted'**
+  String get cocktailDeleted;
+
+  /// No description provided for @deleteCocktailConfirm.
+  ///
+  /// In en, this message translates to:
+  /// **'Delete this cocktail?'**
+  String get deleteCocktailConfirm;
+
+  /// No description provided for @cocktailNameRequired.
+  ///
+  /// In en, this message translates to:
+  /// **'Please enter a cocktail name'**
+  String get cocktailNameRequired;
+
+  /// No description provided for @cocktailInstructionsRequired.
+  ///
+  /// In en, this message translates to:
+  /// **'Please enter instructions'**
+  String get cocktailInstructionsRequired;
+
+  /// No description provided for @addPhoto.
+  ///
+  /// In en, this message translates to:
+  /// **'Add Photo'**
+  String get addPhoto;
+
+  /// No description provided for @changePhoto.
+  ///
+  /// In en, this message translates to:
+  /// **'Change Photo'**
+  String get changePhoto;
+
+  /// No description provided for @removePhoto.
+  ///
+  /// In en, this message translates to:
+  /// **'Remove Photo'**
+  String get removePhoto;
+
+  /// No description provided for @takePhoto.
+  ///
+  /// In en, this message translates to:
+  /// **'Take Photo'**
+  String get takePhoto;
+
+  /// No description provided for @chooseFromGallery.
+  ///
+  /// In en, this message translates to:
+  /// **'Choose from Gallery'**
+  String get chooseFromGallery;
+
+  /// No description provided for @myCocktailsCount.
+  ///
+  /// In en, this message translates to:
+  /// **'{count} cocktails'**
+  String myCocktailsCount(int count);
+
+  /// No description provided for @createdAt.
+  ///
+  /// In en, this message translates to:
+  /// **'Created: {date}'**
+  String createdAt(String date);
 }
 
 class _AppLocalizationsDelegate

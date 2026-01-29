@@ -627,4 +627,102 @@ class AppLocalizationsEn extends AppLocalizations {
 
   @override
   String get loading => 'Loading...';
+
+  @override
+  String get myCocktails => 'My Cocktails';
+
+  @override
+  String get myCocktailsDescription => 'Create and manage your own recipes';
+
+  @override
+  String get createCocktail => 'Create Cocktail';
+
+  @override
+  String get editCocktail => 'Edit Cocktail';
+
+  @override
+  String get cocktailName => 'Cocktail Name';
+
+  @override
+  String get cocktailNameHint => 'e.g., My Signature Martini';
+
+  @override
+  String get cocktailDescription => 'Description (optional)';
+
+  @override
+  String get cocktailDescriptionHint => 'Describe your cocktail';
+
+  @override
+  String get cocktailInstructions => 'Instructions';
+
+  @override
+  String get cocktailInstructionsHint =>
+      'Write detailed instructions for making this cocktail';
+
+  @override
+  String get addIngredient => 'Add Ingredient';
+
+  @override
+  String get ingredientName => 'Ingredient Name';
+
+  @override
+  String get ingredientAmount => 'Amount';
+
+  @override
+  String get ingredientUnit => 'Unit';
+
+  @override
+  String get customIngredient => 'Custom';
+
+  @override
+  String get selectIngredient => 'Select Ingredient';
+
+  @override
+  String get noUserCocktails => 'No cocktails yet';
+
+  @override
+  String get noUserCocktailsPrompt => 'Create your own recipe!';
+
+  @override
+  String get saveCocktail => 'Save';
+
+  @override
+  String get cocktailSaved => 'Cocktail saved';
+
+  @override
+  String get cocktailDeleted => 'Cocktail deleted';
+
+  @override
+  String get deleteCocktailConfirm => 'Delete this cocktail?';
+
+  @override
+  String get cocktailNameRequired => 'Please enter a cocktail name';
+
+  @override
+  String get cocktailInstructionsRequired => 'Please enter instructions';
+
+  @override
+  String get addPhoto => 'Add Photo';
+
+  @override
+  String get changePhoto => 'Change Photo';
+
+  @override
+  String get removePhoto => 'Remove Photo';
+
+  @override
+  String get takePhoto => 'Take Photo';
+
+  @override
+  String get chooseFromGallery => 'Choose from Gallery';
+
+  @override
+  String myCocktailsCount(int count) {
+    return '$count cocktails';
+  }
+
+  @override
+  String createdAt(String date) {
+    return 'Created: $date';
+  }
 }

@@ -43,6 +43,9 @@ dependencies:
   # Utilities - URL Launcher
   url_launcher: ^6.3.1
 
+  # Image Picker
+  image_picker: ^1.1.2
+
   # Firebase
   firebase_core: ^3.8.1
   firebase_analytics: ^11.4.1

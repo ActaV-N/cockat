@@ -309,5 +309,50 @@
   "networkError": "Please check your internet connection",
   "timeoutError": "Request timed out. Please try again",
   "retry": "Retry",
-  "loading": "Loading..."
+  "loading": "Loading...",
+  "myCocktails": "My Cocktails",
+  "myCocktailsDescription": "Create and manage your own recipes",
+  "createCocktail": "Create Cocktail",
+  "editCocktail": "Edit Cocktail",
+  "cocktailName": "Cocktail Name",
+  "cocktailNameHint": "e.g., My Signature Martini",
+  "cocktailDescription": "Description (optional)",
+  "cocktailDescriptionHint": "Describe your cocktail",
+  "cocktailInstructions": "Instructions",
+  "cocktailInstructionsHint": "Write detailed instructions for making this cocktail",
+  "addIngredient": "Add Ingredient",
+  "ingredientName": "Ingredient Name",
+  "ingredientAmount": "Amount",
+  "ingredientUnit": "Unit",
+  "customIngredient": "Custom",
+  "selectIngredient": "Select Ingredient",
+  "noUserCocktails": "No cocktails yet",
+  "noUserCocktailsPrompt": "Create your own recipe!",
+  "saveCocktail": "Save",
+  "cocktailSaved": "Cocktail saved",
+  "cocktailDeleted": "Cocktail deleted",
+  "deleteCocktailConfirm": "Delete this cocktail?",
+  "cocktailNameRequired": "Please enter a cocktail name",
+  "cocktailInstructionsRequired": "Please enter instructions",
+  "addPhoto": "Add Photo",
+  "changePhoto": "Change Photo",
+  "removePhoto": "Remove Photo",
+  "takePhoto": "Take Photo",
+  "chooseFromGallery": "Choose from Gallery",
+  "myCocktailsCount": "{count} cocktails",
+  "@myCocktailsCount": {
+    "placeholders": {
+      "count": {
+        "type": "int"
+      }
+    }
+  },
+  "createdAt": "Created: {date}",
+  "@createdAt": {
+    "placeholders": {
+      "date": {
+        "type": "String"
+      }
+    }
+  }
 }

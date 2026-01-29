@@ -614,4 +614,101 @@ class AppLocalizationsKo extends AppLocalizations {
 
   @override
   String get loading => '로딩 중...';
+
+  @override
+  String get myCocktails => '나만의 칵테일';
+
+  @override
+  String get myCocktailsDescription => '나만의 레시피를 만들고 관리하세요';
+
+  @override
+  String get createCocktail => '칵테일 만들기';
+
+  @override
+  String get editCocktail => '칵테일 수정';
+
+  @override
+  String get cocktailName => '칵테일 이름';
+
+  @override
+  String get cocktailNameHint => '예: 나만의 마티니';
+
+  @override
+  String get cocktailDescription => '설명 (선택)';
+
+  @override
+  String get cocktailDescriptionHint => '이 칵테일에 대한 설명을 입력하세요';
+
+  @override
+  String get cocktailInstructions => '만드는 방법';
+
+  @override
+  String get cocktailInstructionsHint => '칵테일 만드는 방법을 상세히 적어주세요';
+
+  @override
+  String get addIngredient => '재료 추가';
+
+  @override
+  String get ingredientName => '재료 이름';
+
+  @override
+  String get ingredientAmount => '양';
+
+  @override
+  String get ingredientUnit => '단위';
+
+  @override
+  String get customIngredient => '직접 입력';
+
+  @override
+  String get selectIngredient => '재료 선택';
+
+  @override
+  String get noUserCocktails => '아직 만든 칵테일이 없어요';
+
+  @override
+  String get noUserCocktailsPrompt => '나만의 레시피를 만들어보세요!';
+
+  @override
+  String get saveCocktail => '저장';
+
+  @override
+  String get cocktailSaved => '칵테일이 저장되었습니다';
+
+  @override
+  String get cocktailDeleted => '칵테일이 삭제되었습니다';
+
+  @override
+  String get deleteCocktailConfirm => '이 칵테일을 삭제할까요?';
+
+  @override
+  String get cocktailNameRequired => '칵테일 이름을 입력해주세요';
+
+  @override
+  String get cocktailInstructionsRequired => '만드는 방법을 입력해주세요';
+
+  @override
+  String get addPhoto => '사진 추가';
+
+  @override
+  String get changePhoto => '사진 변경';
+
+  @override
+  String get removePhoto => '사진 제거';
+
+  @override
+  String get takePhoto => '사진 촬영';
+
+  @override
+  String get chooseFromGallery => '갤러리에서 선택';
+
+  @override
+  String myCocktailsCount(int count) {
+    return '나만의 칵테일 $count개';
+  }
+
+  @override
+  String createdAt(String date) {
+    return '생성일: $date';
+  }
 }

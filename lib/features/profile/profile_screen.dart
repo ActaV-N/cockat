@@ -12,6 +12,7 @@ import '../auth/signup_screen.dart';
 import '../settings/pages/other_ingredients_settings_page.dart';
 import '../settings/pages/unit_settings_page.dart';
 import '../settings/settings_screen.dart';
+import '../user_cocktails/user_cocktails_list_screen.dart';
 
 class ProfileScreen extends ConsumerWidget {
   const ProfileScreen({super.key});
@@ -147,6 +148,31 @@ class ProfileScreen extends ConsumerWidget {
                     ],
                   ),
                   const SizedBox(height: AppTheme.spacingLg),
+                ],
+
+                // My Cocktails Section (only for authenticated users)
+                if (isAuthenticated) ...[
+                  _PremiumSectionCard(
+                    title: l10n.myCocktails,
+                    icon: Icons.local_bar,
+                    iconColor: AppColors.coralPeach,
+                    children: [
+                      _SettingsTile(
+                        icon: Icons.local_bar,
+                        iconColor: AppColors.coralPeach,
+                        title: l10n.myCocktails,
+                        subtitle: l10n.myCocktailsDescription,
+                        onTap: () {
+                          Navigator.of(context).push(
+                            MaterialPageRoute(
+                              builder: (_) => const UserCocktailsListScreen(),
+                            ),
+                          );
+                        },
+                      ),
+                    ],
+                  ),
+                  const SizedBox(height: AppTheme.spacingMd),
                 ],
 
                 // Ingredient Settings Section
