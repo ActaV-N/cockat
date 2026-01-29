@@ -1,6 +1,9 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 
+import '../../core/theme/app_colors.dart';
+import '../../core/theme/app_colors_extension.dart';
+import '../../core/theme/app_theme.dart';
 import '../../core/widgets/widgets.dart';
 import '../../data/models/models.dart';
 import '../../data/providers/providers.dart';
@@ -42,9 +45,17 @@ class MyBarScreen extends ConsumerWidget {
             locale: locale,
           );
         },
-        loading: () => const Center(child: CircularProgressIndicator()),
-        error: (error, stack) => Center(
-          child: Text('Error: $error'),
+        loading: () => CustomScrollView(
+          slivers: [
+            SliverShimmerGrid(
+              itemCount: 6,
+              itemBuilder: (context, index) => const ProductCardSkeleton(),
+            ),
+          ],
+        ),
+        error: (error, stack) => ErrorView(
+          error: error,
+          onRetry: () => ref.invalidate(ingredientGroupsForMyBarProvider),
         ),
       ),
     );
@@ -58,24 +69,40 @@ class _EmptyBarView extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final colors = context.appColors;
+
     return Center(
       child: Padding(
-        padding: const EdgeInsets.all(32),
+        padding: const EdgeInsets.all(AppTheme.spacingXl),
         child: Column(
           mainAxisAlignment: MainAxisAlignment.center,
           children: [
-            const CockatLogo.watermark(),
-            const SizedBox(height: 24),
+            Container(
+              width: 100,
+              height: 100,
+              decoration: BoxDecoration(
+                color: colors.primary.withValues(alpha: 0.1),
+                shape: BoxShape.circle,
+              ),
+              child: Icon(
+                Icons.inventory_2_outlined,
+                size: 48,
+                color: colors.primary,
+              ),
+            ),
+            const SizedBox(height: AppTheme.spacingLg),
             Text(
               l10n.myBarEmpty,
-              style: Theme.of(context).textTheme.titleMedium,
+              style: Theme.of(context).textTheme.titleLarge?.copyWith(
+                    fontWeight: FontWeight.w700,
+                  ),
               textAlign: TextAlign.center,
             ),
-            const SizedBox(height: 8),
+            const SizedBox(height: AppTheme.spacingSm),
             Text(
               l10n.myBarEmptyPrompt,
               style: Theme.of(context).textTheme.bodyMedium?.copyWith(
-                    color: Theme.of(context).colorScheme.outline,
+                    color: colors.textSecondary,
                   ),
               textAlign: TextAlign.center,
             ),
@@ -100,92 +127,127 @@ class _MyBarContent extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final l10n = AppLocalizations.of(context)!;
+    final colors = context.appColors;
 
     return CustomScrollView(
       slivers: [
         // Summary header
         SliverToBoxAdapter(
           child: Padding(
-            padding: const EdgeInsets.all(16),
-            child: Row(
-              children: [
-                Chip(
-                  avatar: const Icon(Icons.inventory_2, size: 18),
-                  label: Text(l10n.ownedProducts(selectedCount)),
-                  backgroundColor:
-                      Theme.of(context).colorScheme.primaryContainer,
-                ),
-                const SizedBox(width: 8),
-                Chip(
-                  avatar: const Icon(Icons.category_outlined, size: 18),
-                  label: Text(l10n.ingredientTypes(groups.length)),
-                  backgroundColor:
-                      Theme.of(context).colorScheme.secondaryContainer,
-                ),
-              ],
+            padding: const EdgeInsets.all(AppTheme.spacingMd),
+            child: Container(
+              padding: const EdgeInsets.all(AppTheme.spacingMd),
+              decoration: BoxDecoration(
+                color: colors.card,
+                borderRadius: BorderRadius.circular(AppTheme.radiusMd),
+                boxShadow: [
+                  BoxShadow(
+                    color: Colors.black.withValues(alpha: 0.05),
+                    blurRadius: 10,
+                    offset: const Offset(0, 2),
+                  ),
+                ],
+              ),
+              child: Row(
+                children: [
+                  Expanded(
+                    child: _StatChip(
+                      icon: Icons.inventory_2,
+                      value: '$selectedCount',
+                      label: l10n.ownedProducts(selectedCount),
+                      color: AppColors.coralPeach,
+                    ),
+                  ),
+                  Container(
+                    width: 1,
+                    height: 40,
+                    color: colors.divider,
+                  ),
+                  Expanded(
+                    child: _StatChip(
+                      icon: Icons.category_outlined,
+                      value: '${groups.length}',
+                      label: l10n.ingredientTypes(groups.length),
+                      color: AppColors.purple,
+                    ),
+                  ),
+                ],
+              ),
             ),
           ),
         ),
 
         // Ingredient sections
         for (final group in groups) ...[
-          _SectionHeader(
+          SliverSectionHeader(
             title: group.getLocalizedDisplayName(locale),
             count: group.productCount,
+            accentColor: colors.primary,
           ),
           _ProductGrid(products: group.products),
         ],
 
-        const SliverPadding(padding: EdgeInsets.only(bottom: 16)),
+        // Bottom padding for floating nav
+        const SliverPadding(padding: EdgeInsets.only(bottom: 100)),
       ],
     );
   }
 }
 
-class _SectionHeader extends StatelessWidget {
-  final String title;
-  final int count;
+class _StatChip extends StatelessWidget {
+  final IconData icon;
+  final String value;
+  final String label;
+  final Color color;
 
-  const _SectionHeader({
-    required this.title,
-    required this.count,
+  const _StatChip({
+    required this.icon,
+    required this.value,
+    required this.label,
+    required this.color,
   });
 
   @override
   Widget build(BuildContext context) {
-    return SliverToBoxAdapter(
-      child: Padding(
-        padding: const EdgeInsets.fromLTRB(16, 16, 8, 8),
-        child: Row(
+    final colors = context.appColors;
+
+    return Column(
+      children: [
+        Row(
+          mainAxisAlignment: MainAxisAlignment.center,
           children: [
             Container(
-              width: 4,
-              height: 24,
+              width: 32,
+              height: 32,
               decoration: BoxDecoration(
-                color: Theme.of(context).colorScheme.primary,
-                borderRadius: BorderRadius.circular(2),
+                color: color.withValues(alpha: 0.12),
+                shape: BoxShape.circle,
               ),
+              child: Icon(icon, color: color, size: 18),
             ),
-            const SizedBox(width: 8),
+            const SizedBox(width: AppTheme.spacingSm),
             Text(
-              title,
-              style: Theme.of(context).textTheme.titleMedium?.copyWith(
-                    fontWeight: FontWeight.bold,
-                  ),
-            ),
-            const SizedBox(width: 8),
-            Text(
-              '$count',
-              style: Theme.of(context).textTheme.bodyMedium?.copyWith(
-                    color: Theme.of(context).colorScheme.outline,
+              value,
+              style: Theme.of(context).textTheme.titleLarge?.copyWith(
+                    fontWeight: FontWeight.w700,
+                    color: colors.textPrimary,
                   ),
             ),
           ],
         ),
-      ),
+        const SizedBox(height: 4),
+        Text(
+          label,
+          style: Theme.of(context).textTheme.labelSmall?.copyWith(
+                color: colors.textTertiary,
+              ),
+          textAlign: TextAlign.center,
+        ),
+      ],
     );
   }
 }
+
 
 class _ProductGrid extends StatelessWidget {
   final List<Product> products;

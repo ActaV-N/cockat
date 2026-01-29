@@ -596,4 +596,22 @@ class AppLocalizationsKo extends AppLocalizations {
 
   @override
   String get delete => '삭제';
+
+  @override
+  String get errorOccurred => '오류가 발생했어요';
+
+  @override
+  String get somethingWentWrong => '잠시 후 다시 시도해주세요';
+
+  @override
+  String get networkError => '인터넷 연결을 확인해주세요';
+
+  @override
+  String get timeoutError => '요청 시간이 초과되었어요. 다시 시도해주세요';
+
+  @override
+  String get retry => '다시 시도';
+
+  @override
+  String get loading => '로딩 중...';
 }

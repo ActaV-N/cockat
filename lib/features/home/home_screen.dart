@@ -1,8 +1,12 @@
+import 'dart:ui';
+
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 
+import '../../core/theme/app_colors.dart';
+import '../../core/theme/app_colors_extension.dart';
+import '../../core/theme/app_theme.dart';
 import '../../data/providers/providers.dart';
-import '../../l10n/app_localizations.dart';
 import '../cocktails/cocktails_screen.dart';
 import '../products/my_bar_screen.dart';
 import '../products/products_catalog_screen.dart';
@@ -34,8 +38,6 @@ class _HomeScreenState extends ConsumerState<HomeScreen> {
 
   @override
   Widget build(BuildContext context) {
-    final l10n = AppLocalizations.of(context)!;
-
     final screens = [
       const CocktailsScreen(),
       const MyBarScreen(),
@@ -48,7 +50,8 @@ class _HomeScreenState extends ConsumerState<HomeScreen> {
         index: _selectedIndex,
         children: screens,
       ),
-      bottomNavigationBar: NavigationBar(
+      extendBody: true,
+      bottomNavigationBar: _FloatingNavBar(
         selectedIndex: _selectedIndex,
         onDestinationSelected: (index) {
           setState(() {
@@ -56,28 +59,146 @@ class _HomeScreenState extends ConsumerState<HomeScreen> {
           });
           _logScreenView(index);
         },
-        destinations: [
-          NavigationDestination(
-            icon: const Icon(Icons.local_bar_outlined),
-            selectedIcon: const Icon(Icons.local_bar),
-            label: l10n.cocktails,
+        items: const [
+          _NavItem(
+            icon: Icons.local_bar_outlined,
+            selectedIcon: Icons.local_bar,
           ),
-          NavigationDestination(
-            icon: const Icon(Icons.inventory_2_outlined),
-            selectedIcon: const Icon(Icons.inventory_2),
-            label: l10n.myBar,
+          _NavItem(
+            icon: Icons.inventory_2_outlined,
+            selectedIcon: Icons.inventory_2,
           ),
-          NavigationDestination(
-            icon: const Icon(Icons.liquor_outlined),
-            selectedIcon: const Icon(Icons.liquor),
-            label: l10n.products,
+          _NavItem(
+            icon: Icons.liquor_outlined,
+            selectedIcon: Icons.liquor,
           ),
-          NavigationDestination(
-            icon: const Icon(Icons.person_outline),
-            selectedIcon: const Icon(Icons.person),
-            label: l10n.profile,
+          _NavItem(
+            icon: Icons.person_outline,
+            selectedIcon: Icons.person,
           ),
         ],
+      ),
+    );
+  }
+}
+
+class _NavItem {
+  final IconData icon;
+  final IconData selectedIcon;
+
+  const _NavItem({
+    required this.icon,
+    required this.selectedIcon,
+  });
+}
+
+class _FloatingNavBar extends StatelessWidget {
+  final int selectedIndex;
+  final ValueChanged<int> onDestinationSelected;
+  final List<_NavItem> items;
+
+  const _FloatingNavBar({
+    required this.selectedIndex,
+    required this.onDestinationSelected,
+    required this.items,
+  });
+
+  @override
+  Widget build(BuildContext context) {
+    final colors = context.appColors;
+    final isDark = Theme.of(context).brightness == Brightness.dark;
+    final bottomPadding = MediaQuery.of(context).viewPadding.bottom;
+
+    return Container(
+      margin: EdgeInsets.only(
+        left: AppTheme.spacingLg,
+        right: AppTheme.spacingLg,
+        bottom: bottomPadding + AppTheme.spacingSm,
+      ),
+      decoration: BoxDecoration(
+        borderRadius: BorderRadius.circular(AppTheme.radiusRound),
+        boxShadow: [
+          BoxShadow(
+            color: Colors.black.withValues(alpha: 0.2),
+            blurRadius: 24,
+            offset: const Offset(0, 8),
+          ),
+        ],
+      ),
+      child: ClipRRect(
+        borderRadius: BorderRadius.circular(AppTheme.radiusRound),
+        child: BackdropFilter(
+          filter: ImageFilter.blur(sigmaX: 20, sigmaY: 20),
+          child: Container(
+            padding: const EdgeInsets.symmetric(
+              horizontal: AppTheme.spacingMd,
+              vertical: AppTheme.spacingSm,
+            ),
+            decoration: BoxDecoration(
+              color: isDark
+                  ? colors.navBar.withValues(alpha: 0.85)
+                  : colors.navBar.withValues(alpha: 0.9),
+              borderRadius: BorderRadius.circular(AppTheme.radiusRound),
+              border: Border.all(
+                color: isDark
+                    ? Colors.white.withValues(alpha: 0.1)
+                    : Colors.black.withValues(alpha: 0.05),
+                width: 0.5,
+              ),
+            ),
+            child: Row(
+              mainAxisAlignment: MainAxisAlignment.spaceAround,
+              children: List.generate(items.length, (index) {
+                final item = items[index];
+                final isSelected = index == selectedIndex;
+
+                return _NavBarItem(
+                  icon: isSelected ? item.selectedIcon : item.icon,
+                  isSelected: isSelected,
+                  onTap: () => onDestinationSelected(index),
+                );
+              }),
+            ),
+          ),
+        ),
+      ),
+    );
+  }
+}
+
+class _NavBarItem extends StatelessWidget {
+  final IconData icon;
+  final bool isSelected;
+  final VoidCallback onTap;
+
+  const _NavBarItem({
+    required this.icon,
+    required this.isSelected,
+    required this.onTap,
+  });
+
+  @override
+  Widget build(BuildContext context) {
+    final colors = context.appColors;
+
+    return GestureDetector(
+      onTap: onTap,
+      behavior: HitTestBehavior.opaque,
+      child: AnimatedContainer(
+        duration: const Duration(milliseconds: 200),
+        curve: Curves.easeInOut,
+        padding: const EdgeInsets.all(AppTheme.spacingSm),
+        decoration: BoxDecoration(
+          color: isSelected
+              ? AppColors.coralPeach.withValues(alpha: 0.2)
+              : Colors.transparent,
+          shape: BoxShape.circle,
+        ),
+        child: Icon(
+          icon,
+          size: 26,
+          color: isSelected ? AppColors.coralPeach : colors.textTertiary,
+        ),
       ),
     );
   }

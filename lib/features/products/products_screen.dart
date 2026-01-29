@@ -42,8 +42,15 @@ class ProductsScreen extends ConsumerWidget {
             l10n: l10n,
           );
         },
-        loading: () => const Center(child: CircularProgressIndicator()),
-        error: (error, _) => Center(child: Text('Error: $error')),
+        loading: () => ShimmerGrid(
+          itemCount: 6,
+          childAspectRatio: 0.7,
+          itemBuilder: (context, index) => const ProductCardSkeleton(),
+        ),
+        error: (error, _) => ErrorView(
+          error: error,
+          onRetry: () => ref.invalidate(filteredProductsProvider),
+        ),
       ),
     );
   }

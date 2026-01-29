@@ -609,4 +609,22 @@ class AppLocalizationsEn extends AppLocalizations {
 
   @override
   String get delete => 'Delete';
+
+  @override
+  String get errorOccurred => 'Oops! Something went wrong';
+
+  @override
+  String get somethingWentWrong => 'Please try again later';
+
+  @override
+  String get networkError => 'Please check your internet connection';
+
+  @override
+  String get timeoutError => 'Request timed out. Please try again';
+
+  @override
+  String get retry => 'Retry';
+
+  @override
+  String get loading => 'Loading...';
 }

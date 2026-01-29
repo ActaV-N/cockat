@@ -181,5 +181,11 @@
   "deleteAccountConfirmTitle": "정말 삭제하시겠어요?",
   "deleteAccountConfirmMessage": "계정을 삭제하면 모든 데이터가 영구적으로 삭제되며 복구할 수 없습니다.",
   "deleteAccountSuccess": "계정이 삭제되었습니다",
-  "delete": "삭제"
+  "delete": "삭제",
+  "errorOccurred": "오류가 발생했어요",
+  "somethingWentWrong": "잠시 후 다시 시도해주세요",
+  "networkError": "인터넷 연결을 확인해주세요",
+  "timeoutError": "요청 시간이 초과되었어요. 다시 시도해주세요",
+  "retry": "다시 시도",
+  "loading": "로딩 중..."
 }

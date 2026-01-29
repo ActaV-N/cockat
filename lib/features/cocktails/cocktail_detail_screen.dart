@@ -1,7 +1,12 @@
+import 'dart:ui';
+
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 
 import '../../core/theme/app_colors.dart';
+import '../../core/theme/app_colors_extension.dart';
+import '../../core/theme/app_theme.dart';
 import '../../core/widgets/widgets.dart';
 import '../../data/models/models.dart';
 import '../../data/providers/providers.dart';
@@ -52,53 +57,107 @@ class _CocktailDetailScreenState extends ConsumerState<CocktailDetailScreen> {
 
         _logCocktailView(cocktail, locale);
 
+        final colors = context.appColors;
+
         return Scaffold(
           body: CustomScrollView(
             slivers: [
-              // App Bar with expanded image
+              // Premium Hero App Bar
               SliverAppBar(
-                expandedHeight: 350,
+                expandedHeight: 420,
                 pinned: true,
                 stretch: true,
+                backgroundColor: colors.surface,
+                surfaceTintColor: Colors.transparent,
+                systemOverlayStyle: SystemUiOverlayStyle.light,
+                leading: _FloatingBackButton(),
                 actions: [
-                  _FavoriteButton(cocktailId: cocktail.id),
+                  _FloatingFavoriteButton(cocktailId: cocktail.id),
+                  const SizedBox(width: 8),
                 ],
                 flexibleSpace: FlexibleSpaceBar(
-                  title: Text(
-                    cocktail.getLocalizedName(locale),
-                    style: TextStyle(
-                      fontWeight: FontWeight.bold,
-                      shadows: [
-                        Shadow(
-                          offset: const Offset(0, 1),
-                          blurRadius: 4,
-                          color: AppColors.gray900.withValues(alpha: 0.54),
-                        ),
-                      ],
-                    ),
-                  ),
-                  titlePadding: const EdgeInsets.only(left: 16, bottom: 16, right: 48),
+                  collapseMode: CollapseMode.parallax,
+                  stretchModes: const [
+                    StretchMode.zoomBackground,
+                    StretchMode.blurBackground,
+                  ],
                   background: Stack(
                     fit: StackFit.expand,
                     children: [
+                      // Hero Image
                       CocktailImage(
                         cocktail: cocktail,
                         mode: ImageDisplayMode.full,
                         fit: BoxFit.cover,
                       ),
-                      // Gradient overlay for better text readability
+                      // Premium gradient overlay
                       Container(
                         decoration: BoxDecoration(
                           gradient: LinearGradient(
                             begin: Alignment.topCenter,
                             end: Alignment.bottomCenter,
                             colors: [
+                              Colors.black.withValues(alpha: 0.3),
                               Colors.transparent,
                               Colors.transparent,
-                              AppColors.gray900.withValues(alpha: 0.7),
+                              colors.background.withValues(alpha: 0.8),
+                              colors.background,
                             ],
-                            stops: const [0.0, 0.5, 1.0],
+                            stops: const [0.0, 0.2, 0.5, 0.85, 1.0],
                           ),
+                        ),
+                      ),
+                      // Title at bottom
+                      Positioned(
+                        left: AppTheme.spacingMd,
+                        right: AppTheme.spacingMd,
+                        bottom: AppTheme.spacingLg,
+                        child: Column(
+                          crossAxisAlignment: CrossAxisAlignment.start,
+                          mainAxisSize: MainAxisSize.min,
+                          children: [
+                            Text(
+                              cocktail.getLocalizedName(locale),
+                              style: Theme.of(context)
+                                  .textTheme
+                                  .headlineMedium
+                                  ?.copyWith(
+                                    fontWeight: FontWeight.w800,
+                                    color: colors.textPrimary,
+                                    letterSpacing: -0.5,
+                                  ),
+                            ),
+                            if (cocktail.tags.isNotEmpty) ...[
+                              const SizedBox(height: AppTheme.spacingSm),
+                              Wrap(
+                                spacing: AppTheme.spacingXs,
+                                runSpacing: AppTheme.spacingXs,
+                                children: cocktail.tags.take(3).map((tag) {
+                                  return Container(
+                                    padding: const EdgeInsets.symmetric(
+                                      horizontal: AppTheme.spacingSm,
+                                      vertical: AppTheme.spacingXs,
+                                    ),
+                                    decoration: BoxDecoration(
+                                      color: colors.primary.withValues(alpha: 0.15),
+                                      borderRadius: BorderRadius.circular(
+                                          AppTheme.radiusRound),
+                                    ),
+                                    child: Text(
+                                      tag,
+                                      style: Theme.of(context)
+                                          .textTheme
+                                          .labelSmall
+                                          ?.copyWith(
+                                            color: colors.primary,
+                                            fontWeight: FontWeight.w600,
+                                          ),
+                                    ),
+                                  );
+                                }).toList(),
+                              ),
+                            ],
+                          ],
                         ),
                       ),
                     ],
@@ -106,74 +165,72 @@ class _CocktailDetailScreenState extends ConsumerState<CocktailDetailScreen> {
                 ),
               ),
 
-              // Content
+              // Content with rounded top
               SliverToBoxAdapter(
-                child: Padding(
-                  padding: const EdgeInsets.all(16),
-                  child: Column(
-                    crossAxisAlignment: CrossAxisAlignment.start,
-                    children: [
-                      // Tags
-                      if (cocktail.tags.isNotEmpty) ...[
-                        Wrap(
-                          spacing: 8,
-                          runSpacing: 8,
-                          children: cocktail.tags
-                              .map((tag) => Chip(
-                                    label: Text(tag),
-                                    visualDensity: VisualDensity.compact,
-                                  ))
-                              .toList(),
+                child: Container(
+                  decoration: BoxDecoration(
+                    color: colors.background,
+                  ),
+                  child: Padding(
+                    padding: const EdgeInsets.all(AppTheme.spacingMd),
+                    child: Column(
+                      crossAxisAlignment: CrossAxisAlignment.start,
+                      children: [
+                        // Stats Row
+                        _StatsRow(cocktail: cocktail, l10n: l10n),
+                        const SizedBox(height: AppTheme.spacingLg),
+
+                        // Ingredients
+                        _SectionTitle(title: l10n.ingredients),
+                        const SizedBox(height: AppTheme.spacingSm),
+                        _IngredientsList(
+                          cocktailId: cocktail.id,
+                          ingredients: cocktail.ingredients,
+                          l10n: l10n,
+                          locale: locale,
                         ),
-                        const SizedBox(height: 16),
-                      ],
+                        const SizedBox(height: AppTheme.spacingLg),
 
-                      // Description
-                      if (cocktail.getLocalizedDescription(locale) != null &&
-                          cocktail.getLocalizedDescription(locale)!.isNotEmpty) ...[
-                        Text(
-                          cocktail.getLocalizedDescription(locale)!,
-                          style: Theme.of(context).textTheme.bodyMedium,
-                        ),
-                        const SizedBox(height: 24),
-                      ],
+                        // Instructions
+                        _SectionTitle(title: l10n.instructions),
+                        const SizedBox(height: AppTheme.spacingSm),
+                        _InstructionsCard(
+                            instructions:
+                                cocktail.getLocalizedInstructions(locale)),
 
-                      // Info Row
-                      _InfoRow(cocktail: cocktail, l10n: l10n),
-                      const SizedBox(height: 24),
+                        // Garnish
+                        if (cocktail.getLocalizedGarnish(locale) != null &&
+                            cocktail
+                                .getLocalizedGarnish(locale)!
+                                .isNotEmpty) ...[
+                          const SizedBox(height: AppTheme.spacingLg),
+                          _SectionTitle(title: l10n.garnish),
+                          const SizedBox(height: AppTheme.spacingSm),
+                          _GarnishCard(
+                              garnish: cocktail.getLocalizedGarnish(locale)!),
+                        ],
 
-                      // Ingredients
-                      _SectionTitle(title: l10n.ingredients),
-                      const SizedBox(height: 8),
-                      _IngredientsList(
-                        cocktailId: cocktail.id,
-                        ingredients: cocktail.ingredients,
-                        l10n: l10n,
-                        locale: locale,
-                      ),
-                      const SizedBox(height: 24),
-
-                      // Instructions
-                      _SectionTitle(title: l10n.instructions),
-                      const SizedBox(height: 8),
-                      _InstructionsCard(instructions: cocktail.getLocalizedInstructions(locale)),
-
-                      // Garnish
-                      if (cocktail.getLocalizedGarnish(locale) != null &&
-                          cocktail.getLocalizedGarnish(locale)!.isNotEmpty) ...[
-                        const SizedBox(height: 24),
-                        _SectionTitle(title: l10n.garnish),
-                        const SizedBox(height: 8),
-                        Card(
-                          child: ListTile(
-                            leading: const Icon(Icons.eco),
-                            title: Text(cocktail.getLocalizedGarnish(locale)!),
+                        // Description
+                        if (cocktail.getLocalizedDescription(locale) != null &&
+                            cocktail
+                                .getLocalizedDescription(locale)!
+                                .isNotEmpty) ...[
+                          const SizedBox(height: AppTheme.spacingLg),
+                          _SectionTitle(title: l10n.description),
+                          const SizedBox(height: AppTheme.spacingSm),
+                          Text(
+                            cocktail.getLocalizedDescription(locale)!,
+                            style:
+                                Theme.of(context).textTheme.bodyLarge?.copyWith(
+                                      color: colors.textSecondary,
+                                      height: 1.6,
+                                    ),
                           ),
-                        ),
-                      ],
+                        ],
 
-                      const SizedBox(height: 32),
-                    ],
+                        const SizedBox(height: 100), // Bottom padding for nav
+                      ],
+                    ),
                   ),
                 ),
               ),
@@ -193,60 +250,195 @@ class _CocktailDetailScreenState extends ConsumerState<CocktailDetailScreen> {
   }
 }
 
-class _InfoRow extends StatelessWidget {
-  final Cocktail cocktail;
-  final AppLocalizations l10n;
-
-  const _InfoRow({required this.cocktail, required this.l10n});
-
+class _FloatingBackButton extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
-    return Row(
-      children: [
-        if (cocktail.glass != null)
-          _InfoChip(
-            icon: Icons.wine_bar,
-            label: cocktail.glass!,
+    return Padding(
+      padding: const EdgeInsets.all(AppTheme.spacingSm),
+      child: ClipRRect(
+        borderRadius: BorderRadius.circular(AppTheme.radiusRound),
+        child: BackdropFilter(
+          filter: ImageFilter.blur(sigmaX: 10, sigmaY: 10),
+          child: Container(
+            width: 40,
+            height: 40,
+            decoration: BoxDecoration(
+              color: Colors.black.withValues(alpha: 0.3),
+              shape: BoxShape.circle,
+            ),
+            child: IconButton(
+              icon: const Icon(Icons.arrow_back, color: Colors.white, size: 20),
+              onPressed: () => Navigator.of(context).pop(),
+              padding: EdgeInsets.zero,
+            ),
           ),
-        if (cocktail.method != null) ...[
-          const SizedBox(width: 8),
-          _InfoChip(
-            icon: Icons.blender,
-            label: cocktail.method!,
-          ),
-        ],
-        if (cocktail.abv != null) ...[
-          const SizedBox(width: 8),
-          _InfoChip(
-            icon: Icons.percent,
-            label: '${cocktail.abv!.toStringAsFixed(0)}%',
-          ),
-        ],
-      ],
+        ),
+      ),
     );
   }
 }
 
-class _InfoChip extends StatelessWidget {
-  final IconData icon;
-  final String label;
+class _FloatingFavoriteButton extends ConsumerWidget {
+  final String cocktailId;
 
-  const _InfoChip({required this.icon, required this.label});
+  const _FloatingFavoriteButton({required this.cocktailId});
+
+  @override
+  Widget build(BuildContext context, WidgetRef ref) {
+    final isFavorite = ref.watch(effectiveIsFavoriteProvider(cocktailId));
+    final l10n = AppLocalizations.of(context)!;
+
+    return Padding(
+      padding: const EdgeInsets.all(AppTheme.spacingSm),
+      child: ClipRRect(
+        borderRadius: BorderRadius.circular(AppTheme.radiusRound),
+        child: BackdropFilter(
+          filter: ImageFilter.blur(sigmaX: 10, sigmaY: 10),
+          child: Container(
+            width: 40,
+            height: 40,
+            decoration: BoxDecoration(
+              color: isFavorite
+                  ? AppColors.error.withValues(alpha: 0.9)
+                  : Colors.black.withValues(alpha: 0.3),
+              shape: BoxShape.circle,
+            ),
+            child: IconButton(
+              icon: Icon(
+                isFavorite ? Icons.favorite : Icons.favorite_border,
+                color: Colors.white,
+                size: 20,
+              ),
+              onPressed: () {
+                HapticFeedback.lightImpact();
+                final favoritesService =
+                    ref.read(effectiveFavoritesServiceProvider);
+                final result = favoritesService.toggle(cocktailId);
+
+                final message = switch (result) {
+                  FavoriteResult.added => l10n.addedToFavorites,
+                  FavoriteResult.removed => l10n.removedFromFavorites,
+                  _ => null,
+                };
+
+                if (message != null) {
+                  ScaffoldMessenger.of(context).showSnackBar(
+                    SnackBar(
+                      content: Text(message),
+                      duration: const Duration(seconds: 2),
+                    ),
+                  );
+                }
+              },
+              padding: EdgeInsets.zero,
+            ),
+          ),
+        ),
+      ),
+    );
+  }
+}
+
+class _StatsRow extends StatelessWidget {
+  final Cocktail cocktail;
+  final AppLocalizations l10n;
+
+  const _StatsRow({required this.cocktail, required this.l10n});
 
   @override
   Widget build(BuildContext context) {
+    final colors = context.appColors;
+
     return Container(
-      padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 6),
+      padding: const EdgeInsets.all(AppTheme.spacingMd),
       decoration: BoxDecoration(
-        color: Theme.of(context).colorScheme.surfaceContainerHighest,
-        borderRadius: BorderRadius.circular(20),
+        color: colors.card,
+        borderRadius: BorderRadius.circular(AppTheme.radiusMd),
+        boxShadow: [
+          BoxShadow(
+            color: Colors.black.withValues(alpha: 0.05),
+            blurRadius: 10,
+            offset: const Offset(0, 2),
+          ),
+        ],
       ),
       child: Row(
-        mainAxisSize: MainAxisSize.min,
+        mainAxisAlignment: MainAxisAlignment.spaceAround,
         children: [
-          Icon(icon, size: 16),
-          const SizedBox(width: 4),
-          Text(label, style: Theme.of(context).textTheme.labelMedium),
+          if (cocktail.abv != null)
+            _StatItem(
+              icon: Icons.local_bar,
+              value: '${cocktail.abv!.toStringAsFixed(0)}%',
+              label: 'ABV',
+              color: AppColors.coralPeach,
+            ),
+          if (cocktail.glass != null)
+            _StatItem(
+              icon: Icons.wine_bar,
+              value: cocktail.glass!,
+              label: l10n.glass,
+              color: AppColors.purple,
+            ),
+          if (cocktail.method != null)
+            _StatItem(
+              icon: Icons.blender,
+              value: cocktail.method!,
+              label: l10n.method,
+              color: AppColors.success,
+            ),
+        ],
+      ),
+    );
+  }
+}
+
+class _StatItem extends StatelessWidget {
+  final IconData icon;
+  final String value;
+  final String label;
+  final Color color;
+
+  const _StatItem({
+    required this.icon,
+    required this.value,
+    required this.label,
+    required this.color,
+  });
+
+  @override
+  Widget build(BuildContext context) {
+    final colors = context.appColors;
+
+    return Expanded(
+      child: Column(
+        children: [
+          Container(
+            width: 44,
+            height: 44,
+            decoration: BoxDecoration(
+              color: color.withValues(alpha: 0.12),
+              shape: BoxShape.circle,
+            ),
+            child: Icon(icon, color: color, size: 22),
+          ),
+          const SizedBox(height: AppTheme.spacingSm),
+          Text(
+            value,
+            style: Theme.of(context).textTheme.titleSmall?.copyWith(
+                  fontWeight: FontWeight.w700,
+                  color: colors.textPrimary,
+                ),
+            textAlign: TextAlign.center,
+            maxLines: 1,
+            overflow: TextOverflow.ellipsis,
+          ),
+          const SizedBox(height: 2),
+          Text(
+            label,
+            style: Theme.of(context).textTheme.labelSmall?.copyWith(
+                  color: colors.textTertiary,
+                ),
+          ),
         ],
       ),
     );
@@ -260,11 +452,27 @@ class _SectionTitle extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return Text(
-      title,
-      style: Theme.of(context).textTheme.titleMedium?.copyWith(
-            fontWeight: FontWeight.bold,
+    final colors = context.appColors;
+
+    return Row(
+      children: [
+        Container(
+          width: 4,
+          height: 20,
+          decoration: BoxDecoration(
+            color: colors.primary,
+            borderRadius: BorderRadius.circular(2),
           ),
+        ),
+        const SizedBox(width: AppTheme.spacingSm),
+        Text(
+          title,
+          style: Theme.of(context).textTheme.titleMedium?.copyWith(
+                fontWeight: FontWeight.w700,
+                letterSpacing: -0.3,
+              ),
+        ),
+      ],
     );
   }
 }
@@ -284,46 +492,65 @@ class _IngredientsList extends ConsumerWidget {
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
+    final colors = context.appColors;
     final availabilityAsync =
         ref.watch(cocktailIngredientAvailabilityProvider(cocktailId));
     final userUnit = ref.watch(effectiveUnitSystemProvider);
 
     return availabilityAsync.when(
       data: (availabilities) {
-        return Card(
-          child: Column(
-            children: ingredients.map((ingredient) {
-              final availability = availabilities.firstWhere(
-                (a) => a.ingredientId == ingredient.id,
-                orElse: () => IngredientAvailability(
-                  ingredientId: ingredient.id,
-                  ingredientName: ingredient.name,
-                  isOwned: false,
-                ),
-              );
+        return Container(
+          decoration: BoxDecoration(
+            color: colors.card,
+            borderRadius: BorderRadius.circular(AppTheme.radiusMd),
+            boxShadow: [
+              BoxShadow(
+                color: Colors.black.withValues(alpha: 0.05),
+                blurRadius: 10,
+                offset: const Offset(0, 2),
+              ),
+            ],
+          ),
+          child: ClipRRect(
+            borderRadius: BorderRadius.circular(AppTheme.radiusMd),
+            child: Column(
+              children: ingredients.map((ingredient) {
+                final availability = availabilities.firstWhere(
+                  (a) => a.ingredientId == ingredient.id,
+                  orElse: () => IngredientAvailability(
+                    ingredientId: ingredient.id,
+                    ingredientName: ingredient.name,
+                    isOwned: false,
+                  ),
+                );
 
-              return IngredientAvailabilityCard(
-                ingredient: ingredient,
-                availability: availability,
-                userUnit: userUnit,
-                l10n: l10n,
-                locale: locale,
-              );
-            }).toList(),
+                return IngredientAvailabilityCard(
+                  ingredient: ingredient,
+                  availability: availability,
+                  userUnit: userUnit,
+                  l10n: l10n,
+                  locale: locale,
+                );
+              }).toList(),
+            ),
           ),
         );
       },
-      loading: () => const Card(
-        child: Padding(
-          padding: EdgeInsets.all(24),
-          child: Center(child: CircularProgressIndicator()),
+      loading: () => Container(
+        decoration: BoxDecoration(
+          color: colors.card,
+          borderRadius: BorderRadius.circular(AppTheme.radiusMd),
         ),
+        padding: const EdgeInsets.all(AppTheme.spacingLg),
+        child: const Center(child: CircularProgressIndicator()),
       ),
-      error: (error, stack) => Card(
-        child: Padding(
-          padding: const EdgeInsets.all(16),
-          child: Text('Error: $error'),
+      error: (error, stack) => Container(
+        decoration: BoxDecoration(
+          color: colors.card,
+          borderRadius: BorderRadius.circular(AppTheme.radiusMd),
         ),
+        padding: const EdgeInsets.all(AppTheme.spacingMd),
+        child: Text('Error: $error'),
       ),
     );
   }
@@ -336,45 +563,71 @@ class _InstructionsCard extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final steps = instructions.split('\n').where((s) => s.trim().isNotEmpty).toList();
+    final colors = context.appColors;
+    final steps =
+        instructions.split('\n').where((s) => s.trim().isNotEmpty).toList();
 
-    return Card(
+    return Container(
+      decoration: BoxDecoration(
+        color: colors.card,
+        borderRadius: BorderRadius.circular(AppTheme.radiusMd),
+        boxShadow: [
+          BoxShadow(
+            color: Colors.black.withValues(alpha: 0.05),
+            blurRadius: 10,
+            offset: const Offset(0, 2),
+          ),
+        ],
+      ),
       child: Padding(
-        padding: const EdgeInsets.all(16),
+        padding: const EdgeInsets.all(AppTheme.spacingMd),
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
           children: steps.asMap().entries.map((entry) {
             final index = entry.key;
             final step = entry.value.trim();
-            // Remove leading numbers like "1. " or "1) "
             final cleanStep = step.replaceFirst(RegExp(r'^\d+[\.\)]\s*'), '');
 
             return Padding(
-              padding: EdgeInsets.only(bottom: index < steps.length - 1 ? 12 : 0),
+              padding: EdgeInsets.only(
+                  bottom: index < steps.length - 1 ? AppTheme.spacingMd : 0),
               child: Row(
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
                   Container(
-                    width: 24,
-                    height: 24,
+                    width: 28,
+                    height: 28,
                     decoration: BoxDecoration(
-                      color: Theme.of(context).colorScheme.primaryContainer,
+                      gradient: LinearGradient(
+                        colors: [
+                          AppColors.coralPeach,
+                          AppColors.coralDeep,
+                        ],
+                      ),
                       shape: BoxShape.circle,
                     ),
                     child: Center(
                       child: Text(
                         '${index + 1}',
-                        style: TextStyle(
-                          color: Theme.of(context).colorScheme.primary,
+                        style: const TextStyle(
+                          color: Colors.white,
                           fontWeight: FontWeight.bold,
-                          fontSize: 12,
+                          fontSize: 13,
                         ),
                       ),
                     ),
                   ),
-                  const SizedBox(width: 12),
+                  const SizedBox(width: AppTheme.spacingSm),
                   Expanded(
-                    child: Text(cleanStep),
+                    child: Padding(
+                      padding: const EdgeInsets.only(top: 4),
+                      child: Text(
+                        cleanStep,
+                        style: Theme.of(context).textTheme.bodyMedium?.copyWith(
+                              height: 1.5,
+                            ),
+                      ),
+                    ),
                   ),
                 ],
               ),
@@ -386,65 +639,57 @@ class _InstructionsCard extends StatelessWidget {
   }
 }
 
-class _FavoriteButton extends ConsumerWidget {
-  final String cocktailId;
+class _GarnishCard extends StatelessWidget {
+  final String garnish;
 
-  const _FavoriteButton({required this.cocktailId});
+  const _GarnishCard({required this.garnish});
 
   @override
-  Widget build(BuildContext context, WidgetRef ref) {
-    // 통합 Provider 사용 (비회원: 로컬, 회원: DB)
-    final isFavorite = ref.watch(effectiveIsFavoriteProvider(cocktailId));
-    final isAuthenticated = ref.watch(isAuthenticatedProvider);
-    final l10n = AppLocalizations.of(context)!;
+  Widget build(BuildContext context) {
+    final colors = context.appColors;
 
-    return IconButton(
-      icon: Icon(
-        isFavorite ? Icons.favorite : Icons.favorite_border,
-        color: isFavorite ? AppColors.error : null,
+    return Container(
+      decoration: BoxDecoration(
+        color: colors.card,
+        borderRadius: BorderRadius.circular(AppTheme.radiusMd),
+        boxShadow: [
+          BoxShadow(
+            color: Colors.black.withValues(alpha: 0.05),
+            blurRadius: 10,
+            offset: const Offset(0, 2),
+          ),
+        ],
       ),
-      onPressed: () {
-        final favoritesService = ref.read(effectiveFavoritesServiceProvider);
-        final result = favoritesService.toggle(cocktailId);
-
-        switch (result) {
-          case FavoriteResult.added:
-            ScaffoldMessenger.of(context).showSnackBar(
-              SnackBar(
-                content: Text(l10n.addedToFavorites),
-                duration: const Duration(seconds: 2),
+      child: Padding(
+        padding: const EdgeInsets.all(AppTheme.spacingMd),
+        child: Row(
+          children: [
+            Container(
+              width: 44,
+              height: 44,
+              decoration: BoxDecoration(
+                color: AppColors.success.withValues(alpha: 0.12),
+                shape: BoxShape.circle,
               ),
-            );
-            break;
-          case FavoriteResult.removed:
-            ScaffoldMessenger.of(context).showSnackBar(
-              SnackBar(
-                content: Text(l10n.removedFromFavorites),
-                duration: const Duration(seconds: 2),
+              child: const Icon(
+                Icons.eco,
+                color: AppColors.success,
+                size: 22,
               ),
-            );
-            break;
-          case FavoriteResult.limitReached:
-            // 비회원만 제한이 있음
-            if (!isAuthenticated) {
-              ScaffoldMessenger.of(context).showSnackBar(
-                SnackBar(
-                  content: Text(l10n.favoritesLimitReached(kMaxFavoritesForGuest)),
-                  duration: const Duration(seconds: 3),
-                  action: SnackBarAction(
-                    label: l10n.signUpForMore,
-                    onPressed: () {
-                      // TODO: Navigate to sign up screen
-                    },
-                  ),
-                ),
-              );
-            }
-            break;
-          case FavoriteResult.alreadyExists:
-            break;
-        }
-      },
+            ),
+            const SizedBox(width: AppTheme.spacingSm),
+            Expanded(
+              child: Text(
+                garnish,
+                style: Theme.of(context).textTheme.bodyMedium?.copyWith(
+                      fontWeight: FontWeight.w500,
+                    ),
+              ),
+            ),
+          ],
+        ),
+      ),
     );
   }
 }
+

@@ -100,6 +100,9 @@ class SettingsScreen extends ConsumerWidget {
             },
           ),
 
+          // Delete Account Section (only for authenticated users)
+          _DeleteAccountSection(),
+
           const SizedBox(height: 32),
         ],
       ),
@@ -206,6 +209,54 @@ class _LanguageTile extends StatelessWidget {
 }
 
 class _AccountSection extends ConsumerWidget {
+  @override
+  Widget build(BuildContext context, WidgetRef ref) {
+    final l10n = AppLocalizations.of(context)!;
+    final theme = Theme.of(context);
+    final user = ref.watch(currentUserProvider);
+    final isAuthenticated = user != null;
+
+    return Column(
+      crossAxisAlignment: CrossAxisAlignment.start,
+      children: [
+        _SectionHeader(title: l10n.account),
+        if (isAuthenticated) ...[
+          ListTile(
+            leading: CircleAvatar(
+              backgroundColor: theme.colorScheme.primaryContainer,
+              child: Icon(
+                Icons.person,
+                color: theme.colorScheme.onPrimaryContainer,
+              ),
+            ),
+            title: Text(user.email ?? ''),
+            subtitle: Text(l10n.account),
+          ),
+        ] else ...[
+          ListTile(
+            leading: const Icon(Icons.person_outline),
+            title: Text(l10n.notLoggedIn),
+            subtitle: Text(l10n.loginPrompt),
+          ),
+          Padding(
+            padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
+            child: FilledButton.icon(
+              onPressed: () {
+                Navigator.of(context).push(
+                  MaterialPageRoute(builder: (_) => const LoginScreen()),
+                );
+              },
+              icon: const Icon(Icons.login),
+              label: Text(l10n.login),
+            ),
+          ),
+        ],
+      ],
+    );
+  }
+}
+
+class _DeleteAccountSection extends ConsumerWidget {
   Future<void> _showDeleteAccountDialog(
     BuildContext context,
     WidgetRef ref,
@@ -238,7 +289,6 @@ class _AccountSection extends ConsumerWidget {
 
       if (context.mounted) {
         if (result.isSuccess) {
-          // 설정 화면 닫고 이전 화면으로
           Navigator.of(context).pop();
           ScaffoldMessenger.of(context).showSnackBar(
             SnackBar(content: Text(l10n.deleteAccountSuccess)),
@@ -259,52 +309,27 @@ class _AccountSection extends ConsumerWidget {
   Widget build(BuildContext context, WidgetRef ref) {
     final l10n = AppLocalizations.of(context)!;
     final theme = Theme.of(context);
-    final user = ref.watch(currentUserProvider);
-    final isAuthenticated = user != null;
+    final isAuthenticated = ref.watch(isAuthenticatedProvider);
+
+    if (!isAuthenticated) return const SizedBox.shrink();
 
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
-        _SectionHeader(title: l10n.account),
-        if (isAuthenticated) ...[
-          ListTile(
-            leading: CircleAvatar(
-              backgroundColor: theme.colorScheme.primaryContainer,
-              child: Icon(
-                Icons.person,
-                color: theme.colorScheme.onPrimaryContainer,
-              ),
+        const Divider(),
+        const SizedBox(height: 16),
+        Padding(
+          padding: const EdgeInsets.symmetric(horizontal: 16),
+          child: OutlinedButton.icon(
+            onPressed: () => _showDeleteAccountDialog(context, ref, l10n),
+            style: OutlinedButton.styleFrom(
+              foregroundColor: theme.colorScheme.error,
+              side: BorderSide(color: theme.colorScheme.error),
             ),
-            title: Text(user.email ?? ''),
-            subtitle: Text(l10n.account),
+            icon: const Icon(Icons.delete_forever),
+            label: Text(l10n.deleteAccount),
           ),
-          ListTile(
-            leading: Icon(Icons.delete_forever, color: theme.colorScheme.error),
-            title: Text(
-              l10n.deleteAccount,
-              style: TextStyle(color: theme.colorScheme.error),
-            ),
-            onTap: () => _showDeleteAccountDialog(context, ref, l10n),
-          ),
-        ] else ...[
-          ListTile(
-            leading: const Icon(Icons.person_outline),
-            title: Text(l10n.notLoggedIn),
-            subtitle: Text(l10n.loginPrompt),
-          ),
-          Padding(
-            padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
-            child: FilledButton.icon(
-              onPressed: () {
-                Navigator.of(context).push(
-                  MaterialPageRoute(builder: (_) => const LoginScreen()),
-                );
-              },
-              icon: const Icon(Icons.login),
-              label: Text(l10n.login),
-            ),
-          ),
-        ],
+        ),
       ],
     );
   }
