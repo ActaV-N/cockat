@@ -298,5 +298,10 @@
   "remove": "Remove",
   "productNotFound": "Product not found",
   "footerContact": "Contact: liam.leeson5108@gmail.com",
-  "footerCopyright": "© 2026 Cockat"
+  "footerCopyright": "© 2026 Cockat",
+  "deleteAccount": "Delete Account",
+  "deleteAccountConfirmTitle": "Are you sure?",
+  "deleteAccountConfirmMessage": "Deleting your account will permanently remove all your data and cannot be undone.",
+  "deleteAccountSuccess": "Account deleted successfully",
+  "delete": "Delete"
 }

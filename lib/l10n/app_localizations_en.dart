@@ -593,4 +593,20 @@ class AppLocalizationsEn extends AppLocalizations {
 
   @override
   String get footerCopyright => '© 2026 Cockat';
+
+  @override
+  String get deleteAccount => 'Delete Account';
+
+  @override
+  String get deleteAccountConfirmTitle => 'Are you sure?';
+
+  @override
+  String get deleteAccountConfirmMessage =>
+      'Deleting your account will permanently remove all your data and cannot be undone.';
+
+  @override
+  String get deleteAccountSuccess => 'Account deleted successfully';
+
+  @override
+  String get delete => 'Delete';
 }

@@ -92,7 +92,7 @@ class AuthService {
         OAuthProvider.google,
         redirectTo: kIsWeb ? null : 'io.supabase.cockat://login-callback',
         authScreenLaunchMode:
-            kIsWeb ? LaunchMode.platformDefault : LaunchMode.externalApplication,
+            kIsWeb ? LaunchMode.platformDefault : LaunchMode.inAppBrowserView,
         queryParams: {
           'prompt': 'select_account', // 항상 계정 선택 화면 표시
         },
@@ -118,7 +118,7 @@ class AuthService {
         OAuthProvider.apple,
         redirectTo: kIsWeb ? null : 'io.supabase.cockat://login-callback',
         authScreenLaunchMode:
-            kIsWeb ? LaunchMode.platformDefault : LaunchMode.externalApplication,
+            kIsWeb ? LaunchMode.platformDefault : LaunchMode.inAppBrowserView,
       );
 
       if (response) {
@@ -136,6 +136,35 @@ class AuthService {
   /// 로그아웃
   Future<void> signOut() async {
     await _supabase.auth.signOut();
+  }
+
+  /// 계정 삭제
+  Future<AuthResult> deleteAccount() async {
+    try {
+      final session = _supabase.auth.currentSession;
+      if (session == null) {
+        return AuthResult.failure('로그인이 필요합니다.');
+      }
+
+      final response = await _supabase.functions.invoke(
+        'delete-user',
+        method: HttpMethod.post,
+        headers: {
+          'Authorization': 'Bearer ${session.accessToken}',
+        },
+      );
+
+      if (response.status == 200) {
+        // 로컬 세션 정리
+        await _supabase.auth.signOut();
+        return AuthResult.success(null);
+      } else {
+        final error = response.data?['error'] ?? '계정 삭제에 실패했습니다.';
+        return AuthResult.failure(error);
+      }
+    } catch (e) {
+      return AuthResult.failure('계정 삭제 중 오류가 발생했습니다.');
+    }
   }
 
   /// 비밀번호 재설정 이메일 발송

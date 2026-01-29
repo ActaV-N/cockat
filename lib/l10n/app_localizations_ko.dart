@@ -580,4 +580,20 @@ class AppLocalizationsKo extends AppLocalizations {
 
   @override
   String get footerCopyright => '© 2026 Cockat';
+
+  @override
+  String get deleteAccount => '계정 삭제';
+
+  @override
+  String get deleteAccountConfirmTitle => '정말 삭제하시겠어요?';
+
+  @override
+  String get deleteAccountConfirmMessage =>
+      '계정을 삭제하면 모든 데이터가 영구적으로 삭제되며 복구할 수 없습니다.';
+
+  @override
+  String get deleteAccountSuccess => '계정이 삭제되었습니다';
+
+  @override
+  String get delete => '삭제';
 }

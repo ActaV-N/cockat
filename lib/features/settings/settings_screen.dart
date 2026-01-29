@@ -206,6 +206,55 @@ class _LanguageTile extends StatelessWidget {
 }
 
 class _AccountSection extends ConsumerWidget {
+  Future<void> _showDeleteAccountDialog(
+    BuildContext context,
+    WidgetRef ref,
+    AppLocalizations l10n,
+  ) async {
+    final confirmed = await showDialog<bool>(
+      context: context,
+      builder: (context) => AlertDialog(
+        title: Text(l10n.deleteAccountConfirmTitle),
+        content: Text(l10n.deleteAccountConfirmMessage),
+        actions: [
+          TextButton(
+            onPressed: () => Navigator.of(context).pop(false),
+            child: Text(l10n.cancel),
+          ),
+          TextButton(
+            onPressed: () => Navigator.of(context).pop(true),
+            style: TextButton.styleFrom(
+              foregroundColor: Theme.of(context).colorScheme.error,
+            ),
+            child: Text(l10n.delete),
+          ),
+        ],
+      ),
+    );
+
+    if (confirmed == true && context.mounted) {
+      final authService = ref.read(authServiceProvider);
+      final result = await authService.deleteAccount();
+
+      if (context.mounted) {
+        if (result.isSuccess) {
+          // 설정 화면 닫고 이전 화면으로
+          Navigator.of(context).pop();
+          ScaffoldMessenger.of(context).showSnackBar(
+            SnackBar(content: Text(l10n.deleteAccountSuccess)),
+          );
+        } else {
+          ScaffoldMessenger.of(context).showSnackBar(
+            SnackBar(
+              content: Text(result.errorMessage ?? 'Error'),
+              backgroundColor: Theme.of(context).colorScheme.error,
+            ),
+          );
+        }
+      }
+    }
+  }
+
   @override
   Widget build(BuildContext context, WidgetRef ref) {
     final l10n = AppLocalizations.of(context)!;
@@ -228,6 +277,14 @@ class _AccountSection extends ConsumerWidget {
             ),
             title: Text(user.email ?? ''),
             subtitle: Text(l10n.account),
+          ),
+          ListTile(
+            leading: Icon(Icons.delete_forever, color: theme.colorScheme.error),
+            title: Text(
+              l10n.deleteAccount,
+              style: TextStyle(color: theme.colorScheme.error),
+            ),
+            onTap: () => _showDeleteAccountDialog(context, ref, l10n),
           ),
         ] else ...[
           ListTile(
