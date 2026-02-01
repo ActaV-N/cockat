@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:supabase_flutter/supabase_flutter.dart';
 
+import '../../core/services/analytics_service.dart';
 import '../../core/widgets/widgets.dart';
 import '../../data/providers/providers.dart';
 import '../../l10n/app_localizations.dart';
@@ -35,17 +36,13 @@ class _SignUpScreenState extends ConsumerState<SignUpScreen> {
         if (authState.event == AuthChangeEvent.signedIn && _isProcessingOAuth) {
           _isProcessingOAuth = false;
 
-          if (!mounted) return;
-
-          final l10n = AppLocalizations.of(context)!;
-          ScaffoldMessenger.of(context).showSnackBar(
-            SnackBar(content: Text(l10n.loginSuccess)),
-          );
-
+          // Sync data first
           await ref.read(onboardingServiceProvider).clearLocalData();
           await ref.read(onboardingServiceProvider).syncDbToLocal();
 
           if (!mounted) return;
+
+          // Pop first, then show SnackBar on the previous screen
           Navigator.of(context).pop(true);
         }
       });
@@ -103,7 +100,20 @@ class _SignUpScreenState extends ConsumerState<SignUpScreen> {
     if (!mounted) return;
     setState(() => _isLoading = false);
 
-    if (!result.isSuccess && !result.isPending) {
+    if (result.isSuccess) {
+      // 네이티브 Google Sign In 성공 (iOS/Android)
+      _isProcessingOAuth = false;
+      AnalyticsService().logLogin(method: 'google');
+
+      await ref.read(onboardingServiceProvider).clearLocalData();
+      await ref.read(onboardingServiceProvider).syncDbToLocal();
+
+      if (!mounted) return;
+      Navigator.of(context).pop(true);
+    } else if (result.isPending) {
+      // OAuth 콜백 대기 (Web/기타) - authStateChangesProvider에서 처리
+    } else {
+      // 에러
       _isProcessingOAuth = false;
       ScaffoldMessenger.of(context).showSnackBar(
         SnackBar(
@@ -126,7 +136,20 @@ class _SignUpScreenState extends ConsumerState<SignUpScreen> {
     if (!mounted) return;
     setState(() => _isLoading = false);
 
-    if (!result.isSuccess && !result.isPending) {
+    if (result.isSuccess) {
+      // 네이티브 Apple Sign In 성공 (iOS/macOS)
+      _isProcessingOAuth = false;
+      AnalyticsService().logLogin(method: 'apple');
+
+      await ref.read(onboardingServiceProvider).clearLocalData();
+      await ref.read(onboardingServiceProvider).syncDbToLocal();
+
+      if (!mounted) return;
+      Navigator.of(context).pop(true);
+    } else if (result.isPending) {
+      // OAuth 콜백 대기 (Web/기타) - authStateChangesProvider에서 처리
+    } else {
+      // 에러
       _isProcessingOAuth = false;
       ScaffoldMessenger.of(context).showSnackBar(
         SnackBar(

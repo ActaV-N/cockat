@@ -34,18 +34,13 @@ class _LoginScreenState extends ConsumerState<LoginScreen> {
           _isProcessingOAuth = false;
           AnalyticsService().logLogin(method: 'oauth');
 
-          if (!mounted) return;
-
-          final l10n = AppLocalizations.of(context)!;
-          ScaffoldMessenger.of(context).showSnackBar(
-            SnackBar(content: Text(l10n.loginSuccess)),
-          );
-
-          // Sync data
+          // Sync data first
           await ref.read(onboardingServiceProvider).clearLocalData();
           await ref.read(onboardingServiceProvider).syncDbToLocal();
 
           if (!mounted) return;
+
+          // Pop first, then show SnackBar on the previous screen
           Navigator.of(context).pop(true);
         }
       });
@@ -109,7 +104,20 @@ class _LoginScreenState extends ConsumerState<LoginScreen> {
     if (!mounted) return;
     setState(() => _isLoading = false);
 
-    if (!result.isSuccess && !result.isPending) {
+    if (result.isSuccess) {
+      // 네이티브 Google Sign In 성공 (iOS/Android)
+      _isProcessingOAuth = false;
+      AnalyticsService().logLogin(method: 'google');
+
+      await ref.read(onboardingServiceProvider).clearLocalData();
+      await ref.read(onboardingServiceProvider).syncDbToLocal();
+
+      if (!mounted) return;
+      Navigator.of(context).pop(true);
+    } else if (result.isPending) {
+      // OAuth 콜백 대기 (Web/기타) - authStateChangesProvider에서 처리
+    } else {
+      // 에러
       _isProcessingOAuth = false;
       ScaffoldMessenger.of(context).showSnackBar(
         SnackBar(
@@ -132,7 +140,20 @@ class _LoginScreenState extends ConsumerState<LoginScreen> {
     if (!mounted) return;
     setState(() => _isLoading = false);
 
-    if (!result.isSuccess && !result.isPending) {
+    if (result.isSuccess) {
+      // 네이티브 Apple Sign In 성공 (iOS/macOS)
+      _isProcessingOAuth = false;
+      AnalyticsService().logLogin(method: 'apple');
+
+      await ref.read(onboardingServiceProvider).clearLocalData();
+      await ref.read(onboardingServiceProvider).syncDbToLocal();
+
+      if (!mounted) return;
+      Navigator.of(context).pop(true);
+    } else if (result.isPending) {
+      // OAuth 콜백 대기 (Web/기타) - authStateChangesProvider에서 처리
+    } else {
+      // 에러
       _isProcessingOAuth = false;
       ScaffoldMessenger.of(context).showSnackBar(
         SnackBar(
