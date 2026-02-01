@@ -4,6 +4,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 
 import '../../core/services/image_upload_service.dart';
+import '../../core/theme/app_colors.dart';
 import '../../core/theme/app_colors_extension.dart';
 import '../../core/theme/app_theme.dart';
 import '../../data/models/models.dart';
@@ -333,6 +334,10 @@ class _CreateUserCocktailScreenState
 
             // 추가 정보
             _buildAdditionalInfoSection(l10n, colors),
+            const SizedBox(height: AppTheme.spacingLg),
+
+            // 설명 (맨 아래)
+            _buildDescriptionSection(l10n, colors),
             const SizedBox(height: 100), // FAB 공간
           ],
         ),
@@ -413,22 +418,6 @@ class _CreateUserCocktailScreenState
             }
             return null;
           },
-        ),
-        const SizedBox(height: AppTheme.spacingMd),
-        Text(
-          l10n.cocktailDescription,
-          style: Theme.of(context).textTheme.titleMedium?.copyWith(
-                fontWeight: FontWeight.w600,
-              ),
-        ),
-        const SizedBox(height: AppTheme.spacingSm),
-        TextFormField(
-          controller: _descriptionController,
-          decoration: InputDecoration(
-            hintText: l10n.cocktailDescriptionHint,
-            border: const OutlineInputBorder(),
-          ),
-          maxLines: 3,
         ),
       ],
     );
@@ -595,7 +584,50 @@ class _CreateUserCocktailScreenState
       ],
     );
   }
+
+  Widget _buildDescriptionSection(AppLocalizations l10n, AppColorsExtension colors) {
+    return Column(
+      crossAxisAlignment: CrossAxisAlignment.start,
+      children: [
+        Text(
+          l10n.cocktailDescription,
+          style: Theme.of(context).textTheme.titleMedium?.copyWith(
+                fontWeight: FontWeight.w600,
+              ),
+        ),
+        const SizedBox(height: AppTheme.spacingSm),
+        TextFormField(
+          controller: _descriptionController,
+          decoration: InputDecoration(
+            hintText: l10n.cocktailDescriptionHint,
+            border: const OutlineInputBorder(),
+          ),
+          maxLines: 3,
+        ),
+      ],
+    );
+  }
 }
+
+/// 재료 입력 타입 (DB 선택 or 커스텀 입력)
+enum _IngredientType { database, custom }
+
+/// 단위 옵션 목록
+const List<String> _unitOptions = [
+  'oz',
+  'ml',
+  'part',
+  'dash',
+  'drop',
+  'splash',
+  'barspoon',
+  'tsp',
+  'tbsp',
+  'cup',
+  'piece',
+  'slice',
+  'whole',
+];
 
 // 재료 입력 행
 class _IngredientEntry {
@@ -604,17 +636,19 @@ class _IngredientEntry {
   String amount;
   String units;
   bool isOptional;
+  _IngredientType type;
 
   _IngredientEntry({
     this.ingredientId,
     this.customName,
     this.amount = '',
-    this.units = '',
+    this.units = 'oz',
     this.isOptional = false,
-  });
+    _IngredientType? type,
+  }) : type = type ?? (ingredientId != null ? _IngredientType.database : _IngredientType.custom);
 }
 
-class _IngredientRow extends StatelessWidget {
+class _IngredientRow extends ConsumerStatefulWidget {
   final _IngredientEntry ingredient;
   final VoidCallback onRemove;
   final ValueChanged<_IngredientEntry> onChanged;
@@ -627,104 +661,326 @@ class _IngredientRow extends StatelessWidget {
   });
 
   @override
+  ConsumerState<_IngredientRow> createState() => _IngredientRowState();
+}
+
+class _IngredientRowState extends ConsumerState<_IngredientRow> {
+  late _IngredientType _selectedType;
+  late TextEditingController _customNameController;
+  late TextEditingController _amountController;
+  String? _searchQuery;
+
+  @override
+  void initState() {
+    super.initState();
+    _selectedType = widget.ingredient.type;
+    _customNameController = TextEditingController(text: widget.ingredient.customName ?? '');
+    _amountController = TextEditingController(text: widget.ingredient.amount);
+  }
+
+  @override
+  void dispose() {
+    _customNameController.dispose();
+    _amountController.dispose();
+    super.dispose();
+  }
+
+  void _updateIngredient({
+    String? ingredientId,
+    String? customName,
+    String? amount,
+    String? units,
+    bool? isOptional,
+    _IngredientType? type,
+  }) {
+    widget.onChanged(_IngredientEntry(
+      ingredientId: ingredientId ?? widget.ingredient.ingredientId,
+      customName: customName ?? widget.ingredient.customName,
+      amount: amount ?? widget.ingredient.amount,
+      units: units ?? widget.ingredient.units,
+      isOptional: isOptional ?? widget.ingredient.isOptional,
+      type: type ?? _selectedType,
+    ));
+  }
+
+  @override
   Widget build(BuildContext context) {
     final l10n = AppLocalizations.of(context)!;
     final colors = context.appColors;
+    final locale = ref.watch(currentLocaleCodeProvider);
+    final ingredientsAsync = ref.watch(ingredientsProvider);
+    final userIngredientsAsync = ref.watch(userIngredientsDbProvider);
+    final userIngredientIds = userIngredientsAsync.valueOrNull ?? [];
 
     return Card(
       margin: const EdgeInsets.only(bottom: AppTheme.spacingSm),
       child: Padding(
         padding: const EdgeInsets.all(AppTheme.spacingSm),
         child: Column(
+          crossAxisAlignment: CrossAxisAlignment.start,
           children: [
+            // 타입 선택 (DB/Custom 토글)
             Row(
               children: [
-                // 재료 이름
+                Expanded(
+                  child: SegmentedButton<_IngredientType>(
+                    segments: [
+                      ButtonSegment<_IngredientType>(
+                        value: _IngredientType.database,
+                        label: Text(l10n.selectIngredient, style: const TextStyle(fontSize: 12)),
+                        icon: const Icon(Icons.search, size: 16),
+                      ),
+                      ButtonSegment<_IngredientType>(
+                        value: _IngredientType.custom,
+                        label: Text(l10n.customIngredient, style: const TextStyle(fontSize: 12)),
+                        icon: const Icon(Icons.edit, size: 16),
+                      ),
+                    ],
+                    selected: {_selectedType},
+                    onSelectionChanged: (Set<_IngredientType> newSelection) {
+                      setState(() {
+                        _selectedType = newSelection.first;
+                        // 타입 변경 시 재료 데이터 초기화
+                        if (_selectedType == _IngredientType.database) {
+                          _customNameController.clear();
+                          _updateIngredient(
+                            customName: null,
+                            type: _IngredientType.database,
+                          );
+                        } else {
+                          _updateIngredient(
+                            ingredientId: null,
+                            type: _IngredientType.custom,
+                          );
+                        }
+                      });
+                    },
+                    style: ButtonStyle(
+                      tapTargetSize: MaterialTapTargetSize.shrinkWrap,
+                      visualDensity: VisualDensity.compact,
+                    ),
+                  ),
+                ),
+                IconButton(
+                  icon: Icon(Icons.remove_circle, color: colors.textSecondary),
+                  onPressed: widget.onRemove,
+                  visualDensity: VisualDensity.compact,
+                ),
+              ],
+            ),
+            const SizedBox(height: AppTheme.spacingSm),
+
+            // 재료 선택/입력 영역
+            if (_selectedType == _IngredientType.database)
+              // DB 재료 선택 (Autocomplete)
+              ingredientsAsync.when(
+                data: (ingredients) {
+                  // 현재 선택된 재료 이름 찾기
+                  String? selectedName;
+                  if (widget.ingredient.ingredientId != null) {
+                    final found = ingredients.where(
+                      (i) => i.id == widget.ingredient.ingredientId,
+                    );
+                    if (found.isNotEmpty) {
+                      selectedName = found.first.getLocalizedName(locale);
+                    }
+                  }
+
+                  return Autocomplete<Ingredient>(
+                    initialValue: selectedName != null
+                        ? TextEditingValue(text: selectedName)
+                        : TextEditingValue.empty,
+                    displayStringForOption: (option) => option.getLocalizedName(locale),
+                    optionsBuilder: (textEditingValue) {
+                      if (textEditingValue.text.isEmpty) {
+                        // 검색어 없으면 카테고리별 상위 재료 표시
+                        return ingredients.take(20);
+                      }
+                      final query = textEditingValue.text.toLowerCase();
+                      return ingredients.where((ingredient) {
+                        final name = ingredient.name.toLowerCase();
+                        final nameKo = ingredient.nameKo?.toLowerCase() ?? '';
+                        return name.contains(query) || nameKo.contains(query);
+                      }).take(20);
+                    },
+                    fieldViewBuilder: (context, controller, focusNode, onFieldSubmitted) {
+                      return TextFormField(
+                        controller: controller,
+                        focusNode: focusNode,
+                        decoration: InputDecoration(
+                          labelText: l10n.ingredientName,
+                          hintText: l10n.searchIngredient,
+                          border: const OutlineInputBorder(),
+                          isDense: true,
+                          prefixIcon: const Icon(Icons.search, size: 20),
+                        ),
+                      );
+                    },
+                    optionsViewBuilder: (context, onSelected, options) {
+                      return Align(
+                        alignment: Alignment.topLeft,
+                        child: Material(
+                          elevation: 4,
+                          borderRadius: BorderRadius.circular(AppTheme.radiusSm),
+                          child: ConstrainedBox(
+                            constraints: BoxConstraints(
+                              maxHeight: 200,
+                              maxWidth: MediaQuery.of(context).size.width - 64,
+                            ),
+                            child: ListView.builder(
+                              padding: EdgeInsets.zero,
+                              shrinkWrap: true,
+                              itemCount: options.length,
+                              itemBuilder: (context, index) {
+                                final ingredient = options.elementAt(index);
+                                final isOwned = userIngredientIds.contains(ingredient.id);
+                                return ListTile(
+                                  dense: true,
+                                  title: Row(
+                                    children: [
+                                      Expanded(
+                                        child: Text(ingredient.getLocalizedName(locale)),
+                                      ),
+                                      if (isOwned)
+                                        Container(
+                                          padding: const EdgeInsets.symmetric(
+                                            horizontal: 6,
+                                            vertical: 2,
+                                          ),
+                                          decoration: BoxDecoration(
+                                            color: AppColors.coralPeach.withValues(alpha: 0.15),
+                                            borderRadius: BorderRadius.circular(AppTheme.radiusXs),
+                                          ),
+                                          child: Row(
+                                            mainAxisSize: MainAxisSize.min,
+                                            children: [
+                                              Icon(
+                                                Icons.inventory_2,
+                                                size: 10,
+                                                color: AppColors.coralPeach,
+                                              ),
+                                              const SizedBox(width: 2),
+                                              Text(
+                                                l10n.myIngredients,
+                                                style: TextStyle(
+                                                  fontSize: 9,
+                                                  color: AppColors.coralPeach,
+                                                  fontWeight: FontWeight.w600,
+                                                ),
+                                              ),
+                                            ],
+                                          ),
+                                        ),
+                                    ],
+                                  ),
+                                  subtitle: ingredient.category != null
+                                      ? Text(
+                                          ingredient.category!,
+                                          style: TextStyle(
+                                            fontSize: 11,
+                                            color: colors.textTertiary,
+                                          ),
+                                        )
+                                      : null,
+                                  onTap: () => onSelected(ingredient),
+                                );
+                              },
+                            ),
+                          ),
+                        ),
+                      );
+                    },
+                    onSelected: (ingredient) {
+                      _updateIngredient(
+                        ingredientId: ingredient.id,
+                        customName: null,
+                      );
+                    },
+                  );
+                },
+                loading: () => const LinearProgressIndicator(),
+                error: (_, __) => Text(l10n.errorOccurred),
+              )
+            else
+              // 커스텀 재료 입력
+              TextFormField(
+                controller: _customNameController,
+                decoration: InputDecoration(
+                  labelText: l10n.ingredientName,
+                  hintText: l10n.customIngredientHint,
+                  border: const OutlineInputBorder(),
+                  isDense: true,
+                  prefixIcon: const Icon(Icons.edit_note, size: 20),
+                ),
+                onChanged: (value) {
+                  _updateIngredient(
+                    customName: value.isNotEmpty ? value : null,
+                    ingredientId: null,
+                  );
+                },
+              ),
+
+            const SizedBox(height: AppTheme.spacingSm),
+
+            // 양과 단위 (같은 행)
+            Row(
+              children: [
+                // 양 입력
                 Expanded(
                   flex: 2,
                   child: TextFormField(
-                    initialValue: ingredient.customName ?? ingredient.ingredientId,
-                    decoration: InputDecoration(
-                      labelText: l10n.ingredientName,
-                      border: const OutlineInputBorder(),
-                      isDense: true,
-                    ),
-                    onChanged: (value) {
-                      onChanged(_IngredientEntry(
-                        customName: value.isNotEmpty ? value : null,
-                        amount: ingredient.amount,
-                        units: ingredient.units,
-                        isOptional: ingredient.isOptional,
-                      ));
-                    },
-                  ),
-                ),
-                const SizedBox(width: 8),
-                // 양
-                Expanded(
-                  child: TextFormField(
-                    initialValue: ingredient.amount,
+                    controller: _amountController,
                     decoration: InputDecoration(
                       labelText: l10n.ingredientAmount,
                       border: const OutlineInputBorder(),
                       isDense: true,
                     ),
-                    keyboardType: TextInputType.number,
+                    keyboardType: const TextInputType.numberWithOptions(decimal: true),
                     onChanged: (value) {
-                      onChanged(_IngredientEntry(
-                        ingredientId: ingredient.ingredientId,
-                        customName: ingredient.customName,
-                        amount: value,
-                        units: ingredient.units,
-                        isOptional: ingredient.isOptional,
-                      ));
+                      _updateIngredient(amount: value);
                     },
                   ),
                 ),
                 const SizedBox(width: 8),
-                // 단위
+                // 단위 드롭다운
                 Expanded(
-                  child: TextFormField(
-                    initialValue: ingredient.units,
+                  flex: 2,
+                  child: DropdownButtonFormField<String>(
+                    value: _unitOptions.contains(widget.ingredient.units)
+                        ? widget.ingredient.units
+                        : 'oz',
                     decoration: InputDecoration(
                       labelText: l10n.ingredientUnit,
                       border: const OutlineInputBorder(),
                       isDense: true,
                     ),
+                    items: _unitOptions.map((unit) {
+                      return DropdownMenuItem(
+                        value: unit,
+                        child: Text(unit),
+                      );
+                    }).toList(),
                     onChanged: (value) {
-                      onChanged(_IngredientEntry(
-                        ingredientId: ingredient.ingredientId,
-                        customName: ingredient.customName,
-                        amount: ingredient.amount,
-                        units: value,
-                        isOptional: ingredient.isOptional,
-                      ));
+                      if (value != null) {
+                        _updateIngredient(units: value);
+                      }
                     },
                   ),
                 ),
-                // 삭제 버튼
-                IconButton(
-                  icon: Icon(Icons.remove_circle, color: colors.textSecondary),
-                  onPressed: onRemove,
-                ),
               ],
             ),
+
             // 옵션 체크박스
             Row(
               children: [
                 Checkbox(
-                  value: ingredient.isOptional,
+                  value: widget.ingredient.isOptional,
                   onChanged: (value) {
-                    onChanged(_IngredientEntry(
-                      ingredientId: ingredient.ingredientId,
-                      customName: ingredient.customName,
-                      amount: ingredient.amount,
-                      units: ingredient.units,
-                      isOptional: value ?? false,
-                    ));
+                    _updateIngredient(isOptional: value ?? false);
                   },
+                  visualDensity: VisualDensity.compact,
                 ),
-                Text(l10n.optional),
+                Text(l10n.optional, style: const TextStyle(fontSize: 13)),
               ],
             ),
           ],

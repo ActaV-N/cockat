@@ -1,11 +1,12 @@
 import 'package:cached_network_image/cached_network_image.dart';
+import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
-import 'package:intl/intl.dart';
 
 import '../../core/theme/app_colors.dart';
 import '../../core/theme/app_colors_extension.dart';
 import '../../core/theme/app_theme.dart';
+import '../../core/widgets/storage_image.dart';
 import '../../data/models/models.dart';
 import '../../data/providers/providers.dart';
 import '../../l10n/app_localizations.dart';
@@ -31,7 +32,7 @@ class UserCocktailsListScreen extends ConsumerWidget {
           if (cocktails.isEmpty) {
             return _EmptyState(l10n: l10n, colors: colors);
           }
-          return _CocktailsList(cocktails: cocktails, l10n: l10n, colors: colors);
+          return _CocktailsGrid(cocktails: cocktails, l10n: l10n, colors: colors);
         },
         loading: () => const Center(child: CircularProgressIndicator()),
         error: (error, _) => Center(
@@ -51,11 +52,17 @@ class UserCocktailsListScreen extends ConsumerWidget {
         ),
       ),
       floatingActionButton: FloatingActionButton.extended(
-        onPressed: () => Navigator.of(context).push(
-          MaterialPageRoute(
-            builder: (_) => const CreateUserCocktailScreen(),
-          ),
-        ),
+        onPressed: () async {
+          // Phase 1.2: 결과값 받아서 리스트 새로고침
+          final result = await Navigator.of(context).push<bool>(
+            MaterialPageRoute(
+              builder: (_) => const CreateUserCocktailScreen(),
+            ),
+          );
+          if (result == true) {
+            ref.invalidate(userCocktailsProvider);
+          }
+        },
         backgroundColor: AppColors.coralPeach,
         foregroundColor: Colors.white,
         icon: const Icon(Icons.add),
@@ -113,142 +120,249 @@ class _EmptyState extends StatelessWidget {
   }
 }
 
-class _CocktailsList extends StatelessWidget {
+/// Phase 2.0: GridView 2열 레이아웃으로 변경
+class _CocktailsGrid extends ConsumerWidget {
   final List<UserCocktail> cocktails;
   final AppLocalizations l10n;
   final AppColorsExtension colors;
 
-  const _CocktailsList({
+  const _CocktailsGrid({
     required this.cocktails,
     required this.l10n,
     required this.colors,
   });
 
   @override
-  Widget build(BuildContext context) {
-    return ListView.builder(
+  Widget build(BuildContext context, WidgetRef ref) {
+    return GridView.builder(
       padding: const EdgeInsets.all(AppTheme.spacingMd),
+      gridDelegate: const SliverGridDelegateWithFixedCrossAxisCount(
+        crossAxisCount: 2,
+        childAspectRatio: 0.72, // 표준 칵테일 카드와 동일
+        crossAxisSpacing: AppTheme.spacingSm,
+        mainAxisSpacing: AppTheme.spacingSm,
+      ),
       itemCount: cocktails.length,
       itemBuilder: (context, index) {
         final cocktail = cocktails[index];
-        return _CocktailCard(cocktail: cocktail, l10n: l10n, colors: colors);
+        return _UserCocktailCard(
+          cocktail: cocktail,
+          onNavigateBack: () {
+            // 상세/수정 화면에서 돌아올 때 새로고침
+            ref.invalidate(userCocktailsProvider);
+          },
+        );
       },
     );
   }
 }
 
-class _CocktailCard extends ConsumerWidget {
+/// 표준 칵테일 카드와 동일한 스타일의 사용자 칵테일 카드
+class _UserCocktailCard extends ConsumerWidget {
   final UserCocktail cocktail;
-  final AppLocalizations l10n;
-  final AppColorsExtension colors;
+  final VoidCallback? onNavigateBack;
 
-  const _CocktailCard({
+  const _UserCocktailCard({
     required this.cocktail,
-    required this.l10n,
-    required this.colors,
+    this.onNavigateBack,
   });
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
+    final colors = context.appColors;
     final locale = ref.watch(currentLocaleCodeProvider);
-    final dateFormat = DateFormat.yMMMd(locale);
 
-    return Card(
-      margin: const EdgeInsets.only(bottom: AppTheme.spacingMd),
-      clipBehavior: Clip.antiAlias,
-      child: InkWell(
-        onTap: () => Navigator.of(context).push(
-          MaterialPageRoute(
-            builder: (_) => UserCocktailDetailScreen(cocktailId: cocktail.id),
+    return Container(
+      decoration: BoxDecoration(
+        borderRadius: BorderRadius.circular(AppTheme.radiusMd),
+        boxShadow: [
+          BoxShadow(
+            color: Colors.black.withValues(alpha: 0.08),
+            blurRadius: 16,
+            offset: const Offset(0, 4),
           ),
-        ),
-        child: Row(
-          children: [
-            // 이미지
-            SizedBox(
-              width: 100,
-              height: 100,
-              child: cocktail.imageUrl != null
-                  ? CachedNetworkImage(
-                      imageUrl: cocktail.imageUrl!,
-                      fit: BoxFit.cover,
-                      placeholder: (_, __) => Container(
-                        color: colors.card,
-                        child: Center(
-                          child: Icon(
-                            Icons.local_bar,
-                            color: colors.textSecondary,
+        ],
+      ),
+      child: ClipRRect(
+        borderRadius: BorderRadius.circular(AppTheme.radiusMd),
+        child: Material(
+          color: colors.card,
+          child: InkWell(
+            onTap: () async {
+              // Phase 1.2: 상세 화면에서 수정/삭제 후 돌아올 때 새로고침
+              final result = await Navigator.of(context).push<bool>(
+                MaterialPageRoute(
+                  builder: (_) => UserCocktailDetailScreen(cocktailId: cocktail.id),
+                ),
+              );
+              if (result == true) {
+                onNavigateBack?.call();
+              }
+            },
+            child: Column(
+              crossAxisAlignment: CrossAxisAlignment.stretch,
+              children: [
+                // 이미지 섹션
+                Expanded(
+                  flex: 3,
+                  child: Stack(
+                    fit: StackFit.expand,
+                    children: [
+                      // 칵테일 이미지
+                      _buildImage(colors),
+                      // Gradient overlay
+                      Positioned.fill(
+                        child: DecoratedBox(
+                          decoration: BoxDecoration(
+                            gradient: LinearGradient(
+                              begin: Alignment.topCenter,
+                              end: Alignment.bottomCenter,
+                              colors: [
+                                Colors.transparent,
+                                Colors.black.withValues(alpha: 0.3),
+                              ],
+                              stops: const [0.6, 1.0],
+                            ),
                           ),
                         ),
                       ),
-                      errorWidget: (_, __, ___) => Container(
-                        color: colors.card,
-                        child: Center(
-                          child: Icon(
-                            Icons.local_bar,
-                            color: colors.textSecondary,
+                      // "My Recipe" 배지 (좌측 하단)
+                      Positioned(
+                        bottom: AppTheme.spacingSm,
+                        left: AppTheme.spacingSm,
+                        child: Container(
+                          padding: const EdgeInsets.symmetric(
+                            horizontal: AppTheme.spacingSm,
+                            vertical: AppTheme.spacingXs,
+                          ),
+                          decoration: BoxDecoration(
+                            color: AppColors.coralPeach.withValues(alpha: 0.9),
+                            borderRadius: BorderRadius.circular(AppTheme.radiusXs),
+                            boxShadow: [
+                              BoxShadow(
+                                color: AppColors.coralPeach.withValues(alpha: 0.3),
+                                blurRadius: 8,
+                                offset: const Offset(0, 2),
+                              ),
+                            ],
+                          ),
+                          child: Row(
+                            mainAxisSize: MainAxisSize.min,
+                            children: [
+                              Icon(
+                                Icons.edit_note,
+                                size: 12,
+                                color: AppColors.white,
+                              ),
+                              const SizedBox(width: 4),
+                              Text(
+                                'My Recipe',
+                                style: Theme.of(context).textTheme.labelSmall?.copyWith(
+                                      color: AppColors.white,
+                                      fontWeight: FontWeight.w600,
+                                    ),
+                              ),
+                            ],
                           ),
                         ),
                       ),
-                    )
-                  : Container(
-                      color: AppColors.coralPeach.withValues(alpha: 0.1),
-                      child: Center(
-                        child: Icon(
-                          Icons.local_bar,
-                          size: 40,
-                          color: AppColors.coralPeach,
-                        ),
-                      ),
-                    ),
-            ),
-            // 정보
-            Expanded(
-              child: Padding(
-                padding: const EdgeInsets.all(AppTheme.spacingMd),
-                child: Column(
-                  crossAxisAlignment: CrossAxisAlignment.start,
-                  children: [
-                    Text(
-                      cocktail.getLocalizedName(locale),
-                      style: Theme.of(context).textTheme.titleMedium?.copyWith(
-                            fontWeight: FontWeight.w600,
-                          ),
-                      maxLines: 1,
-                      overflow: TextOverflow.ellipsis,
-                    ),
-                    if (cocktail.description != null) ...[
-                      const SizedBox(height: 4),
+                    ],
+                  ),
+                ),
+                // 정보 섹션
+                Container(
+                  padding: const EdgeInsets.all(AppTheme.spacingSm),
+                  child: Column(
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    mainAxisSize: MainAxisSize.min,
+                    children: [
+                      // 칵테일 이름
                       Text(
-                        cocktail.getLocalizedDescription(locale) ?? '',
-                        style: Theme.of(context).textTheme.bodySmall?.copyWith(
-                              color: colors.textSecondary,
+                        cocktail.getLocalizedName(locale),
+                        style: Theme.of(context).textTheme.titleSmall?.copyWith(
+                              fontWeight: FontWeight.w700,
+                              letterSpacing: -0.2,
                             ),
                         maxLines: 2,
                         overflow: TextOverflow.ellipsis,
                       ),
+                      const SizedBox(height: 4),
+                      // ABV 정보
+                      Row(
+                        children: [
+                          if (cocktail.abv != null) ...[
+                            Icon(
+                              Icons.local_bar,
+                              size: 12,
+                              color: colors.textTertiary,
+                            ),
+                            const SizedBox(width: 4),
+                            Text(
+                              '${cocktail.abv!.toStringAsFixed(0)}%',
+                              style: Theme.of(context)
+                                  .textTheme
+                                  .labelSmall
+                                  ?.copyWith(
+                                    color: colors.textTertiary,
+                                    fontWeight: FontWeight.w500,
+                                  ),
+                            ),
+                          ],
+                        ],
+                      ),
                     ],
-                    const SizedBox(height: 8),
-                    Text(
-                      l10n.createdAt(dateFormat.format(cocktail.createdAt)),
-                      style: Theme.of(context).textTheme.bodySmall?.copyWith(
-                            color: colors.textSecondary,
-                            fontSize: 11,
-                          ),
-                    ),
-                  ],
+                  ),
                 ),
-              ),
+              ],
             ),
-            // 화살표
-            Padding(
-              padding: const EdgeInsets.only(right: AppTheme.spacingSm),
-              child: Icon(
-                Icons.chevron_right,
-                color: colors.textSecondary,
-              ),
-            ),
+          ),
+        ),
+      ),
+    );
+  }
+
+  Widget _buildImage(AppColorsExtension colors) {
+    if (cocktail.imageUrl != null && cocktail.imageUrl!.isNotEmpty) {
+      return CachedNetworkImage(
+        imageUrl: cocktail.imageUrl!,
+        fit: BoxFit.cover,
+        fadeInDuration: const Duration(milliseconds: 200),
+        placeholder: (context, url) => ShimmerPlaceholder(
+          borderRadius: BorderRadius.circular(AppTheme.radiusMd),
+        ),
+        errorWidget: (context, url, error) {
+          // Phase 1.1: 디버그 로깅 추가
+          if (kDebugMode) {
+            debugPrint('❌ Image load failed: $url');
+            debugPrint('   Error: $error');
+          }
+          return _buildPlaceholder(colors);
+        },
+        // Memory cache optimization
+        memCacheWidth: 300,
+        memCacheHeight: 300,
+      );
+    }
+    return _buildPlaceholder(colors);
+  }
+
+  Widget _buildPlaceholder(AppColorsExtension colors) {
+    return Container(
+      decoration: BoxDecoration(
+        gradient: LinearGradient(
+          begin: Alignment.topLeft,
+          end: Alignment.bottomRight,
+          colors: [
+            AppColors.coralPeach.withValues(alpha: 0.2),
+            AppColors.purple.withValues(alpha: 0.1),
           ],
+        ),
+      ),
+      child: Center(
+        child: Icon(
+          Icons.local_bar,
+          size: 48,
+          color: AppColors.coralPeach.withValues(alpha: 0.5),
         ),
       ),
     );

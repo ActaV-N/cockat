@@ -19,24 +19,25 @@ class ImageUploadService {
 
   ImageUploadService(this._supabase);
 
-  /// 갤러리에서 이미지 선택
+  /// 갤러리에서 이미지 선택 (3:4 세로 비율 최적화)
   Future<File?> pickImageFromGallery() async {
     final XFile? image = await _imagePicker.pickImage(
       source: ImageSource.gallery,
       maxWidth: 1080,
-      maxHeight: 1080,
+      maxHeight: 1440, // 3:4 비율 (세로 방향)
       imageQuality: 85,
     );
     return image != null ? File(image.path) : null;
   }
 
-  /// 카메라로 이미지 촬영
+  /// 카메라로 이미지 촬영 (3:4 세로 비율 최적화)
   Future<File?> pickImageFromCamera() async {
     final XFile? image = await _imagePicker.pickImage(
       source: ImageSource.camera,
       maxWidth: 1080,
-      maxHeight: 1080,
+      maxHeight: 1440, // 3:4 비율 (세로 방향)
       imageQuality: 85,
+      preferredCameraDevice: CameraDevice.rear,
     );
     return image != null ? File(image.path) : null;
   }
