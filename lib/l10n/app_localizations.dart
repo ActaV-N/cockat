@@ -1316,6 +1316,18 @@ abstract class AppLocalizations {
   /// **'Custom'**
   String get customIngredient;
 
+  /// No description provided for @customIngredientHint.
+  ///
+  /// In en, this message translates to:
+  /// **'Enter ingredient name'**
+  String get customIngredientHint;
+
+  /// No description provided for @searchIngredient.
+  ///
+  /// In en, this message translates to:
+  /// **'Search ingredient...'**
+  String get searchIngredient;
+
   /// No description provided for @selectIngredient.
   ///
   /// In en, this message translates to:

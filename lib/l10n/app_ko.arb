@@ -203,6 +203,8 @@
   "ingredientAmount": "양",
   "ingredientUnit": "단위",
   "customIngredient": "직접 입력",
+  "customIngredientHint": "재료 이름을 입력하세요",
+  "searchIngredient": "재료 검색...",
   "selectIngredient": "재료 선택",
   "noUserCocktails": "아직 만든 칵테일이 없어요",
   "noUserCocktailsPrompt": "나만의 레시피를 만들어보세요!",

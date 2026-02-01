@@ -325,6 +325,8 @@
   "ingredientAmount": "Amount",
   "ingredientUnit": "Unit",
   "customIngredient": "Custom",
+  "customIngredientHint": "Enter ingredient name",
+  "searchIngredient": "Search ingredient...",
   "selectIngredient": "Select Ingredient",
   "noUserCocktails": "No cocktails yet",
   "noUserCocktailsPrompt": "Create your own recipe!",

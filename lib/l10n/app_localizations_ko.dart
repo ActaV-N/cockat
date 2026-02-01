@@ -661,6 +661,12 @@ class AppLocalizationsKo extends AppLocalizations {
   String get customIngredient => '직접 입력';
 
   @override
+  String get customIngredientHint => '재료 이름을 입력하세요';
+
+  @override
+  String get searchIngredient => '재료 검색...';
+
+  @override
   String get selectIngredient => '재료 선택';
 
   @override

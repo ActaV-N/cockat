@@ -675,6 +675,12 @@ class AppLocalizationsEn extends AppLocalizations {
   String get customIngredient => 'Custom';
 
   @override
+  String get customIngredientHint => 'Enter ingredient name';
+
+  @override
+  String get searchIngredient => 'Search ingredient...';
+
+  @override
   String get selectIngredient => 'Select Ingredient';
 
   @override
