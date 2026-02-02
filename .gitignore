@@ -76,3 +76,6 @@ prompts/
 
 # Local image files for upload
 data/images/
+
+# Claude Code agents (local configuration)
+.claude/agents/
