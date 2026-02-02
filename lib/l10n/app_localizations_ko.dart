@@ -717,4 +717,16 @@ class AppLocalizationsKo extends AppLocalizations {
   String createdAt(String date) {
     return '생성일: $date';
   }
+
+  @override
+  String get sendFeedback => '피드백 보내기';
+
+  @override
+  String get sendFeedbackSubtitle => '의견과 기능 제안을 들려주세요';
+
+  @override
+  String get feedback => '피드백';
+
+  @override
+  String get feedbackLoadError => '피드백을 불러올 수 없습니다';
 }

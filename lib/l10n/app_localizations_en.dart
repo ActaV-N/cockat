@@ -731,4 +731,16 @@ class AppLocalizationsEn extends AppLocalizations {
   String createdAt(String date) {
     return 'Created: $date';
   }
+
+  @override
+  String get sendFeedback => 'Send Feedback';
+
+  @override
+  String get sendFeedbackSubtitle => 'Share your ideas and suggestions';
+
+  @override
+  String get feedback => 'Feedback';
+
+  @override
+  String get feedbackLoadError => 'Failed to load feedback';
 }

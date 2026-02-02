@@ -10,3 +10,4 @@ export 'misc_item_provider.dart';
 export 'onboarding_provider.dart';
 export 'ingredient_availability_provider.dart';
 export 'user_cocktail_provider.dart';
+export 'canny_provider.dart';

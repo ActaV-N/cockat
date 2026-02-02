@@ -12,6 +12,7 @@ import '../auth/signup_screen.dart';
 import '../settings/pages/other_ingredients_settings_page.dart';
 import '../settings/pages/unit_settings_page.dart';
 import '../settings/settings_screen.dart';
+import '../feedback/feedback_screen.dart';
 import '../user_cocktails/user_cocktails_list_screen.dart';
 
 class ProfileScreen extends ConsumerWidget {
@@ -227,6 +228,30 @@ class ProfileScreen extends ConsumerWidget {
                       onTap: () {
                         Navigator.of(context).push(
                           MaterialPageRoute(builder: (_) => const SettingsScreen()),
+                        );
+                      },
+                    ),
+                  ],
+                ),
+
+                const SizedBox(height: AppTheme.spacingMd),
+
+                // Feedback Section
+                _PremiumSectionCard(
+                  title: l10n.feedback,
+                  icon: Icons.feedback_outlined,
+                  iconColor: AppColors.info,
+                  children: [
+                    _SettingsTile(
+                      icon: Icons.rate_review_outlined,
+                      iconColor: AppColors.info,
+                      title: l10n.sendFeedback,
+                      subtitle: l10n.sendFeedbackSubtitle,
+                      onTap: () {
+                        Navigator.of(context).push(
+                          MaterialPageRoute(
+                            builder: (_) => const FeedbackScreen(),
+                          ),
                         );
                       },
                     ),

@@ -1423,6 +1423,30 @@ abstract class AppLocalizations {
   /// In en, this message translates to:
   /// **'Created: {date}'**
   String createdAt(String date);
+
+  /// No description provided for @sendFeedback.
+  ///
+  /// In en, this message translates to:
+  /// **'Send Feedback'**
+  String get sendFeedback;
+
+  /// No description provided for @sendFeedbackSubtitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Share your ideas and suggestions'**
+  String get sendFeedbackSubtitle;
+
+  /// No description provided for @feedback.
+  ///
+  /// In en, this message translates to:
+  /// **'Feedback'**
+  String get feedback;
+
+  /// No description provided for @feedbackLoadError.
+  ///
+  /// In en, this message translates to:
+  /// **'Failed to load feedback'**
+  String get feedbackLoadError;
 }
 
 class _AppLocalizationsDelegate

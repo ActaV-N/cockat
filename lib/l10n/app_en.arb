@@ -356,5 +356,9 @@
         "type": "String"
       }
     }
-  }
+  },
+  "sendFeedback": "Send Feedback",
+  "sendFeedbackSubtitle": "Share your ideas and suggestions",
+  "feedback": "Feedback",
+  "feedbackLoadError": "Failed to load feedback"
 }
