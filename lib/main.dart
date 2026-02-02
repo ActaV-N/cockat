@@ -70,14 +70,13 @@ class CockatApp extends ConsumerWidget {
       home: const SplashScreen(),
       // OAuth 콜백 딥링크를 빈 페이지로 처리 (Supabase가 auth 처리)
       onGenerateRoute: (settings) {
-        // login-callback 경로는 Supabase가 이미 처리함
-        // 빈 페이지 반환하여 에러 방지
-        if (settings.name?.contains('login-callback') == true ||
-            settings.name?.contains('://') == true) {
+        final name = settings.name ?? '';
+        // io.supabase.cockat:// 스킴의 딥링크는 Supabase가 처리함
+        if (name.contains('login-callback') ||
+            name.startsWith('io.supabase.cockat://')) {
+          // 빈 페이지 반환하여 라우팅 에러 방지
           return MaterialPageRoute(
-            builder: (_) => const Scaffold(
-              body: Center(child: CircularProgressIndicator()),
-            ),
+            builder: (_) => const SizedBox.shrink(),
           );
         }
         return null;

@@ -154,11 +154,8 @@ class AppTheme {
           borderRadius: BorderRadius.circular(radiusLg),
         ),
       ),
-      snackBarTheme: SnackBarThemeData(
-        behavior: SnackBarBehavior.floating,
-        shape: RoundedRectangleBorder(
-          borderRadius: BorderRadius.circular(radiusSm),
-        ),
+      snackBarTheme: const SnackBarThemeData(
+        behavior: SnackBarBehavior.fixed,
       ),
     );
   }
@@ -296,12 +293,9 @@ class AppTheme {
         ),
       ),
       snackBarTheme: SnackBarThemeData(
-        behavior: SnackBarBehavior.floating,
+        behavior: SnackBarBehavior.fixed,
         backgroundColor: AppColors.navy100,
         contentTextStyle: const TextStyle(color: AppColors.white),
-        shape: RoundedRectangleBorder(
-          borderRadius: BorderRadius.circular(radiusSm),
-        ),
       ),
     );
   }
