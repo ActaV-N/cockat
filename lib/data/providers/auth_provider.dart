@@ -328,6 +328,23 @@ class AuthService {
     }
   }
 
+  /// 비밀번호 업데이트 (recovery 세션에서 호출)
+  Future<AuthResult> updatePassword(String newPassword) async {
+    try {
+      final response = await _supabase.auth.updateUser(
+        UserAttributes(password: newPassword),
+      );
+      if (response.user != null) {
+        return AuthResult.success(response.user);
+      }
+      return AuthResult.failure('비밀번호 변경에 실패했습니다.');
+    } on AuthException catch (e) {
+      return AuthResult.failure(_translateAuthError(e.message));
+    } catch (e) {
+      return AuthResult.failure('알 수 없는 오류가 발생했습니다.');
+    }
+  }
+
   /// 에러 메시지 번역
   String _translateAuthError(String message) {
     if (message.contains('Invalid login credentials')) {

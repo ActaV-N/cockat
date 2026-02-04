@@ -729,4 +729,16 @@ class AppLocalizationsKo extends AppLocalizations {
 
   @override
   String get feedbackLoadError => '피드백을 불러올 수 없습니다';
+
+  @override
+  String get resetPasswordInstruction => '새로운 비밀번호를 입력해주세요';
+
+  @override
+  String get newPassword => '새 비밀번호';
+
+  @override
+  String get changePassword => '비밀번호 변경';
+
+  @override
+  String get passwordChangeSuccess => '비밀번호가 변경되었습니다';
 }

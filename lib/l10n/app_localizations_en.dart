@@ -743,4 +743,16 @@ class AppLocalizationsEn extends AppLocalizations {
 
   @override
   String get feedbackLoadError => 'Failed to load feedback';
+
+  @override
+  String get resetPasswordInstruction => 'Please enter your new password';
+
+  @override
+  String get newPassword => 'New Password';
+
+  @override
+  String get changePassword => 'Change Password';
+
+  @override
+  String get passwordChangeSuccess => 'Password has been changed successfully';
 }

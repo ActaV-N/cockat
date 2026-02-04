@@ -1447,6 +1447,30 @@ abstract class AppLocalizations {
   /// In en, this message translates to:
   /// **'Failed to load feedback'**
   String get feedbackLoadError;
+
+  /// No description provided for @resetPasswordInstruction.
+  ///
+  /// In en, this message translates to:
+  /// **'Please enter your new password'**
+  String get resetPasswordInstruction;
+
+  /// No description provided for @newPassword.
+  ///
+  /// In en, this message translates to:
+  /// **'New Password'**
+  String get newPassword;
+
+  /// No description provided for @changePassword.
+  ///
+  /// In en, this message translates to:
+  /// **'Change Password'**
+  String get changePassword;
+
+  /// No description provided for @passwordChangeSuccess.
+  ///
+  /// In en, this message translates to:
+  /// **'Password has been changed successfully'**
+  String get passwordChangeSuccess;
 }
 
 class _AppLocalizationsDelegate

@@ -2,7 +2,7 @@ name: cockat
 description: "What should I drink today? - Cocktail recommendation app based on your ingredients"
 publish_to: 'none'
 
-version: 1.0.0+1
+version: 1.0.1+2
 
 environment:
   sdk: ^3.8.1
@@ -82,3 +82,4 @@ flutter:
   assets:
     - .env
     - assets/logos/
+    - shorebird.yaml

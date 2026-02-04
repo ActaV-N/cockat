@@ -360,5 +360,9 @@
   "sendFeedback": "Send Feedback",
   "sendFeedbackSubtitle": "Share your ideas and suggestions",
   "feedback": "Feedback",
-  "feedbackLoadError": "Failed to load feedback"
+  "feedbackLoadError": "Failed to load feedback",
+  "resetPasswordInstruction": "Please enter your new password",
+  "newPassword": "New Password",
+  "changePassword": "Change Password",
+  "passwordChangeSuccess": "Password has been changed successfully"
 }
