@@ -6,7 +6,7 @@ import 'package:supabase_flutter/supabase_flutter.dart';
 /// SSO 토큰 생성 및 Canny URL 빌드를 담당합니다.
 class CannyService {
   static const String _subdomain = 'cockat';
-  static const String _defaultBoard = 'feature-requests';
+  static const String _defaultBoard = 'general';
 
   final SupabaseClient _supabase;
 
