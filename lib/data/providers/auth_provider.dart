@@ -4,12 +4,12 @@ import 'dart:io' show Platform;
 
 import 'package:crypto/crypto.dart';
 import 'package:flutter/foundation.dart' show debugPrint, kIsWeb;
-import 'package:flutter_dotenv/flutter_dotenv.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:google_sign_in/google_sign_in.dart';
 import 'package:sign_in_with_apple/sign_in_with_apple.dart';
 import 'package:supabase_flutter/supabase_flutter.dart';
 
+import '../../core/config/env.dart';
 import 'ingredient_provider.dart';
 
 /// Supabase Auth 상태 스트림
@@ -105,12 +105,8 @@ class AuthService {
   /// Google 네이티브 로그인 (iOS/Android)
   Future<AuthResult> _signInWithGoogleNative() async {
     try {
-      final webClientId = dotenv.env['GOOGLE_CLIENT_ID_WEB'];
-      final iosClientId = dotenv.env['GOOGLE_CLIENT_ID_IOS'];
-
-      if (webClientId == null) {
-        return AuthResult.failure('Google Client ID가 설정되지 않았습니다.');
-      }
+      const webClientId = Env.googleClientIdWeb;
+      const iosClientId = Env.googleClientIdIos;
 
       final googleSignIn = GoogleSignIn(
         clientId: Platform.isIOS ? iosClientId : null,

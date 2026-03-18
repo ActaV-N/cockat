@@ -1,7 +1,7 @@
-import 'package:flutter_dotenv/flutter_dotenv.dart';
+import 'env.dart';
 
-/// Supabase configuration loaded from .env file
+/// Supabase configuration loaded via envied (compile-time)
 class SupabaseConfig {
-  static String get url => dotenv.env['SUPABASE_URL'] ?? '';
-  static String get anonKey => dotenv.env['SUPABASE_ANON_KEY'] ?? '';
+  static String get url => Env.supabaseUrl;
+  static String get anonKey => Env.supabaseAnonKey;
 }
